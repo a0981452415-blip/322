@@ -34,16 +34,10 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
-        .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
-        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.8); }
-        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; animation-duration: 2.8s; }
-        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; transform: scale(1.2); }
-        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; animation-duration: 4.2s; }
-
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 登入驗證層 --- */
+        /* --- 登入驗證層 (打字機效果優化) --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 60000; background: var(--bg-gradient);
@@ -51,14 +45,38 @@
             transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
         }
         .login-box {
-            background: rgba(255, 255, 255, 0.95); padding: 50px; border-radius: 30px;
-            text-align: center; box-shadow: 0 15px 50px rgba(79, 195, 247, 0.4);
-            border: 2px solid var(--header-color); backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px;
+            text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3);
+            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px);
+            color: white;
         }
+
+        /* 打字機動畫設定 */
+        .typewriter-text {
+            font-family: 'Courier New', Courier, monospace; /* 使用等寬字體更有打字感 */
+            overflow: hidden; 
+            border-right: .15em solid var(--accent-blue); /* 光標 */
+            white-space: nowrap; 
+            margin: 0 auto 20px; 
+            letter-spacing: .15em; 
+            width: 0;
+            font-size: 1.8rem;
+            font-weight: bold;
+            animation: 
+                typing 2s steps(10, end) forwards,
+                blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
+
         .login-box input {
+            background: rgba(255,255,255,0.1);
+            color: white;
             padding: 12px; width: 220px; border-radius: 12px;
-            border: 1px solid #ddd; margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
+            border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
         }
+        .login-box input::placeholder { color: rgba(255,255,255,0.5); }
 
         /* --- 介面組件 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
@@ -67,12 +85,8 @@
         header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
 
         #quote-display {
-            color: #e1f5fe;
-            font-style: italic;
-            font-size: 1.2rem;
-            min-height: 30px;
-            transition: opacity 0.8s ease;
-            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px;
+            transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
         }
         
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
@@ -81,7 +95,7 @@
         .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: white; }
 
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
-        .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .photo-container img { width: 100%; height: 100%; object-fit: cover; }
         
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
@@ -121,13 +135,15 @@
 <body>
 
 <div class="night-sky">
-    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star" style="top: 5%; left: 80%; animation-delay: 0s;"></div>
+    <div class="shooting-star" style="top: 15%; left: 60%; animation-delay: 1.2s;"></div>
+    <div class="shooting-star" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
 </div>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color); margin-top:0;">322 入口</h2>
-        <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
+        <div class="typewriter-text">歡迎進入 322...</div>
+        <input type="password" id="pass-input" placeholder="請輸入神秘暗號" onkeydown="if(event.key==='Enter') checkPass()">
         <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
     </div>
 </div>
@@ -175,7 +191,7 @@
 </div>
 
 <script>
-    // Firebase 初始化
+    // --- 這裡放你原本的所有 Firebase 初始化與邏輯 ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -188,7 +204,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 成員資料
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
@@ -217,48 +232,18 @@
                             ❤️ <span id="like-count-${m.id}">0</span>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
             container.appendChild(card);
             observer.observe(card);
-
             db.ref('likes/' + m.id).on('value', (snapshot) => {
-                const count = snapshot.val() || 0;
-                document.getElementById(`like-count-${m.id}`).innerText = count;
+                document.getElementById(`like-count-${m.id}`).innerText = snapshot.val() || 0;
             });
         });
     }
 
     function addLike(id) {
-        const likeRef = db.ref('likes/' + id);
-        likeRef.transaction((currentLikes) => {
-            return (currentLikes || 0) + 1;
-        });
+        db.ref('likes/' + id).transaction(c => (c || 0) + 1);
     }
-
-    const quotes = [
-        "「走步哥：這球真的沒走步，是地心引力在抓我。」",
-        "「妮塔：(露出充滿智慧的疑惑表情)」",
-        "「高工候選人：我的選票跟我的球技一樣穩。」",
-        "「崇瑋與軒漢的父親陳緯哲：乖兒子們，爸爸回來了。」",
-        "「雨傘哥：下雨不愁，我有我的專屬雨傘陣。」",
-        "「大野豬廖廷恩：撞開一切阻礙，這就是力量！」",
-        "「養身籃球簡宗翰：流汗就好，勝負都是浮雲。」",
-        "「導演鄭子恩：Action！322 的每一天都是大片。」",
-        "「鬍子哥趙峻霆：鬍子是我的本體，帥氣是我的贈品。」",
-        "「老師：再吵的，去外面走廊跟飲水機聊天！」"
-    ];
-
-    function updateQuote() {
-        const display = document.getElementById('quote-display');
-        display.style.opacity = 0;
-        setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * quotes.length);
-            display.innerText = quotes[randomIndex];
-            display.style.opacity = 1;
-        }, 800);
-    }
-    setInterval(updateQuote, 8000);
 
     function checkPass() {
         const input = document.getElementById('pass-input');
@@ -267,69 +252,17 @@
             overlay.style.transform = "translateY(-100%)";
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
             shuffleSong();
-            updateQuote();
         } else {
-            alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
+            alert("暗號錯誤!");
             input.value = "";
         }
     }
 
-    function sendMsg() {
-        const input = document.getElementById('msg-input');
-        if (input.value.trim() === "") return;
-        const now = new Date();
-        db.ref('messages').push({
-            text: input.value,
-            time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
-            timestamp: Date.now()
-        });
-        input.value = "";
-    }
-
-    db.ref('messages').limitToLast(20).on('value', (snapshot) => {
-        const list = document.getElementById('msg-list');
-        list.innerHTML = "";
-        const data = snapshot.val();
-        if (data) {
-            Object.values(data).reverse().forEach(msg => {
-                const div = document.createElement('div');
-                div.className = 'msg-item';
-                div.innerHTML = `<strong>匿名憨包</strong> <small style="color:#888;">${msg.time}</small><br><p style="margin:5px 0 0 0;">${msg.text}</p>`;
-                list.appendChild(div);
-            });
-        }
-    });
-
-    const playlist = ["music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3", "music7.mp3", "music8.mp3", "music9.mp3", "music10.mp3"];
-    function shuffleSong() {
-        const audio = document.getElementById('bg-audio');
-        const songName = playlist[Math.floor(Math.random() * playlist.length)];
-        document.getElementById('audio-source').src = songName;
-        document.getElementById('song-title').innerText = "🎵 正在播放：" + songName;
-        audio.load();
-        audio.play().catch(() => {});
-    }
-
-    const dots = document.querySelectorAll('.cursor-dot');
-    let mouseX = 0, mouseY = 0;
-    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
-    function moveDots() {
-        dots.forEach((dot, index) => {
-            dot.style.left = mouseX + 'px';
-            dot.style.top = mouseY + 'px';
-            dot.style.opacity = 1 - (index * 0.3);
-        });
-        requestAnimationFrame(moveDots);
-    }
-    moveDots();
-
-    // 更新倒數計時與進度條
+    // 更新倒數與進度條
     function updateCountdown() {
-        const start = new Date(2025, 8, 1).getTime(); // 九年級開學日 (2025/09/01)
-        const end = new Date(2026, 4, 16, 8, 0, 0).getTime(); // 會考日 (2026/05/16)
+        const start = new Date(2025, 8, 1).getTime();
+        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
-        
-        // 1. 更新倒數數字
         const diff = end - now;
         if (diff > 0) {
             document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
@@ -337,25 +270,28 @@
             document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
         }
-
-        // 2. 更新進度條
-        const totalDuration = end - start;
-        const elapsed = now - start;
-        const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
-        
+        const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
         document.getElementById('progress-bar').style.width = progress + '%';
         document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
     }
+
     setInterval(updateCountdown, 1000);
+    const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
+    
+    // 滑鼠圓點邏輯
+    const dots = document.querySelectorAll('.cursor-dot');
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+    function moveDots() {
+        dots.forEach((dot, i) => {
+            dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+            dot.style.opacity = 1 - (i * 0.3);
+        });
+        requestAnimationFrame(moveDots);
+    }
+    moveDots();
 
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
-    });
-
-    window.onload = () => { 
-        renderCards();
-        updateCountdown(); 
-    };
+    window.onload = () => { renderCards(); updateCountdown(); };
 </script>
 </body>
 </html>
