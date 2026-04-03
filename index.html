@@ -118,9 +118,9 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322 基地入口</h2>
+        <h2 style="color:var(--header-color)">322入口</h2>
         <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">進入基地</button>
+        <br><button class="btn-ig" onclick="checkPass()">進入322</button>
     </div>
 </div>
 
@@ -140,9 +140,9 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">💬 322 匿名聊天室</h3>
+    <h3 style="color:var(--header-color); text-align:center;">💬 322聊天室</h3>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="說點什麼吧..." onkeydown="if(event.key==='Enter') sendMsg()">
+        <input type="text" id="msg-input" placeholder="發點牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
         <button class="btn-ig" onclick="sendMsg()">發送</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
@@ -194,7 +194,7 @@
                 { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' },
                 { transform: 'translateX(0)' }
             ], { duration: 300 });
-            alert("錯誤 你不是憨包");
+            alert("回答錯誤 你不是憨包");
             input.value = "";
             setTimeout(() => {
                 input.style.border = "1px solid #ddd";
