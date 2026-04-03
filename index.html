@@ -48,11 +48,39 @@
         .welcome-content button {
             background: linear-gradient(45deg, #4fc3f7, #0288d1);
             color: white; border: none; padding: 15px 45px; border-radius: 50px;
-            font-weight: bold; cursor: pointer;
+            font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+
+        /* --- 打字機效果樣式 --- */
+        .typewriter-cursor {
+            border-right: 3px solid var(--header-color);
+            animation: blink 0.75s step-end infinite;
         }
 
         header { text-align: center; padding: 60px 0; }
-        header h1 { color: var(--header-color); font-size: 3.5rem; letter-spacing: 4px; }
+        header h1 { 
+            color: var(--header-color); 
+            font-size: 3.5rem; 
+            letter-spacing: 4px;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 4px solid var(--header-color);
+            /* steps(字數) 讓動畫有跳格感 */
+            animation: 
+                typing-header 2s steps(8, end),
+                blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing-header {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--header-color); }
+        }
         
         .container {
             max-width: 1200px; margin: 0 auto;
@@ -74,7 +102,6 @@
         }
         .card.show { opacity: 1; transform: translateY(0); }
 
-        /* 流光層：使用放射漸層跟隨座標 */
         .card::after {
             content: "";
             position: absolute;
@@ -92,7 +119,6 @@
         }
 
         .card:hover::after { opacity: 1; }
-
         .card:hover {
             transform: translateY(-12px);
             box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2);
@@ -107,7 +133,6 @@
         .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
-        /* 倒數計時 */
         .countdown-container {
             max-width: 800px; margin: 0 auto 100px; background: var(--card-bg);
             padding: 30px; border-radius: 30px; text-align: center;
@@ -116,7 +141,6 @@
         .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
 
-        /* 音樂播放器 */
         .music-player {
             position: fixed; bottom: 25px; right: 25px; width: 260px;
             background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
@@ -137,7 +161,7 @@
 <div id="welcome-overlay">
     <div class="welcome-content">
         <h1>歡迎來到 322</h1>
-        <p>準備好看到一群憨包了嗎？</p>
+        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.2rem; font-weight: 500;"></p>
         <button onclick="closeWelcome()">點擊進入</button>
     </div>
 </div>
@@ -179,6 +203,25 @@
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
+    // --- 打字機 JS 函式 ---
+    function runTypewriter(element, text, speed = 100) {
+        let i = 0;
+        element.innerHTML = '';
+        element.classList.add('typewriter-cursor');
+        
+        function type() {
+            if (i < text.length) {
+                element.innerHTML += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            } else {
+                // 打完後三秒移除游標閃爍
+                setTimeout(() => { element.classList.remove('typewriter-cursor'); }, 3000);
+            }
+        }
+        type();
+    }
+
     // --- 核心互動：座標流光 ---
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
@@ -191,7 +234,7 @@
         });
     });
 
-    // --- 音樂與基本功能整合 ---
+    // --- 音樂邏輯 ---
     const playlist = [
         { title: "海嶼你", file: "music1.mp3" }, { title: "宗翰獨特品味", file: "music2.mp3" },
         { title: "擊敗人", file: "music3.mp3" }, { title: "步步", file: "music4.mp3" },
@@ -229,9 +272,12 @@
     function nextSong() { loadSong((currentSongIndex + 1) % playlist.length); }
     function prevSong() { loadSong((currentSongIndex - 1 + playlist.length) % playlist.length); }
     function shuffleSong() { loadSong(Math.floor(Math.random() * playlist.length)); }
-    function closeWelcome() { document.getElementById('welcome-overlay').classList.add('fade-out'); loadSong(0); }
+    function closeWelcome() { 
+        document.getElementById('welcome-overlay').classList.add('fade-out'); 
+        loadSong(0); 
+    }
 
-    // --- 粒子特效與倒數計時 ---
+    // --- 粒子特效 ---
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -249,19 +295,29 @@
     function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
     anim();
 
+    // --- 倒數計時 ---
     function countdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const diff = end - new Date().getTime();
         if (diff <= 0) return;
-        document.getElementById('days').innerText = Math.floor(diff / 86400000);
-        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
-        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
-        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
+        document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+        document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+        document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
     }
     setInterval(countdown, 1000);
 
     const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }), {threshold:0.1});
-    window.onload = () => { renderMenu(); countdown(); cards.forEach(c => obs.observe(c)); };
+    
+    window.onload = () => { 
+        renderMenu(); 
+        countdown(); 
+        cards.forEach(c => obs.observe(c)); 
+        
+        // 執行歡迎詞打字機
+        const welcomeDesc = document.getElementById('welcome-desc');
+        runTypewriter(welcomeDesc, "準備好看到一群憨包了嗎？", 120);
+    };
 </script>
 </body>
 </html>
