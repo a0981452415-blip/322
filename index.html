@@ -66,7 +66,6 @@
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
         header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
 
-        /* 語錄樣式 */
         #quote-display {
             color: #e1f5fe;
             font-style: italic;
@@ -83,10 +82,20 @@
 
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .card:hover .photo-container img { transform: scale(1.15); }
+        
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; cursor: none; }
+        
+        /* 點讚按鈕與 IG 按鈕佈局 */
+        .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; }
+        
+        .like-box { 
+            display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; 
+            padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none;
+            transition: transform 0.2s ease; border: 1px solid #ffcdd2;
+        }
+        .like-box:active { transform: scale(1.2); }
 
         .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -101,7 +110,7 @@
         .music-player { position: fixed; bottom: 20px; right: 20px; width: 260px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 24px; z-index: 50000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--accent-blue); }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        a, button, input { cursor: none !important; }
+        a, button, input, .like-box { cursor: none !important; }
     </style>
 </head>
 <body>
@@ -125,17 +134,8 @@
     <div id="quote-display">「 加載憨包回憶中... 」</div>
 </header>
 
-<div class="container">
-    <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p2.jpg"></div><div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p3.jpg"></div><div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p4.jpg"></div><div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p5.jpg"></div><div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p6.jpg"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p7.jpg"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p8.jpg"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p9.jpg"></div><div class="info"><div class="name">趙峻霆</div><span class="nickname-tag">鬍子哥</span><br><a href="https://www.instagram.com/venus_tt314" class="btn-ig">Instagram</a></div></div>
-</div>
+<div class="container" id="members-container">
+    </div>
 
 <div class="msg-board">
     <h3 style="color:var(--header-color); text-align:center;">322 留言板</h3>
@@ -176,6 +176,57 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // 成員資料
+    const members = [
+        { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
+        { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
+        { id: "m3", name: "徐堃翔", tag: "高工候選人", ig: "sean.hsu0930", img: "p3.jpg" },
+        { id: "m4", name: "廖廷恩", tag: "大🍼野豬", ig: "ed_331ie", img: "p4.jpg" },
+        { id: "m5", name: "蔡承烜", tag: "雨傘哥", ig: "pywb30", img: "p5.jpg" },
+        { id: "m6", name: "簡宗翰", tag: "養身籃球", ig: "jzh.10.1015", img: "p6.jpg" },
+        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg" },
+        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg" },
+        { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
+    ];
+
+    // 動態生成卡片
+    function renderCards() {
+        const container = document.getElementById('members-container');
+        members.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="photo-container"><img src="${m.img}"></div>
+                <div class="info">
+                    <div class="name">${m.name}</div>
+                    <span class="nickname-tag">${m.tag}</span>
+                    <div class="actions">
+                        <a href="https://www.instagram.com/${m.ig}" class="btn-ig">IG</a>
+                        <div class="like-box" onclick="addLike('${m.id}')">
+                            ❤️ <span id="like-count-${m.id}">0</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+            observer.observe(card);
+
+            // 監聽該成員的讚數
+            db.ref('likes/' + m.id).on('value', (snapshot) => {
+                const count = snapshot.val() || 0;
+                document.getElementById(`like-count-${m.id}`).innerText = count;
+            });
+        });
+    }
+
+    // 點讚功能
+    function addLike(id) {
+        const likeRef = db.ref('likes/' + id);
+        likeRef.transaction((currentLikes) => {
+            return (currentLikes || 0) + 1;
+        });
+    }
+
     // 322 專屬語錄資料
     const quotes = [
         "「走步哥：這球真的沒走步，是地心引力在抓我。」",
@@ -192,15 +243,13 @@
 
     function updateQuote() {
         const display = document.getElementById('quote-display');
-        display.style.opacity = 0; // 先淡出
-        
+        display.style.opacity = 0;
         setTimeout(() => {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             display.innerText = quotes[randomIndex];
-            display.style.opacity = 1; // 再淡入
+            display.style.opacity = 1;
         }, 800);
     }
-    // 每 8 秒切換一次語錄
     setInterval(updateQuote, 8000);
 
     // 登入驗證
@@ -211,7 +260,7 @@
             overlay.style.transform = "translateY(-100%)";
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
             shuffleSong();
-            updateQuote(); // 登入後立即顯示一句
+            updateQuote();
         } else {
             alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
             input.value = "";
@@ -287,8 +336,9 @@
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
     });
+
     window.onload = () => { 
-        document.querySelectorAll('.card').forEach(c => observer.observe(c)); 
+        renderCards(); // 初始化生成卡片與點讚監聽
         updateCountdown(); 
     };
 </script>
