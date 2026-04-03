@@ -11,7 +11,7 @@
         :root {
             --header-color: #0288d1;
             --accent-blue: #4fc3f7;
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.85);
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             --bg-gradient: linear-gradient(-45deg, #e3f2fd, #bbdefb, #90caf9, #e1f5fe);
         }
@@ -49,7 +49,7 @@
             padding: 12px; width: 220px; border-radius: 12px;
             border: 1px solid #ddd; margin: 20px 0;
             font-size: 1.1rem; text-align: center; outline: none;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .cursor-dot {
@@ -61,7 +61,7 @@
         }
 
         header { text-align: center; padding: 40px 0; }
-        header h1 { color: var(--header-color); font-size: 3rem; letter-spacing: 4px; }
+        header h1 { color: var(--header-color); font-size: 3rem; letter-spacing: 4px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
         
         .container {
             max-width: 1200px; margin: 0 auto;
@@ -69,18 +69,32 @@
             gap: 30px; padding-bottom: 60px;
         }
         
+        /* 核心卡片特效 */
         .card {
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; padding-bottom: 25px; 
-            opacity: 0; transform: translateY(40px); transition: 0.4s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; padding-bottom: 25px; 
+            opacity: 0; transform: translateY(40px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
         .card.show { opacity: 1; transform: translateY(0); }
         
-        .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
-        .photo-container img { width: 100%; height: 100%; object-fit: cover; }
+        /* 滑過效果：放大 + 發光 + 浮起 */
+        .card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(2, 136, 209, 0.25);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; position: relative; }
+        .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+        .card:hover .photo-container img { transform: scale(1.1); } /* 照片稍微放大 */
+
         .name { font-size: 1.5rem; font-weight: 800; margin-top: 15px; color: #333; }
         .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-family: inherit;}
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-family: inherit; transition: opacity 0.3s; }
+        .btn-ig:hover { opacity: 0.9; }
 
         .msg-board {
             max-width: 700px; margin: 0 auto 50px;
@@ -88,7 +102,7 @@
             border-radius: 25px; border: 2px solid var(--header-color);
         }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; cursor: none; }
+        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
         .msg-list { max-height: 300px; overflow-y: auto; }
         .msg-item { background: #f0faff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--header-color); text-align: left;}
 
@@ -104,9 +118,9 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322入口</h2>
+        <h2 style="color:var(--header-color)">322 基地入口</h2>
         <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">進入322</button>
+        <br><button class="btn-ig" onclick="checkPass()">進入基地</button>
     </div>
 </div>
 
@@ -126,9 +140,9 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">💬 322聊天室</h3>
+    <h3 style="color:var(--header-color); text-align:center;">💬 322 匿名聊天室</h3>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="發點牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
+        <input type="text" id="msg-input" placeholder="說點什麼吧..." onkeydown="if(event.key==='Enter') sendMsg()">
         <button class="btn-ig" onclick="sendMsg()">發送</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
@@ -147,10 +161,11 @@
 <div class="music-player">
     <p id="song-title" style="font-size:0.8rem; margin:0 0 10px 0;">🎵 待播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
-    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px; cursor: none;">隨機播放</button>
+    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px;">隨機播放</button>
 </div>
 
 <script>
+    // Firebase 配置
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -164,25 +179,22 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 更新後的暗號驗證：包含錯誤震動與提示
+    // 驗證功能
     function checkPass() {
         const input = document.getElementById('pass-input');
+        const overlay = document.getElementById('login-overlay');
         if (input.value === "322") { 
-            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
+            overlay.style.transform = "translateY(-100%)";
             shuffleSong();
         } else {
-            // 錯誤效果：變紅 + 震動
             input.style.border = "2px solid #ff5252";
             input.style.backgroundColor = "#ffebee";
             input.animate([
-                { transform: 'translateX(-5px)' },
-                { transform: 'translateX(5px)' },
-                { transform: 'translateX(-5px)' },
-                { transform: 'translateX(5px)' },
+                { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' },
+                { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' },
                 { transform: 'translateX(0)' }
             ], { duration: 300 });
-            
-            alert("❌ 暗號錯誤 你不是憨包。");
+            alert("錯誤 你不是憨包");
             input.value = "";
             setTimeout(() => {
                 input.style.border = "1px solid #ddd";
@@ -191,6 +203,7 @@
         }
     }
 
+    // 留言功能
     function sendMsg() {
         const input = document.getElementById('msg-input');
         if (input.value.trim() === "") return;
@@ -217,7 +230,7 @@
         }
     });
 
-    // 鼠標特效
+    // 鼠標跟隨
     const dots = document.querySelectorAll('.cursor-dot');
     let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
@@ -232,6 +245,7 @@
     }
     moveDots();
 
+    // 倒數計時
     function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
@@ -244,6 +258,7 @@
     }
     setInterval(updateCountdown, 1000);
 
+    // 音樂播放
     const playlist = ["music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3", "music7.mp3", "music8.mp3", "music9.mp3", "music10.mp3"];
     function shuffleSong() {
         const audio = document.getElementById('bg-audio');
@@ -254,10 +269,14 @@
         audio.play().catch(() => {});
     }
 
+    // 滾動出現動畫
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
     });
-    window.onload = () => { document.querySelectorAll('.card').forEach(c => observer.observe(c)); updateCountdown(); };
+    window.onload = () => { 
+        document.querySelectorAll('.card').forEach(c => observer.observe(c)); 
+        updateCountdown(); 
+    };
 </script>
 </body>
 </html>
