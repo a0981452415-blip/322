@@ -26,25 +26,20 @@
             cursor: none; 
         }
 
-        /* --- 流星雨核心特效 --- */
+        /* --- 特效層 --- */
         .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
             filter: drop-shadow(0 0 6px #ffffff); border-radius: 999px; opacity: 0;
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
-
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 視覺化畫布樣式 --- */
-        #visualizer-container {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 100px;
-            z-index: 5; pointer-events: none; opacity: 0.6;
-        }
+        #visualizer-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 100px; z-index: 5; pointer-events: none; opacity: 0.6; }
         #visualizer-canvas { width: 100%; height: 100%; }
 
-        /* --- 登入驗證層 --- */
+        /* --- 登入層 --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 60000; background: var(--bg-gradient);
@@ -54,141 +49,65 @@
         .login-box {
             background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px;
             text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3);
-            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px);
-            color: white;
+            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white;
         }
 
-        .typewriter-text {
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden; 
-            border-right: .15em solid var(--accent-blue);
-            white-space: nowrap; 
-            margin: 0 auto 20px; 
-            letter-spacing: .15em; 
-            width: 0;
-            font-size: 1.8rem;
-            font-weight: bold;
-            animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite;
-        }
-
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
-
-        .login-box input {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            padding: 12px; width: 220px; border-radius: 12px;
-            border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
-        }
-
-        /* --- 介面組件 --- */
+        /* --- 內容樣式 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
-        
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
-        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
-
-        #quote-display {
-            color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px;
-            transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
-            font-weight: 500;
-        }
+        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
+        #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s; font-weight: 500; }
         
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
-        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s ease; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: white; }
-
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
-        
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
         
+        /* --- 互動元件 --- */
         .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; }
-        
-        .like-box { 
-            display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; 
-            padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none;
-            transition: transform 0.2s ease; border: 1px solid #ffcdd2;
-        }
-        .like-box:active { transform: scale(1.2); }
+        .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; }
+        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; }
 
-        /* --- 優化後的進度條 --- */
-        .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
+        .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); }
+        .progress-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; overflow: hidden; position: relative; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); background-size: 200% 100%; animation: shine 3s linear infinite; box-shadow: 0 0 15px var(--accent-blue); }
         
-        .progress-wrapper { margin: 20px 0; text-align: center; }
-        .progress-container { 
-            width: 100%; height: 20px; background: rgba(0, 0, 0, 0.2); 
-            border-radius: 10px; overflow: hidden; position: relative; 
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); 
-        }
-        .progress-fill { 
-            height: 100%; width: 0%; 
-            background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); 
-            background-size: 200% 100%;
-            animation: shine 3s linear infinite;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
-            box-shadow: 0 0 15px var(--accent-blue); 
-            position: relative;
-        }
-        /* 進度條頭部流星效果 */
-        .progress-fill::after {
-            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 20px;
-            background: white; filter: blur(5px); opacity: 0.7;
-        }
-        
-        @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-        #progress-percent { color: var(--header-color); font-weight: bold; font-size: 1rem; margin-top: 10px; display: block; }
-
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
-        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; border: 1px solid rgba(79, 195, 247, 0.2); }
-        .time-block span { display: block; font-size: 2.2rem; font-weight: 800; color: var(--header-color); text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .time-block p { margin: 5px 0 0; font-size: 0.8rem; color: #555; }
-
+        .time-block span { display: block; font-size: 2.2rem; font-weight: 800; color: var(--header-color); }
+        
+        #music-control { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: none; background: rgba(0,0,0,0.6); color: white; padding: 10px 15px; border-radius: 50px; align-items: center; gap: 10px; }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        a, button, input, .like-box { cursor: none !important; }
-
-        #music-control {
-            position: fixed; bottom: 20px; right: 20px; z-index: 10000;
-            display: none; background: rgba(0,0,0,0.6); color: white;
-            padding: 10px 15px; border-radius: 50px; border: 1px solid var(--accent-blue);
-            backdrop-filter: blur(5px); font-size: 0.9rem; align-items: center; gap: 10px;
-        }
-        #music-control button { background: none; border: none; color: white; font-size: 1.2rem; padding: 0 5px; cursor: none; }
+        @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
 <body>
 
 <div class="night-sky">
     <div class="shooting-star" style="top: 5%; left: 80%; animation-delay: 0s;"></div>
-    <div class="shooting-star" style="top: 15%; left: 60%; animation-delay: 1.2s;"></div>
     <div class="shooting-star" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
 </div>
 
-<div id="visualizer-container">
-    <canvas id="visualizer-canvas"></canvas>
-</div>
+<div id="visualizer-container"><canvas id="visualizer-canvas"></canvas></div>
 
 <div id="login-overlay">
     <div class="login-box">
-        <div class="typewriter-text">歡迎來到 322</div>
-        <input type="password" id="pass-input" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
+        <h2 style="margin-bottom:20px;">歡迎來到 322</h2>
+        <input type="password" id="pass-input" placeholder="請輸入密碼" style="padding:10px; border-radius:8px; border:none;" onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button onclick="checkPass()" style="margin-top:15px; padding:8px 20px; cursor:none; background:var(--accent-blue); border:none; border-radius:10px;">確認身分</button>
     </div>
 </div>
 
 <div id="music-control">
     <span id="music-title">🎵 播放中...</span>
-    <button onclick="prevTrack()">⏮</button>
-    <button onclick="togglePlay()" id="play-pause-icon">⏸</button>
-    <button onclick="nextTrack()">⏭</button>
+    <button onclick="prevTrack()" style="background:none; border:none; color:white;">⏮</button>
+    <button onclick="togglePlay()" id="play-pause-icon" style="background:none; border:none; color:white;">⏸</button>
+    <button onclick="nextTrack()" style="background:none; border:none; color:white;">⏭</button>
 </div>
 
-<div class="cursor-dot" style="z-index: 70001;"></div>
-<div class="cursor-dot" style="transform: scale(2); opacity: 0.3;"></div>
-<div class="cursor-dot" style="transform: scale(3); opacity: 0.1;"></div>
+<div class="cursor-dot"></div>
 
 <header>
     <h1> 322 憨包們 </h1>
@@ -199,11 +118,9 @@
 
 <div class="countdown-container">
     <h3 style="color:var(--header-color); text-align:center; margin-bottom: 20px;">🎓 115 會考倒數計時</h3>
-    <div class="progress-wrapper">
-        <div class="progress-container">
-            <div id="progress-bar" class="progress-fill"></div>
-        </div>
-        <span id="progress-percent">正在連結戰場數據...</span>
+    <div style="text-align: center; margin-bottom: 10px;">
+        <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
+        <span id="progress-percent" style="font-weight:bold; color:var(--header-color); margin-top:10px; display:block;">數據同步中...</span>
     </div>
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>剩餘天數</p></div>
@@ -214,91 +131,7 @@
 </div>
 
 <script>
-    // --- 基礎配置 ---
-    const playlist = [
-        { title: "曲目 1", url: "music1.mp3" }, { title: "曲目 2", url: "music2.mp3" },
-        { title: "曲目 3", url: "music3.mp3" }, { title: "曲目 4", url: "music4.mp3" },
-        { title: "曲目 5", url: "music5.mp3" }, { title: "曲目 6", url: "music6.mp3" },
-        { title: "曲目 7", url: "music7.mp3" }, { title: "曲目 8", url: "music8.mp3" },
-        { title: "曲目 9", url: "music9.mp3" }, { title: "曲目 10", url: "music10.mp3" },
-        { title: "曲目 11", url: "music11.mp3" }, { title: "曲目 12", url: "music12.mp3" }
-    ];
-    let currentTrack = 0;
-    const audio = new Audio();
-    audio.crossOrigin = "anonymous"; 
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
-      authDomain: "project-1673660731296559126.firebaseapp.com",
-      projectId: "project-1673660731296559126",
-      storageBucket: "project-1673660731296559126.firebasestorage.app",
-      messagingSenderId: "475041608650",
-      appId: "1:475041608650:web:59e544b5f9a8dca98c1533",
-      databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    const ganHuaQuotes = [
-        "雖然我們是憨包，但我們是全校最帥的憨包。", 
-        "只要我不尷尬，尷尬的就是飲水機。", 
-        "籃球可以不進，但姿勢一定要帥；書可以不讀，但手機一定要帶。",
-        "322 的情義，就像福利社的泡麵——又香又燙。",
-        "今天不讀書，明天變大豬。", 
-        "考卷發下來，除了名字其他都是陌生人。",
-        "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!",
-        "是種自己的花，愛自己的宇宙，在不完美的生活裡，找到閃亮亮的快樂。",
-
-        "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。",
-
-        "再忙再累，也要抽出時間讓自己美起來，你總不能既沒錢，又「胖若兩人」吧。",
-
-        "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!",
-
-        "他人對你的尊重，從來不是因為你的順從",
-
-        "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。",
-
-        "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。",
-
-        "每個人的一生都有許多夢想，但如果其中一個不斷攪擾著你，剩下的就僅僅是行動了。",
-
-        "從現在開始，不沉溺幻想，不庸人自擾，好好生活，做一個接近幸福的人。",
-
-        "千里之行，始於足下。改變將來，從現在開始。改變現在，就是改變未來。",
-
-        "每一個困難，都是一次對心靈和能力的考驗。",
-
-        "人生短暫，珍惜當下，每一次機會都是一場奇蹟。",
-
-        "接納自己的情緒狀態，而不是強迫改變。",
-
-        "接納自己最難以面對的部分，是通往真正改變的第一步。",
-
-        "當你學會與自己和解，承認自己的不完美，你會發現真正的力量來自於內心的接納。",
-
-        "對於那些傷害你的人，你就活得更好來報復他們吧！",
-
-        "萬事萬物皆有裂痕，光就是這樣照進來的。",
-
-        "生活是屬於每個人自己的感受，不屬於別人的看法。",
-
-        "每天的太陽都是新的，不要辜負了美好的晨光。",
-
-        "任何時候都不要為不值得的人和事，浪費時間和心力。",
-
-        "先愛自己，因為自己是你餘生的伴侶。",
-
-        "不要為小事遮住視線，我們還有更大的世界。",
-
-        "窮則思變，差則思勤!沒有比人更高的山，沒有比腳更長的路！",
-
-        "活著，我願意就這樣單純的活著，簡單的行走，活出我平凡人的精彩。",
-
-        " 人生，在歷經大大小小的各種坎坷與收穫後，我的思想真的成熟了，不再幼稚的面對問題，而是沉著冷靜的思考。",
-        "老師在講我在聽，但我聽的是心碎的聲音。"
-    ];
-
+    // --- 資料配置 ---
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
@@ -311,159 +144,96 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
 
-    // --- 音訊視覺化 ---
-    let audioCtx, analyser, source, dataArray, canvas, canvasCtx;
-    let isVisualizerInitialized = false;
+    const ganHuaQuotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "籃球可以不進，但姿勢一定要帥。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "考卷發下來，除了名字其他都是陌生人。", "是種自己的花，愛自己的宇宙。", "老師在講我在聽，但我聽的是心碎的聲音。"];
 
-    function initVisualizer() {
-        if (isVisualizerInitialized) return;
-        try {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioCtx.createAnalyser();
-            source = audioCtx.createMediaElementSource(audio);
-            source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            analyser.fftSize = 256;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            canvas = document.getElementById('visualizer-canvas');
-            canvasCtx = canvas.getContext('2d');
-            isVisualizerInitialized = true;
-            drawVisualizer();
-        } catch (e) { console.log("視覺化啟動失敗：", e); }
-    }
+    // --- Firebase 與 初始化 ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
+      authDomain: "project-1673660731296559126.firebaseapp.com",
+      projectId: "project-1673660731296559126",
+      databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    function drawVisualizer() {
-        requestAnimationFrame(drawVisualizer);
-        const width = canvas.width = window.innerWidth;
-        const height = canvas.height = 100;
-        analyser.getByteFrequencyData(dataArray);
-        canvasCtx.clearRect(0, 0, width, height);
-        const barWidth = (width / dataArray.length) * 2.5;
-        let x = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-            const barHeight = (dataArray[i] / 255) * height;
-            canvasCtx.fillStyle = `rgba(79, 195, 247, ${dataArray[i] / 255 + 0.2})`;
-            canvasCtx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
-            x += barWidth;
-        }
-    }
-
-    // --- 音樂與登入邏輯 ---
-    function loadMusic(index) {
-        currentTrack = index;
-        audio.src = playlist[index].url;
-        document.getElementById('music-title').innerText = "🎵 " + playlist[index].title;
-    }
-    function togglePlay() {
-        const btn = document.getElementById('play-pause-icon');
-        if (audio.paused) { audio.play(); btn.innerText = "⏸"; } 
-        else { audio.pause(); btn.innerText = "▶️"; }
-    }
-    function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
-    function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
-    audio.onended = () => nextTrack();
-
-    function checkPass() {
-        const input = document.getElementById('pass-input');
-        const overlay = document.getElementById('login-overlay');
-        if (input.value === "best322") { 
-            overlay.style.transform = "translateY(-100%)";
-            initVisualizer();
-            loadMusic(0);
-            audio.play();
-            document.getElementById('music-control').style.display = 'flex';
-            setTimeout(() => { overlay.style.display = 'none'; }, 800);
-            rotateQuotes(); 
-        } else {
-            alert("暗號錯誤!");
-            input.value = "";
-        }
-    }
-
-    // --- 內容渲染與計時邏輯 ---
-    function rotateQuotes() {
-        const display = document.getElementById('quote-display');
-        let index = 0;
-        setInterval(() => {
-            display.style.opacity = 0;
-            setTimeout(() => {
-                display.innerText = `「 ${ganHuaQuotes[index]} 」`;
-                display.style.opacity = 1;
-                index = (index + 1) % ganHuaQuotes.length;
-            }, 800);
-        }, 4000);
-    }
+    const audio = new Audio();
+    let currentTrack = 0;
+    const playlist = Array.from({length: 12}, (_, i) => ({ title: `曲目 ${i+1}`, url: `music${i+1}.mp3` }));
 
     function renderCards() {
         const container = document.getElementById('members-container');
         members.forEach(m => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="info"><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div></div>`;
+            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div>`;
             container.appendChild(card);
             observer.observe(card);
-            db.ref('likes/' + m.id).on('value', (snapshot) => { 
+            db.ref('likes/' + m.id).on('value', snap => {
                 const el = document.getElementById(`like-count-${m.id}`);
-                if (el) el.innerText = snapshot.val() || 0; 
+                if (el) el.innerText = snap.val() || 0;
             });
         });
     }
 
     function addLike(id) { db.ref('likes/' + id).transaction(c => (c || 0) + 1); }
 
-    // 更新進度與倒數
+    // --- 倒數核心邏輯 ---
     function updateCountdown() {
-        // 設定基準點
-        const start = new Date(2025, 8, 1).getTime(); // 2025/9/1
-        const end = new Date(2026, 4, 16, 8, 0, 0).getTime(); // 2026/5/16 08:00
+        const start = new Date(2025, 8, 1).getTime(); 
+        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
         const diff = end - now;
 
-        // 1. 更新數字顯示
         if (diff > 0) {
             document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
             document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
             document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-        } else {
-            document.getElementById('timer').innerHTML = "<div style='grid-column:span 4; font-size:1.5rem; color:#0288d1; font-weight:bold;'>祝 322 們金榜題名，戰鬥結束！</div>";
         }
-
-        // 2. 更新進度條
-        const total = end - start;
-        const current = now - start;
-        let progress = (current / total) * 100;
-        progress = Math.max(0, Math.min(100, progress));
-
-        const bar = document.getElementById('progress-bar');
-        const text = document.getElementById('progress-percent');
         
-        if (bar) bar.style.width = progress.toFixed(4) + '%';
-        if (text) text.innerText = `會考備戰進度：${progress.toFixed(4)}%`;
+        const progress = Math.max(0, Math.min(100, ((now - start) / (end - start)) * 100));
+        document.getElementById('progress-bar').style.width = progress.toFixed(4) + '%';
+        document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
+        requestAnimationFrame(updateCountdown);
+    }
+
+    // --- 音樂控制 ---
+    function loadMusic(idx) {
+        currentTrack = idx;
+        audio.src = playlist[idx].url;
+        document.getElementById('music-title').innerText = "🎵 " + playlist[idx].title;
+    }
+    function togglePlay() { 
+        if (audio.paused) { audio.play(); document.getElementById('play-pause-icon').innerText = "⏸"; }
+        else { audio.pause(); document.getElementById('play-pause-icon').innerText = "▶️"; }
+    }
+    function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
+    function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
+
+    function checkPass() {
+        if (document.getElementById('pass-input').value === "best322") {
+            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
+            document.getElementById('music-control').style.display = 'flex';
+            loadMusic(0); audio.play();
+            updateCountdown();
+            rotateQuotes();
+        } else { alert("暗號錯誤！"); }
+    }
+
+    function rotateQuotes() {
+        let i = 0;
+        setInterval(() => {
+            const d = document.getElementById('quote-display');
+            d.style.opacity = 0;
+            setTimeout(() => { d.innerText = `「 ${ganHuaQuotes[i]} 」`; d.style.opacity = 1; i = (i + 1) % ganHuaQuotes.length; }, 800);
+        }, 4000);
     }
 
     const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
-    
-    // 自定義游標跟隨邏輯
-    const dots = document.querySelectorAll('.cursor-dot');
-    let mx = 0, my = 0;
-    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
-    function moveDots() {
-        dots.forEach((dot, i) => {
-            const delay = i * 4; // 增加些微延遲感
-            dot.style.left = mx + 'px'; 
-            dot.style.top = my + 'px';
-        });
-        requestAnimationFrame(moveDots);
-    }
-    
-    moveDots();
-    setInterval(updateCountdown, 1000);
+    const dot = document.querySelector('.cursor-dot');
+    window.addEventListener('mousemove', e => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; });
 
-    window.onload = () => { 
-        renderCards(); 
-        updateCountdown(); 
-    };
+    window.onload = renderCards;
 </script>
 </body>
 </html>
