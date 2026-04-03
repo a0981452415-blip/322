@@ -65,25 +65,30 @@
         
         .container {
             max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 35px; padding-bottom: 50px;
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 35px; padding: 20px 20px 100px;
         }
+        
         .card {
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.5s ease;
             text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px);
+            display: flex; flex-direction: column;
         }
         .card.show { opacity: 1; transform: translateY(0); }
         .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2); }
-        .photo-container { width: 100%; height: 300px; overflow: hidden; background-color: #f8f9fa; }
+        
+        .photo-container { width: 100%; height: 350px; overflow: hidden; background-color: #f8f9fa; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .info { padding: 20px; }
+        
+        .info { padding: 20px; flex-grow: 1; }
         .name { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; color: #2c3e50; }
         .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
         .countdown-container {
-            max-width: 800px; margin: 40px auto 100px; background: var(--card-bg);
+            max-width: 800px; margin: 0 auto 100px; background: var(--card-bg);
             padding: 30px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
         }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
@@ -96,12 +101,22 @@
         .music-player {
             position: fixed; bottom: 25px; right: 25px;
             background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 24px; z-index: 9999;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); backdrop-filter: blur(5px);
         }
+        .music-controls button {
+            cursor: pointer; border: none; background: #e1f5fe; color: #0288d1; 
+            border-radius: 12px; padding: 5px 12px; font-weight: bold; font-size: 0.75rem;
+            transition: 0.3s;
+        }
+        .music-controls button:hover { background: #0288d1; color: white; }
+
+        footer { text-align: center; padding: 40px; color: #546e7a; font-weight: bold; }
 
         @media (max-width: 768px) {
             header h1 { font-size: 2.2rem; }
-            .music-player { left: 20px; right: 20px; width: auto; }
+            .music-player { left: 20px; right: 20px; width: auto; bottom: 10px; }
+            .timer-grid { gap: 8px; }
+            .time-block span { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -134,8 +149,7 @@
     <div class="card"><div class="photo-container"><img src="p6.jpg" alt="簡宗翰"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" target="_blank" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p7.jpg" alt="鄭子恩"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" target="_blank" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p8.jpg" alt="陳緯哲"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" target="_blank" class="btn-ig">Instagram</a></div></div>
-
-    </div>
+</div> 
 
 <div class="countdown-container">
     <h2 class="countdown-title">🎓 距離 115 會考還有</h2>
@@ -154,20 +168,27 @@
 <div class="music-player">
     <p id="song-title" style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
     <audio id="bg-audio" controls><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
-    <div style="margin-top: 8px; display: flex; gap: 5px; justify-content: center;">
-        <button onclick="prevSong()" style="cursor:pointer; border:none; background:#e1f5fe; color:#0288d1; border-radius:12px; padding:5px 15px; font-weight:bold;">上一首</button>
-        <button onclick="nextSong()" style="cursor:pointer; border:none; background:#e1f5fe; color:#0288d1; border-radius:12px; padding:5px 15px; font-weight:bold;">下一首</button>
+    <div class="music-controls" style="margin-top: 8px; display: flex; gap: 5px; justify-content: center;">
+        <button onclick="prevSong()">上一首</button>
+        <button onclick="shuffleSong()">隨機</button>
+        <button onclick="nextSong()">下一首</button>
     </div>
 </div>
 
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
-    // 播放清單設定
     const playlist = [
-        { title: "憨包主題曲", file: "music1.mp3" },
-        { title: "電腦課外放曲", file: "music2.mp3" },
-        { title: "會考衝刺 BGM", file: "music3.mp3" }
+        { title: "海嶼你", file: "music1.mp3" },
+        { title: "宗翰獨特品味", file: "music2.mp3" },
+        { title: "擊敗人", file: "music3.mp3" },
+        { title: "步步", file: "music4.mp3" },
+        { title: "可惜沒如果", file: "music5.mp3" },
+        { title: "不該", file: "music6.mp3" },
+        { title: "軒漢獨特品味", file: "music7.mp3" },
+        { title: "擱淺", file: "music8.mp3" },
+        { title: "浪子回頭", file: "music9.mp3" },
+        { title: "浪流蓮", file: "music10.mp3" }
     ];
 
     let currentSongIndex = 0;
@@ -193,11 +214,20 @@
         loadSong(currentSongIndex);
     }
 
-    function closeWelcome() {
-        document.getElementById('welcome-overlay').classList.add('fade-out');
-        loadSong(0); // 點擊進入時啟動第一首歌
+    function shuffleSong() {
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * playlist.length);
+        } while (newIndex === currentSongIndex);
+        loadSong(newIndex);
     }
 
+    function closeWelcome() {
+        document.getElementById('welcome-overlay').classList.add('fade-out');
+        loadSong(0);
+    }
+
+    // 自動播放下一首
     audio.addEventListener('ended', nextSong);
 
     // 卡片動畫
@@ -211,7 +241,7 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
-    // 倒數計時
+    // 倒數計時功能
     function updateExamCountdown() {
         const start = new Date(2025, 7, 30).getTime();
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
@@ -219,7 +249,7 @@
         const distance = end - now;
 
         if (distance < 0) {
-            document.querySelector('.countdown-title').innerText = "會考順利！";
+            document.querySelector('.countdown-title').innerText = "💪 會考順利！";
             return;
         }
 
