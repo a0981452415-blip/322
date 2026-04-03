@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322 憨包們</title>
+    <title>322憨包們</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+    
     <style>
         :root {
             --header-color: #0288d1;
@@ -23,7 +26,7 @@
             cursor: none; 
         }
 
-        a, button, .playlist-item { cursor: none; }
+        a, button, .playlist-item, input { cursor: none; }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -36,7 +39,7 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* --- 登入系統 --- */
+        /* --- 登入 --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 30000; background: var(--bg-gradient);
@@ -51,9 +54,8 @@
         .login-box input {
             padding: 12px; width: 220px; border-radius: 12px;
             border: 1px solid #ddd; margin: 20px 0;
-            font-size: 1.1rem; text-align: center; outline: none; cursor: none;
+            font-size: 1.1rem; text-align: center; outline: none;
         }
-        #login-error { color: #d32f2f; font-size: 0.9rem; display: none; margin-bottom: 10px; }
 
         /* --- 藍色拖影 --- */
         .cursor-dot {
@@ -63,15 +65,6 @@
             pointer-events: none; z-index: 40000;
             box-shadow: 0 0 12px var(--accent-blue);
         }
-
-        /* 歡迎層 */
-        #welcome-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10000; transition: opacity 0.8s;
-            display: flex; justify-content: center; align-items: center;
-            background: var(--bg-gradient);
-        }
-        #welcome-overlay.fade-out { opacity: 0; visibility: hidden; }
 
         header { text-align: center; padding: 60px 0; }
         header h1 { color: var(--header-color); font-size: 3.5rem; letter-spacing: 4px; }
@@ -86,137 +79,79 @@
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; padding-bottom: 25px; 
             opacity: 0; transform: translateY(40px); transition: 0.4s;
-            cursor: none;
         }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2); }
         
         .photo-container { width: 100%; height: 350px; overflow: hidden; }
-        .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .photo-container img { width: 100%; height: 100%; object-fit: cover; }
         
-        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; margin-top: 15px;}
+        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-top: 15px; }
         .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; }
 
-        /* --- 匿名留言板樣式 --- */
+        /* --- 留言板 --- */
         .msg-board {
             max-width: 800px; margin: 0 auto 100px;
             background: var(--card-bg); padding: 30px;
             border-radius: 30px; border: 2px solid var(--header-color);
-            box-shadow: 0 10px 30px rgba(2, 136, 209, 0.1);
         }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
         .msg-input-area input {
             flex: 1; padding: 12px; border-radius: 12px;
-            border: 1px solid #ddd; outline: none; cursor: none;
-            font-size: 1rem;
+            border: 1px solid #ddd; outline: none;
         }
         .msg-list {
-            max-height: 300px; overflow-y: auto;
-            text-align: left; padding-right: 10px;
+            max-height: 400px; overflow-y: auto; text-align: left;
         }
         .msg-item {
-            background: #f0faff; padding: 12px 15px;
-            border-radius: 15px; margin-bottom: 10px;
+            background: #f0faff; padding: 15px;
+            border-radius: 15px; margin-bottom: 12px;
             border-left: 5px solid var(--header-color);
             animation: slideIn 0.3s ease-out;
         }
-        .msg-time { font-size: 0.7rem; color: #999; margin-bottom: 5px; }
-        .msg-text { color: #333; font-weight: 500; word-break: break-all; }
-        .msg-list::-webkit-scrollbar { width: 5px; }
-        .msg-list::-webkit-scrollbar-thumb { background: var(--header-color); border-radius: 10px; }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
         .countdown-container { max-width: 800px; margin: 0 auto 100px; background: var(--card-bg); padding: 30px; border-radius: 30px; text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
         .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: var(--header-color); }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
-        .music-player { position: fixed; bottom: 25px; right: 25px; width: 260px; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        footer { text-align: center; padding: 40px; color: #546e7a; font-weight: bold; }
+        
+        .music-player { position: fixed; bottom: 25px; right: 25px; width: 260px; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999; backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322憨包們</h2>
-        <p>請輸入通行暗號</p>
+        <h2 style="color:var(--header-color)">322</h2>
         <input type="password" id="pass-input" placeholder="暗號是...">
-        <div id="login-error">密碼錯誤，你不是憨包！</div>
-        <br>
-        <button class="btn-ig" onclick="checkPass()">進入</button>
+        <br><button class="btn-ig" onclick="checkPass()">進入</button>
     </div>
 </div>
 
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
-
+<div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
 <canvas id="bg-canvas"></canvas>
-
-<div id="welcome-overlay">
-    <div class="welcome-content">
-        <h1 style="color:var(--header-color)">歡迎來到 322</h1>
-        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.1rem; color: #555;">322憨包們</p>
-        <button class="btn-ig" onclick="closeWelcome()">點擊進入</button>
-    </div>
-</div>
 
 <header><h1>322 憨包們</h1></header>
 
 <div class="container">
-    <div class="card">
-        <div class="photo-container"><img src="p1.jpg"></div>
-        <div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p2.jpg"></div>
-        <div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p3.jpg"></div>
-        <div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p4.jpg"></div>
-        <div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p5.jpg"></div>
-        <div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p6.jpg"></div>
-        <div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p7.jpg"></div>
-        <div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div>
-    </div>
-    <div class="card">
-        <div class="photo-container"><img src="p8.jpg"></div>
-        <div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div>
-    </div>
+    <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p2.jpg"></div><div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p3.jpg"></div><div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p4.jpg"></div><div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p5.jpg"></div><div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p6.jpg"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p7.jpg"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p8.jpg"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div></div>
 </div>
 
 <div class="msg-board">
-    <h2 style="color:var(--header-color); text-align:center;">💬 322 匿名耍憨</h2>
+    <h2 style="color:var(--header-color); text-align:center;">💬 322 雲端</h2>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="想噴什麼？(按 Enter 送出)">
-        <button class="btn-ig" style="cursor:none;" onclick="sendMsg()">發送</button>
+        <input type="text" id="msg-input" placeholder="匿名耍憨...(按 Enter 發送)">
+        <button class="btn-ig" onclick="sendMsg()">發送</button>
     </div>
-    <div id="msg-list" class="msg-list">
-        <div class="msg-item">
-            <div class="msg-time">你爹公告 · 剛剛</div>
-            <div class="msg-text">歡迎來到 322留言板！請文明耍憨。</div>
-        </div>
-    </div>
+    <div id="msg-list" class="msg-list"></div>
 </div>
 
 <div class="countdown-container">
@@ -230,115 +165,104 @@
 </div>
 
 <div class="music-player">
-    <div id="playlist-menu" style="max-height:80px; overflow-y:auto; font-size:0.7rem; margin-bottom:5px;"></div>
-    <p id="song-title" style="font-size:0.75rem; color:var(--header-color); font-weight:bold; margin:5px 0;">🎵 準備播放...</p>
-    <audio id="bg-audio"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
-    <div style="display:flex; gap:5px;">
-        <button onclick="prevSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">上</button>
-        <button onclick="shuffleSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">隨機</button>
-        <button onclick="nextSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">下</button>
+    <p id="song-title" style="font-size:0.75rem; color:var(--header-color); font-weight:bold;">🎵 準備播放...</p>
+    <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
+    <div style="display:flex; gap:5px; margin-top:5px;">
+        <button onclick="prevSong()" style="flex:1;">上</button>
+        <button onclick="shuffleSong()" style="flex:1;">隨</button>
+        <button onclick="nextSong()" style="flex:1;">下</button>
     </div>
 </div>
 
-<footer>&copy; 2026 322 Class Official Website</footer>
-
 <script>
+    // --- Firebase 配置 ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
+      authDomain: "project-1673660731296559126.firebaseapp.com",
+      projectId: "project-1673660731296559126",
+      storageBucket: "project-1673660731296559126.firebasestorage.app",
+      messagingSenderId: "475041608650",
+      appId: "1:475041608650:web:59e544b5f9a8dca98c1533",
+      measurementId: "G-3R0393SVVQ",
+      databaseURL: "https://project-1673660731296559126-default-rtdb.firebaseio.com/"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     function checkPass() {
         if (document.getElementById('pass-input').value === "322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
-            setTimeout(() => { runTypewriter(document.getElementById('welcome-desc'), "準備好看到這群憨包了嗎？", 80); }, 600);
-        } else { document.getElementById('login-error').style.display = "block"; }
+            loadSong(0);
+        }
     }
 
-    // 留言板功能
     function sendMsg() {
         const input = document.getElementById('msg-input');
-        const list = document.getElementById('msg-list');
         if (input.value.trim() === "") return;
         const now = new Date();
-        const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-        const newMsg = document.createElement('div');
-        newMsg.className = 'msg-item';
-        newMsg.innerHTML = `<div class="msg-time">某個憨包 · ${timeStr}</div><div class="msg-text">${input.value}</div>`;
-        list.insertBefore(newMsg, list.firstChild);
+        db.ref('messages').push({
+            name: "某個憨包",
+            text: input.value,
+            time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
+            timestamp: Date.now()
+        });
         input.value = "";
-        list.scrollTop = 0;
     }
-    document.getElementById('msg-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
 
+    db.ref('messages').limitToLast(50).on('value', (snapshot) => {
+        const list = document.getElementById('msg-list');
+        list.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+            Object.values(data).reverse().forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'msg-item';
+                div.innerHTML = `<div class="msg-time">${msg.name} · ${msg.time}</div><div class="msg-text">${msg.text}</div>`;
+                list.appendChild(div);
+            });
+        }
+    });
+
+    // --- 其他功能 (粒子, 拖影, 倒數) ---
     const dots = document.querySelectorAll('.cursor-dot');
     const mousePos = { x: -100, y: -100 };
     const dotCoords = Array.from({ length: dots.length }, () => ({ x: 0, y: 0 }));
     window.addEventListener('mousemove', (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; });
-    function updateCursorTrail() {
-        let targetX = mousePos.x; let targetY = mousePos.y;
-        dots.forEach((dot, index) => {
-            const coords = dotCoords[index];
-            coords.x += (targetX - coords.x) * 0.25; coords.y += (targetY - coords.y) * 0.25;
-            dot.style.transform = `translate3d(${coords.x}px, ${coords.y}px, 0) scale(${1 - index * 0.12})`;
-            dot.style.opacity = 1 - (index * 0.18);
-            targetX = coords.x; targetY = coords.y;
+    function updateCursor() {
+        let tx = mousePos.x, ty = mousePos.y;
+        dots.forEach((dot, i) => {
+            const c = dotCoords[i];
+            c.x += (tx - c.x) * 0.25; c.y += (ty - c.y) * 0.25;
+            dot.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${1 - i * 0.1})`;
+            tx = c.x; ty = c.y;
         });
-        requestAnimationFrame(updateCursorTrail);
+        requestAnimationFrame(updateCursor);
     }
-    updateCursorTrail();
-
-    function runTypewriter(element, text, speed) {
-        let i = 0; element.innerHTML = '';
-        function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } }
-        type();
-    }
-
-    const playlist = [
-        { title: "海嶼你", file: "music1.mp3" }, { title: "宗翰獨特品味", file: "music2.mp3" },
-        { title: "擊敗人", file: "music3.mp3" }, { title: "步步", file: "music4.mp3" },
-        { title: "可惜沒如果", file: "music5.mp3" }, { title: "不該", file: "music6.mp3" },
-        { title: "軒漢獨特品味", file: "music7.mp3" }, { title: "擱淺", file: "music8.mp3" },
-        { title: "浪子回頭", file: "music9.mp3" }, { title: "浪流蓮", file: "music10.mp3" }
-    ];
-    let currentIdx = 0;
-    const audio = document.getElementById('bg-audio');
-    const source = document.getElementById('audio-source');
-
-    function loadSong(i) {
-        currentIdx = i; source.src = playlist[i].file;
-        document.getElementById('song-title').innerText = "🎵：" + playlist[i].title;
-        audio.load(); audio.play().catch(e=>{});
-    }
-    function nextSong() { loadSong((currentIdx + 1) % playlist.length); }
-    function prevSong() { loadSong((currentIdx - 1 + playlist.length) % playlist.length); }
-    function shuffleSong() { loadSong(Math.floor(Math.random() * playlist.length)); }
-    function closeWelcome() { document.getElementById('welcome-overlay').classList.add('fade-out'); loadSong(0); }
+    updateCursor();
 
     function countdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const diff = end - new Date().getTime();
         if (diff <= 0) return;
-        document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
-        document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        document.getElementById('days').innerText = Math.floor(diff / 86400000);
+        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
+        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
+        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
     }
     setInterval(countdown, 1000);
 
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.onresize = resize; resize();
-    class P {
-        constructor() { this.reset(); }
-        reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.vy = Math.random()*0.5+0.2; }
-        update() { this.y += this.vy; if(this.y > canvas.height) this.reset(); }
-        draw() { ctx.fillStyle = "rgba(2, 136, 209, 0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
-    }
-    for(let i=0; i<60; i++) particles.push(new P());
-    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
-    anim();
+    const playlist = [{title:"海嶼你",file:"music1.mp3"},{title:"宗翰獨特品味",file:"music2.mp3"},{title:"擊敗人",file:"music3.mp3"},{title:"步步",file:"music4.mp3"},{title:"可惜沒如果",file:"music5.mp3"},{title:"不該",file:"music6.mp3"},{title:"軒漢獨特品味",file:"music7.mp3"},{title:"擱淺",file:"music8.mp3"},{title:"浪子回頭",file:"music9.mp3"},{title:"浪流蓮",file:"music10.mp3"}];
+    let cur = 0;
+    const audio = document.getElementById('bg-audio');
+    function loadSong(i) { cur=i; document.getElementById('audio-source').src=playlist[i].file; document.getElementById('song-title').innerText="🎵："+playlist[i].title; audio.load(); audio.play().catch(()=>{}); }
+    function nextSong() { loadSong((cur+1)%playlist.length); }
+    function prevSong() { loadSong((cur-1+playlist.length)%playlist.length); }
+    function shuffleSong() { loadSong(Math.floor(Math.random()*playlist.length)); }
 
-    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }), {threshold:0.1});
+    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }));
     window.onload = () => { document.querySelectorAll('.card').forEach(c => obs.observe(c)); countdown(); };
-    document.getElementById('pass-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPass(); });
+    document.getElementById('msg-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
 </script>
 </body>
 </html>
