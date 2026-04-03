@@ -179,14 +179,15 @@
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 2. 比對雜湊值 (這串就是 "best322" 的加密長相，F12 看到也猜不出原文)
+        // 2. 比對雜湊值 (這串對應 "best322"，F12 看到也猜不出原文)
         const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
 
-        if (password === "best322") {
+        if (hashedInput === correctHash) {
             overlay.style.transform = "translateY(-100%)";
             shuffleSong();
         } else {
             alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
+            input.value = ""; // 錯誤時清空
         }
     }
 
