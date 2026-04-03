@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322 憨包們</title>
+    <title>322 憨包們 | 旗艦夢幻版</title>
     <style>
         :root {
             --header-color: #0288d1;
-            --card-bg: white;
+            --card-bg: rgba(255, 255, 255, 0.9); /* 微透明增加質感 */
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
         }
 
-        /* 1. 全域樣式與流動背景 */
+        /* 1. 流動背景動畫 */
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background: linear-gradient(-45deg, #e3f2fd, #bbdefb, #90caf9, #e1f5fe);
@@ -29,38 +29,39 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 2. 夢幻氣泡層 */
+        /* 2. 強化版氣泡層 (高對比修復) */
         .bubbles {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            overflow: hidden;
             pointer-events: none;
         }
 
         .bubble {
             position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.25);
+            bottom: -120px;
+            background: rgba(255, 255, 255, 0.4); 
             border-radius: 50%;
+            /* 關鍵：加上邊框與內發光，確保氣泡看得到 */
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
             animation: floatUp 12s infinite ease-in;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
-        /* 氣泡隨機分佈 */
+        /* 氣泡分佈 */
         .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-duration: 10s; }
         .bubble:nth-child(2) { width: 30px; height: 30px; left: 25%; animation-duration: 15s; animation-delay: 2s; }
         .bubble:nth-child(3) { width: 50px; height: 50px; left: 40%; animation-duration: 13s; animation-delay: 4s; }
-        .bubble:nth-child(4) { width: 20px; height: 20px; left: 55%; animation-duration: 18s; animation-delay: 1s; }
+        .bubble:nth-child(4) { width: 25px; height: 25px; left: 55%; animation-duration: 18s; animation-delay: 1s; }
         .bubble:nth-child(5) { width: 60px; height: 60px; left: 70%; animation-duration: 12s; animation-delay: 3s; }
         .bubble:nth-child(6) { width: 40px; height: 40px; left: 85%; animation-duration: 16s; animation-delay: 5s; }
-        .bubble:nth-child(7) { width: 25px; height: 25px; left: 5%; animation-duration: 14s; animation-delay: 7s; }
+        .bubble:nth-child(7) { width: 35px; height: 35px; left: 5%; animation-duration: 14s; animation-delay: 7s; }
         .bubble:nth-child(8) { width: 55px; height: 55px; left: 92%; animation-duration: 11s; animation-delay: 2s; }
 
         @keyframes floatUp {
             0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-            20% { opacity: 0.6; }
+            20% { opacity: 0.8; }
             50% { transform: translateY(-50vh) translateX(30px) scale(1.1); }
             100% { transform: translateY(-120vh) translateX(-20px) scale(1.2); opacity: 0; }
         }
@@ -106,7 +107,6 @@
             z-index: 10;
         }
 
-        /* 滑過閃光效果 */
         .card::after {
             content: '';
             position: absolute;
@@ -168,6 +168,8 @@
         }
         audio { height: 32px; width: 220px; }
 
+        footer { text-align: center; padding: 40px; color: #666; font-size: 0.9rem; }
+
         /* 6. RWD 響應式 */
         @media (max-width: 768px) {
             h1 { font-size: 2.2rem; }
@@ -180,7 +182,7 @@
 
 <div class="bubbles">
     <div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble :nth-child(4)"></div>
+    <div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div>
 </div>
@@ -257,7 +259,7 @@
 </div>
 
 <div class="music-player">
-    <p>憨包崇瑋電腦課外放歌曲</p>
+    <p>🎵 憨包崇瑋電腦課外放歌曲</p>
     <audio controls loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
@@ -268,7 +270,6 @@
 </footer>
 
 <script>
-    // 捲動偵測與卡片顯示動畫
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
