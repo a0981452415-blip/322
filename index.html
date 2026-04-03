@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>322 神人榜</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            --header-color: #0288d1;
+            --card-bg: white;
+            --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        h1 { 
+            color: var(--header-color); 
+            margin: 0; 
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+            padding-bottom: 25px;
+        }
+
+        .card:hover { 
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(2, 136, 209, 0.2);
+        }
+
+        .photo-container {
+            width: 100%;
+            height: 280px; 
+            overflow: hidden;
+            background-color: #f1f1f1;
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .info { padding: 20px; }
+        
+        .name { 
+            font-size: 1.5rem; 
+            font-weight: bold; 
+            margin-bottom: 8px; 
+            color: #333; 
+        }
+        
+        .nickname-tag { 
+            display: inline-block;
+            color: #0288d1; 
+            background-color: #e1f5fe;
+            padding: 4px 15px;
+            border-radius: 10px;
+            font-size: 0.95rem; 
+            margin-bottom: 20px; 
+            font-weight: 500;
+        }
+
+        .btn-ig {
+            display: inline-block;
+            background: var(--ig-gradient);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: opacity 0.2s;
+        }
+
+        .btn-ig:hover { opacity: 0.9; }
+
+        footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            color: #78909c;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💙 322 憨包</h1>
+</header>
+
+<div class="container">
+    
+    <div class="card">
+        <div class="photo-container">
+            <img src="p1.jpg" alt="黃崇瑋">
+        </div>
+        <div class="info">
+            <div class="name">黃崇瑋</div>
+            <span class="nickname-tag">走步哥</span>
+            <a href="https://www.instagram.com/bennynyhuang" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="photo-container">
+            <img src="p2.jpg" alt="林軒漢">
+        </div>
+        <div class="info">
+            <div class="name">林軒漢</div>
+            <span class="nickname-tag">妮塔</span>
+            <a href="https://www.instagram.com/linxuanhan97" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="photo-container">
+            <img src="p3.jpg" alt="徐堃翔">
+        </div>
+        <div class="info">
+            <div class="name">徐堃翔</div>
+            <span class="nickname-tag">高工候選人</span>
+            <a href="https://www.instagram.com/sean.hsu0930" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="photo-container">
+            <img src="p4.jpg" alt="廖廷恩">
+        </div>
+        <div class="info">
+            <div class="name">廖廷恩</div>
+            <span class="nickname-tag">大🍼野豬</span>
+            <a href="https://www.instagram.com/ed_331ie" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="photo-container">
+            <img src="p5.jpg" alt="蔡承烜">
+        </div>
+        <div class="info">
+            <div class="name">蔡承烜</div>
+            <span class="nickname-tag">雨傘哥</span>
+            <a href="https://www.instagram.com/pywb30" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="photo-container">
+            <img src="p6.jpg" alt="簡X翰">
+        </div>
+        <div class="info">
+            <div class="name">簡X翰</div>
+            <span class="nickname-tag">養身籃球</span>
+            <a href="#" target="_blank" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+
+</div> <footer>
+    &copy; 2026 322 Class Official Website
+</footer>
+
+</body>
+</html>
