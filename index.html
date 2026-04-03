@@ -27,15 +27,9 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 畫布容器：放在所有內容最後面 */
         #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2; /* 確保在氣泡後面 */
-            pointer-events: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; pointer-events: none;
         }
 
         /* 歡迎層 */
@@ -81,17 +75,31 @@
             gap: 35px; padding: 20px 20px 100px;
         }
         
+        /* 修正後的卡片樣式 */
         .card {
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: all 0.5s ease;
-            text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            text-align: center; padding-bottom: 25px; 
+            opacity: 0; transform: translateY(40px);
             display: flex; flex-direction: column;
+            border: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2); }
+
+        .card:hover {
+            transform: translateY(-12px) scale(1.02);
+            background: #ffffff;
+            box-shadow: 
+                0 0 10px rgba(79, 195, 247, 0.6),
+                0 0 25px rgba(2, 136, 209, 0.4),
+                0 0 45px rgba(2, 136, 209, 0.2);
+            border: 1px solid rgba(79, 195, 247, 0.8);
+        }
         
         .photo-container { width: 100%; height: 350px; overflow: hidden; background-color: #f8f9fa; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .card:hover .photo-container img { transform: scale(1.1); }
         
         .info { padding: 20px; flex-grow: 1; }
         .name { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; color: #2c3e50; }
@@ -105,6 +113,7 @@
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
         .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
+        
         .progress-wrapper { margin-top: 25px; padding: 0 10px; }
         .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; }
         #progress-fill { background: linear-gradient(90deg, #4fc3f7, #0288d1); width: 0%; height: 100%; transition: width 1s ease-out; }
@@ -114,13 +123,8 @@
             background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
         }
-        #playlist-menu {
-            max-height: 120px; overflow-y: auto; font-size: 0.8rem; 
-            margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;
-        }
-        .playlist-item {
-            padding: 6px 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; color: #546e7a;
-        }
+        #playlist-menu { max-height: 120px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .playlist-item { padding: 6px 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; color: #546e7a; }
         .playlist-item:hover { background: #e1f5fe; color: #0288d1; }
         .playlist-item.active { background: #0288d1; color: white; font-weight: bold; }
 
@@ -189,7 +193,7 @@
 <div class="music-player">
     <div id="playlist-menu"></div>
     <p id="song-title" style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
-    <audio id="bg-audio" controls style="width: 100%; height: 35px;"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-audio" style="width: 100%; height: 35px;"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
     <div class="music-controls" style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
         <button onclick="prevSong()">上一首</button>
         <button onclick="shuffleSong()">隨機</button>
@@ -236,7 +240,7 @@
         titleDisplay.innerText = "🎵 正在播放：" + playlist[index].title;
         renderMenu();
         audio.load();
-        audio.play().catch(() => {});
+        audio.play().catch(e => console.log("播放被攔截:", e));
     }
 
     function nextSong() {
@@ -257,7 +261,7 @@
 
     function closeWelcome() {
         document.getElementById('welcome-overlay').classList.add('fade-out');
-        loadSong(0);
+        loadSong(0); // 點擊按鈕後啟動播放，避開瀏覽器限制
     }
 
     audio.addEventListener('ended', nextSong);
@@ -271,7 +275,6 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
@@ -302,22 +305,38 @@
         particles = [];
         for (let i = 0; i < 70; i++) { particles.push(new Particle()); }
     }
-
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => { p.update(); p.draw(); });
         requestAnimationFrame(animate);
     }
-
     initParticles();
     animate();
-    // -----------------------
 
-    window.onload = function() {
-        renderMenu();
-        updateExamCountdown();
-    };
+    // --- 會考倒數邏輯 ---
+    function updateExamCountdown() {
+        const start = new Date(2025, 7, 30).getTime();
+        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
+        const now = new Date().getTime();
+        const distance = end - now;
 
+        if (distance < 0) {
+            document.querySelector('.countdown-title').innerText = "💪 會考順利！";
+            return;
+        }
+
+        document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+        document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+        let progress = ((now - start) / (end - start)) * 100;
+        progress = Math.max(0, Math.min(100, progress));
+        document.getElementById('progress-fill').style.width = progress.toFixed(2) + "%";
+        document.getElementById('progress-text').innerText = `時間消耗：${progress.toFixed(2)}% (撐住啊憨包們！)`;
+    }
+
+    // --- 捲動顯現動畫 ---
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -326,27 +345,13 @@
             }
         });
     }, { threshold: 0.1 });
-    document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
-    function updateExamCountdown() {
-        const start = new Date(2025, 7, 30).getTime();
-        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
-        const now = new Date().getTime();
-        const distance = end - now;
-        if (distance < 0) {
-            document.querySelector('.countdown-title').innerText = "💪 會考順利！";
-            return;
-        }
-        document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
-        document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-        document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-        document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-        let progress = ((now - start) / (end - start)) * 100;
-        progress = Math.max(0, Math.min(100, progress));
-        document.getElementById('progress-fill').style.width = progress.toFixed(2) + "%";
-        document.getElementById('progress-text').innerText = `時間消耗：${progress.toFixed(2)}% (撐住啊憨包們！)`;
-    }
-    setInterval(updateExamCountdown, 1000);
+    window.onload = function() {
+        renderMenu();
+        setInterval(updateExamCountdown, 1000);
+        updateExamCountdown();
+        document.querySelectorAll('.card').forEach(card => observer.observe(card));
+    };
 </script>
 </body>
 </html>
