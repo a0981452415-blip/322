@@ -144,7 +144,44 @@
             color: #78909c;
             font-size: 0.9rem;
         }
+/* 當螢幕寬度小於 768px (手機/平板) 時執行的樣式 */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem; /* 縮小標題，避免手機上換行 */
+    }
+
+    .container {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 自動調整卡片寬度 */
+        gap: 15px; /* 縮小間距，節省空間 */
+        padding: 10px;
+    }
+
+    .music-player {
+        width: calc(100% - 40px); /* 讓播放器在手機上橫跨底部 */
+        right: 20px;
+        left: 20px;
+        bottom: 10px;
+        padding: 10px;
+    }
+    
+    audio {
+        width: 100%; /* 播放器寬度撐滿 */
+    }
+}
     </style>
+<footer>
+        &copy; 2026 322 Class Official Website
+    </footer>
+
+    <div class="music-player">
+        <p>🎵 322 專屬 BGM</p>
+        <audio controls loop>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+</body>
+</html>
 </head>
 <body>
 
