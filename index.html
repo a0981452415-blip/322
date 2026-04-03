@@ -34,7 +34,6 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
-        /* 流星延遲設定 */
         .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
         .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; }
         .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
@@ -110,8 +109,11 @@
     <div class="login-box">
         <h2 style="color:var(--header-color); margin-top:0;">322 入口</h2>
         <p style="font-size: 0.9rem; color: #666;">請輸入密碼以解除封印</p>
-        <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
+        <form onsubmit="event.preventDefault(); checkPass();">
+            <input type="password" id="pass-input" placeholder="請輸入暗號..." autocomplete="current-password">
+            <br>
+            <button type="submit" class="btn-ig">確認身分</button>
+        </form>
     </div>
 </div>
 
@@ -172,22 +174,25 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 登入驗證 (SHA-256 版 - 密碼 best322)
+    // 登入驗證修正版 (SHA-256 對應密碼: best322)
     async function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
-        // 修正點：使用 trim() 去空格，並 toLowerCase() 統一轉小寫
         const password = input.value.trim().toLowerCase(); 
+
+        if (!password) return;
 
         const msgUint8 = new TextEncoder().encode(password);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
+        // best322 的正確 SHA-256 值
+        const correctHash = "59929845700871e98d9c57d762c95e13511b9ca934f07a4a9cf2996d36e2f170";
 
         if (hashedInput === correctHash) {
             overlay.style.transform = "translateY(-100%)";
+            setTimeout(() => { overlay.style.display = 'none'; }, 800);
             shuffleSong();
         } else {
             alert("暗號錯誤！你是別班的憨包，我們是322的憨包");
@@ -220,7 +225,6 @@
         list.innerHTML = "";
         const data = snapshot.val();
         if (data) {
-            // 將留言依時間反轉顯示，最新的在上面
             Object.keys(data).reverse().forEach(key => {
                 const msg = data[key];
                 const div = document.createElement('div');
@@ -240,7 +244,7 @@
         document.getElementById('audio-source').src = songName;
         document.getElementById('song-title').innerText = "🎵 正在播放：" + songName;
         audio.load();
-        audio.play().catch(e => console.log("自動播放被瀏覽器阻擋，需使用者互動後播放"));
+        audio.play().catch(e => console.log("需使用者互動後播放"));
     }
 
     // 滑鼠跟隨圓點
@@ -257,7 +261,7 @@
     }
     moveDots();
 
-    // 115 會考倒數
+    // 115 會考倒數 (2026/05/16)
     function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
