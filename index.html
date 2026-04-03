@@ -79,7 +79,7 @@
         .container {
             max-width: 1200px; margin: 0 auto;
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 35px; padding: 20px 20px 100px;
+            gap: 35px; padding: 20px 20px 60px;
         }
         
         .card {
@@ -97,6 +97,39 @@
         .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; margin-top: 15px;}
         .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; }
+
+        /* --- 匿名留言板樣式 --- */
+        .msg-board {
+            max-width: 800px; margin: 0 auto 100px;
+            background: var(--card-bg); padding: 30px;
+            border-radius: 30px; border: 2px solid var(--header-color);
+            box-shadow: 0 10px 30px rgba(2, 136, 209, 0.1);
+        }
+        .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        .msg-input-area input {
+            flex: 1; padding: 12px; border-radius: 12px;
+            border: 1px solid #ddd; outline: none; cursor: none;
+            font-size: 1rem;
+        }
+        .msg-list {
+            max-height: 300px; overflow-y: auto;
+            text-align: left; padding-right: 10px;
+        }
+        .msg-item {
+            background: #f0faff; padding: 12px 15px;
+            border-radius: 15px; margin-bottom: 10px;
+            border-left: 5px solid var(--header-color);
+            animation: slideIn 0.3s ease-out;
+        }
+        .msg-time { font-size: 0.7rem; color: #999; margin-bottom: 5px; }
+        .msg-text { color: #333; font-weight: 500; word-break: break-all; }
+        .msg-list::-webkit-scrollbar { width: 5px; }
+        .msg-list::-webkit-scrollbar-thumb { background: var(--header-color); border-radius: 10px; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
         .countdown-container { max-width: 800px; margin: 0 auto 100px; background: var(--card-bg); padding: 30px; border-radius: 30px; text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
@@ -140,58 +173,48 @@
 <div class="container">
     <div class="card">
         <div class="photo-container"><img src="p1.jpg"></div>
-        <div class="info">
-            <div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br>
-            <a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p2.jpg"></div>
-        <div class="info">
-            <div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br>
-            <a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p3.jpg"></div>
-        <div class="info">
-            <div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br>
-            <a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p4.jpg"></div>
-        <div class="info">
-            <div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br>
-            <a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p5.jpg"></div>
-        <div class="info">
-            <div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br>
-            <a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p6.jpg"></div>
-        <div class="info">
-            <div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br>
-            <a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p7.jpg"></div>
-        <div class="info">
-            <div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br>
-            <a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a>
-        </div>
+        <div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div>
     </div>
     <div class="card">
         <div class="photo-container"><img src="p8.jpg"></div>
-        <div class="info">
-            <div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br>
-            <a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a>
+        <div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div>
+    </div>
+</div>
+
+<div class="msg-board">
+    <h2 style="color:var(--header-color); text-align:center;">💬 322 匿名樹洞</h2>
+    <div class="msg-input-area">
+        <input type="text" id="msg-input" placeholder="想噴什麼？(按 Enter 送出)">
+        <button class="btn-ig" style="cursor:none;" onclick="sendMsg()">發送</button>
+    </div>
+    <div id="msg-list" class="msg-list">
+        <div class="msg-item">
+            <div class="msg-time">你爹公告 · 剛剛</div>
+            <div class="msg-text">歡迎來到 322留言板！請文明耍憨。</div>
         </div>
     </div>
 </div>
@@ -223,9 +246,25 @@
     function checkPass() {
         if (document.getElementById('pass-input').value === "322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
-            setTimeout(() => { runTypewriter(document.getElementById('welcome-desc'), "準備好看到這群的憨包了嗎？", 80); }, 600);
+            setTimeout(() => { runTypewriter(document.getElementById('welcome-desc'), "準備好看到這群憨包了嗎？", 80); }, 600);
         } else { document.getElementById('login-error').style.display = "block"; }
     }
+
+    // 留言板功能
+    function sendMsg() {
+        const input = document.getElementById('msg-input');
+        const list = document.getElementById('msg-list');
+        if (input.value.trim() === "") return;
+        const now = new Date();
+        const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const newMsg = document.createElement('div');
+        newMsg.className = 'msg-item';
+        newMsg.innerHTML = `<div class="msg-time">某個憨包 · ${timeStr}</div><div class="msg-text">${input.value}</div>`;
+        list.insertBefore(newMsg, list.firstChild);
+        input.value = "";
+        list.scrollTop = 0;
+    }
+    document.getElementById('msg-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
 
     const dots = document.querySelectorAll('.cursor-dot');
     const mousePos = { x: -100, y: -100 };
@@ -250,7 +289,6 @@
         type();
     }
 
-    // 音樂清單
     const playlist = [
         { title: "海嶼你", file: "music1.mp3" }, { title: "宗翰獨特品味", file: "music2.mp3" },
         { title: "擊敗人", file: "music3.mp3" }, { title: "步步", file: "music4.mp3" },
@@ -270,7 +308,6 @@
     function nextSong() { loadSong((currentIdx + 1) % playlist.length); }
     function prevSong() { loadSong((currentIdx - 1 + playlist.length) % playlist.length); }
     function shuffleSong() { loadSong(Math.floor(Math.random() * playlist.length)); }
-
     function closeWelcome() { document.getElementById('welcome-overlay').classList.add('fade-out'); loadSong(0); }
 
     function countdown() {
