@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322憨包們</title>
+    <title>322憨包們 - 最終流星版</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     
@@ -114,16 +114,38 @@
         }
         .like-box:active { transform: scale(1.2); }
 
+        /* --- 優化後的進度條 --- */
         .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
         
         .progress-wrapper { margin: 20px 0; text-align: center; }
-        .progress-container { width: 100%; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-blue), #0288d1); transition: width 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); box-shadow: 0 0 15px var(--accent-blue); }
-        #progress-percent { color: #fff; font-weight: bold; font-size: 0.9rem; margin-top: 8px; display: block; text-shadow: 0 0 5px #000; }
+        .progress-container { 
+            width: 100%; height: 20px; background: rgba(0, 0, 0, 0.2); 
+            border-radius: 10px; overflow: hidden; position: relative; 
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); 
+        }
+        .progress-fill { 
+            height: 100%; width: 0%; 
+            background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); 
+            background-size: 200% 100%;
+            animation: shine 3s linear infinite;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 0 15px var(--accent-blue); 
+            position: relative;
+        }
+        /* 進度條頭部流星效果 */
+        .progress-fill::after {
+            content: ''; position: absolute; right: 0; top: 0; height: 100%; width: 20px;
+            background: white; filter: blur(5px); opacity: 0.7;
+        }
+        
+        @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        #progress-percent { color: var(--header-color); font-weight: bold; font-size: 1rem; margin-top: 10px; display: block; }
 
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
-        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
-        .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
+        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; border: 1px solid rgba(79, 195, 247, 0.2); }
+        .time-block span { display: block; font-size: 2.2rem; font-weight: 800; color: var(--header-color); text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .time-block p { margin: 5px 0 0; font-size: 0.8rem; color: #555; }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         a, button, input, .like-box { cursor: none !important; }
@@ -134,7 +156,7 @@
             padding: 10px 15px; border-radius: 50px; border: 1px solid var(--accent-blue);
             backdrop-filter: blur(5px); font-size: 0.9rem; align-items: center; gap: 10px;
         }
-        #music-control button { background: none; border: none; color: white; font-size: 1.2rem; padding: 0 5px; }
+        #music-control button { background: none; border: none; color: white; font-size: 1.2rem; padding: 0 5px; cursor: none; }
     </style>
 </head>
 <body>
@@ -164,7 +186,9 @@
     <button onclick="nextTrack()">⏭</button>
 </div>
 
-<div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
+<div class="cursor-dot" style="z-index: 70001;"></div>
+<div class="cursor-dot" style="transform: scale(2); opacity: 0.3;"></div>
+<div class="cursor-dot" style="transform: scale(3); opacity: 0.1;"></div>
 
 <header>
     <h1> 322 憨包們 </h1>
@@ -174,23 +198,23 @@
 <div class="container" id="members-container"></div>
 
 <div class="countdown-container">
-    <h3 style="color:var(--header-color); text-align:center;">🎓 115 會考倒數計時</h3>
+    <h3 style="color:var(--header-color); text-align:center; margin-bottom: 20px;">🎓 115 會考倒數計時</h3>
     <div class="progress-wrapper">
         <div class="progress-container">
             <div id="progress-bar" class="progress-fill"></div>
         </div>
-        <span id="progress-percent">正在計算戰鬥進度...</span>
+        <span id="progress-percent">正在連結戰場數據...</span>
     </div>
     <div id="timer" class="timer-grid">
-        <div class="time-block"><span id="days">00</span><p>天</p></div>
-        <div class="time-block"><span id="hours">00</span><p>時</p></div>
-        <div class="time-block"><span id="minutes">00</span><p>分</p></div>
-        <div class="time-block"><span id="seconds">00</span><p>秒</p></div>
+        <div class="time-block"><span id="days">00</span><p>剩餘天數</p></div>
+        <div class="time-block"><span id="hours">00</span><p>小時</p></div>
+        <div class="time-block"><span id="minutes">00</span><p>分鐘</p></div>
+        <div class="time-block"><span id="seconds">00</span><p>秒數</p></div>
     </div>
 </div>
 
 <script>
-    // --- 基礎配置 (維持原樣) ---
+    // --- 基礎配置 ---
     const playlist = [
         { title: "曲目 1", url: "music1.mp3" }, { title: "曲目 2", url: "music2.mp3" },
         { title: "曲目 3", url: "music3.mp3" }, { title: "曲目 4", url: "music4.mp3" },
@@ -201,7 +225,7 @@
     ];
     let currentTrack = 0;
     const audio = new Audio();
-    audio.crossOrigin = "anonymous"; // 允許視覺化讀取跨域音頻
+    audio.crossOrigin = "anonymous"; 
 
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
@@ -216,9 +240,62 @@
     const db = firebase.database();
 
     const ganHuaQuotes = [
-        "雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", 
+        "雖然我們是憨包，但我們是全校最帥的憨包。", 
+        "只要我不尷尬，尷尬的就是飲水機。", 
         "籃球可以不進，但姿勢一定要帥；書可以不讀，但手機一定要帶。",
-        "萬事萬物皆有裂痕，光就是這樣照進來的。", "先愛自己，因為自己是你餘生的伴侶。",
+        "322 的情義，就像福利社的泡麵——又香又燙。",
+        "今天不讀書，明天變大豬。", 
+        "考卷發下來，除了名字其他都是陌生人。",
+        "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!",
+        "是種自己的花，愛自己的宇宙，在不完美的生活裡，找到閃亮亮的快樂。",
+
+        "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。",
+
+        "再忙再累，也要抽出時間讓自己美起來，你總不能既沒錢，又「胖若兩人」吧。",
+
+        "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!",
+
+        "他人對你的尊重，從來不是因為你的順從",
+
+        "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。",
+
+        "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。",
+
+        "每個人的一生都有許多夢想，但如果其中一個不斷攪擾著你，剩下的就僅僅是行動了。",
+
+        "從現在開始，不沉溺幻想，不庸人自擾，好好生活，做一個接近幸福的人。",
+
+        "千里之行，始於足下。改變將來，從現在開始。改變現在，就是改變未來。",
+
+        "每一個困難，都是一次對心靈和能力的考驗。",
+
+        "人生短暫，珍惜當下，每一次機會都是一場奇蹟。",
+
+        "接納自己的情緒狀態，而不是強迫改變。",
+
+        "接納自己最難以面對的部分，是通往真正改變的第一步。",
+
+        "當你學會與自己和解，承認自己的不完美，你會發現真正的力量來自於內心的接納。",
+
+        "對於那些傷害你的人，你就活得更好來報復他們吧！",
+
+        "萬事萬物皆有裂痕，光就是這樣照進來的。",
+
+        "生活是屬於每個人自己的感受，不屬於別人的看法。",
+
+        "每天的太陽都是新的，不要辜負了美好的晨光。",
+
+        "任何時候都不要為不值得的人和事，浪費時間和心力。",
+
+        "先愛自己，因為自己是你餘生的伴侶。",
+
+        "不要為小事遮住視線，我們還有更大的世界。",
+
+        "窮則思變，差則思勤!沒有比人更高的山，沒有比腳更長的路！",
+
+        "活著，我願意就這樣單純的活著，簡單的行走，活出我平凡人的精彩。",
+
+        " 人生，在歷經大大小小的各種坎坷與收穫後，我的思想真的成熟了，不再幼稚的面對問題，而是沉著冷靜的思考。",
         "老師在講我在聽，但我聽的是心碎的聲音。"
     ];
 
@@ -234,7 +311,7 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
 
-    // --- 視覺化核心變數 ---
+    // --- 音訊視覺化 ---
     let audioCtx, analyser, source, dataArray, canvas, canvasCtx;
     let isVisualizerInitialized = false;
 
@@ -261,47 +338,40 @@
         const height = canvas.height = 100;
         analyser.getByteFrequencyData(dataArray);
         canvasCtx.clearRect(0, 0, width, height);
-        
-        const barWidth = (width / dataArray.length) * 2;
+        const barWidth = (width / dataArray.length) * 2.5;
         let x = 0;
         for (let i = 0; i < dataArray.length; i++) {
             const barHeight = (dataArray[i] / 255) * height;
-            canvasCtx.fillStyle = `rgba(79, 195, 247, ${dataArray[i] / 255 + 0.3})`;
+            canvasCtx.fillStyle = `rgba(79, 195, 247, ${dataArray[i] / 255 + 0.2})`;
             canvasCtx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
             x += barWidth;
         }
     }
 
-    // --- 音樂邏輯 ---
+    // --- 音樂與登入邏輯 ---
     function loadMusic(index) {
         currentTrack = index;
         audio.src = playlist[index].url;
         document.getElementById('music-title').innerText = "🎵 " + playlist[index].title;
     }
-
     function togglePlay() {
         const btn = document.getElementById('play-pause-icon');
         if (audio.paused) { audio.play(); btn.innerText = "⏸"; } 
         else { audio.pause(); btn.innerText = "▶️"; }
     }
-
     function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
     function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
     audio.onended = () => nextTrack();
 
-    // --- 驗證與初始化 ---
     function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
         if (input.value === "best322") { 
             overlay.style.transform = "translateY(-100%)";
-            
-            // 關鍵：瀏覽器要求必須有使用者互動(點擊)後才能開啟 AudioContext
             initVisualizer();
             loadMusic(0);
             audio.play();
             document.getElementById('music-control').style.display = 'flex';
-
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
             rotateQuotes(); 
         } else {
@@ -310,7 +380,7 @@
         }
     }
 
-    // --- 其餘功能與渲染 ---
+    // --- 內容渲染與計時邏輯 ---
     function rotateQuotes() {
         const display = document.getElementById('quote-display');
         let index = 0;
@@ -329,44 +399,71 @@
         members.forEach(m => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="info"><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div></div>`;
+            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="info"><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div></div>`;
             container.appendChild(card);
             observer.observe(card);
-            db.ref('likes/' + m.id).on('value', (snapshot) => { document.getElementById(`like-count-${m.id}`).innerText = snapshot.val() || 0; });
+            db.ref('likes/' + m.id).on('value', (snapshot) => { 
+                const el = document.getElementById(`like-count-${m.id}`);
+                if (el) el.innerText = snapshot.val() || 0; 
+            });
         });
     }
 
     function addLike(id) { db.ref('likes/' + id).transaction(c => (c || 0) + 1); }
 
+    // 更新進度與倒數
     function updateCountdown() {
-        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
+        // 設定基準點
+        const start = new Date(2025, 8, 1).getTime(); // 2025/9/1
+        const end = new Date(2026, 4, 16, 8, 0, 0).getTime(); // 2026/5/16 08:00
         const now = new Date().getTime();
         const diff = end - now;
+
+        // 1. 更新數字顯示
         if (diff > 0) {
             document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
             document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
             document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        } else {
+            document.getElementById('timer').innerHTML = "<div style='grid-column:span 4; font-size:1.5rem; color:#0288d1; font-weight:bold;'>祝 322 們金榜題名，戰鬥結束！</div>";
         }
+
+        // 2. 更新進度條
+        const total = end - start;
+        const current = now - start;
+        let progress = (current / total) * 100;
+        progress = Math.max(0, Math.min(100, progress));
+
+        const bar = document.getElementById('progress-bar');
+        const text = document.getElementById('progress-percent');
+        
+        if (bar) bar.style.width = progress.toFixed(4) + '%';
+        if (text) text.innerText = `會考備戰進度：${progress.toFixed(4)}%`;
     }
 
-    setInterval(updateCountdown, 1000);
     const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
     
-    // 滑鼠特效
+    // 自定義游標跟隨邏輯
     const dots = document.querySelectorAll('.cursor-dot');
     let mx = 0, my = 0;
     window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
     function moveDots() {
         dots.forEach((dot, i) => {
-            dot.style.left = mx + 'px'; dot.style.top = my + 'px';
-            dot.style.opacity = 1 - (i * 0.3);
+            const delay = i * 4; // 增加些微延遲感
+            dot.style.left = mx + 'px'; 
+            dot.style.top = my + 'px';
         });
         requestAnimationFrame(moveDots);
     }
+    
     moveDots();
+    setInterval(updateCountdown, 1000);
 
-    window.onload = () => { renderCards(); updateCountdown(); };
+    window.onload = () => { 
+        renderCards(); 
+        updateCountdown(); 
+    };
 </script>
 </body>
 </html>
