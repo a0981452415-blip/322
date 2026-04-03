@@ -167,11 +167,22 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 登入驗證
-    function checkPass() {
+    // 登入驗證 (SHA-256 加密版)
+    async function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
-        if (input.value === "best322") { 
+        const password = input.value;
+
+        // 1. 將輸入文字轉為 SHA-256 雜湊
+        const msgUint8 = new TextEncoder().encode(password);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+        // 2. 比對雜湊值 (這串就是 "best322" 的加密長相，F12 看到也猜不出原文)
+        const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
+
+        if (hashedInput === correctHash) { 
             overlay.style.transform = "translateY(-100%)";
             shuffleSong();
         } else {
