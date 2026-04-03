@@ -26,7 +26,7 @@
             cursor: none; 
         }
 
-        /* --- 流星雨核心特效 --- */
+        /* --- 增強版流星雨特效 --- */
         .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
@@ -34,91 +34,67 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
+        /* 使用 nth-child 自動分配 25 顆流星的隨機屬性 */
+        .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
+        .shooting-star:nth-child(2) { top: 10%; left: 40%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.7); }
+        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
+        .shooting-star:nth-child(4) { top: 5%; left: 20%; animation-delay: 4s; animation-duration: 4s; transform: scale(1.2); }
+        .shooting-star:nth-child(5) { top: 30%; left: 70%; animation-delay: 0.5s; }
+        .shooting-star:nth-child(6) { top: 40%; left: 50%; animation-delay: 3.2s; transform: scale(0.8); }
+        .shooting-star:nth-child(7) { top: 15%; left: 100%; animation-delay: 1.8s; }
+        .shooting-star:nth-child(8) { top: 50%; left: 30%; animation-delay: 5s; animation-duration: 2.8s; }
+        .shooting-star:nth-child(9) { top: 5%; left: 60%; animation-delay: 2.2s; }
+        .shooting-star:nth-child(10) { top: 25%; left: 85%; animation-delay: 6.5s; transform: scale(1.1); }
+        .shooting-star:nth-child(11) { top: 12%; left: 45%; animation-delay: 0.7s; }
+        .shooting-star:nth-child(12) { top: 35%; left: 92%; animation-delay: 3.8s; animation-duration: 4.2s; }
+        .shooting-star:nth-child(13) { top: 2%; left: 75%; animation-delay: 1.5s; }
+        .shooting-star:nth-child(14) { top: 45%; left: 15%; animation-delay: 4.5s; transform: scale(0.6); }
+        .shooting-star:nth-child(15) { top: 18%; left: 55%; animation-delay: 2.1s; }
+        .shooting-star:nth-child(16) { top: 28%; left: 88%; animation-delay: 5.5s; }
+        .shooting-star:nth-child(17) { top: 8%; left: 35%; animation-delay: 0.3s; animation-duration: 3.1s; }
+        .shooting-star:nth-child(18) { top: 32%; left: 65%; animation-delay: 2.9s; }
+        .shooting-star:nth-child(19) { top: 22%; left: 98%; animation-delay: 7s; transform: scale(1.3); }
+        .shooting-star:nth-child(20) { top: 48%; left: 42%; animation-delay: 1.1s; }
+        .shooting-star:nth-child(21) { top: 6%; left: 12%; animation-delay: 4.2s; }
+        .shooting-star:nth-child(22) { top: 14%; left: 78%; animation-delay: 6s; }
+        .shooting-star:nth-child(23) { top: 38%; left: 25%; animation-delay: 0.9s; animation-duration: 3.8s; }
+        .shooting-star:nth-child(24) { top: 5%; left: 95%; animation-delay: 3.4s; }
+        .shooting-star:nth-child(25) { top: 20%; left: 50%; animation-delay: 5.2s; transform: scale(0.9); }
+
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 登入驗證層 (打字機效果) --- */
-        #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 60000; background: var(--bg-gradient);
-            display: flex; justify-content: center; align-items: center;
-            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
-        }
-        .login-box {
-            background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px;
-            text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3);
-            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px);
-            color: white;
-        }
-
-        .typewriter-text {
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden; 
-            border-right: .15em solid var(--accent-blue);
-            white-space: nowrap; 
-            margin: 0 auto 20px; 
-            letter-spacing: .15em; 
-            width: 0;
-            font-size: 1.8rem;
-            font-weight: bold;
-            animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite;
-        }
-
+        /* --- 登入與介面樣式 (保持不變) --- */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 60000; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1); }
+        .login-box { background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px; text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3); border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white; }
+        .typewriter-text { font-family: 'Courier New', Courier, monospace; overflow: hidden; border-right: .15em solid var(--accent-blue); white-space: nowrap; margin: 0 auto 20px; letter-spacing: .15em; width: 0; font-size: 1.8rem; font-weight: bold; animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite; }
         @keyframes typing { from { width: 0 } to { width: 100% } }
         @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
-
-        .login-box input {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            padding: 12px; width: 220px; border-radius: 12px;
-            border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
-        }
-
-        /* --- 介面組件 --- */
+        .login-box input { background: rgba(255,255,255,0.1); color: white; padding: 12px; width: 220px; border-radius: 12px; border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none; }
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
-        
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
         header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
-
-        #quote-display {
-            color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px;
-            transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
-            font-weight: 500;
-        }
-        
+        #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); font-weight: 500; }
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
         .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
         .card.show { opacity: 1; transform: translateY(0); }
         .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: white; }
-
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
-        
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        
         .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; }
-        
-        .like-box { 
-            display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; 
-            padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none;
-            transition: transform 0.2s ease; border: 1px solid #ffcdd2;
-        }
+        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; transition: transform 0.2s ease; border: 1px solid #ffcdd2; }
         .like-box:active { transform: scale(1.2); }
-
-        .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        
-        /* 進度條樣式 */
+        .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
         .progress-wrapper { margin: 20px 0; text-align: center; }
         .progress-container { width: 100%; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
         .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-blue), #0288d1); transition: width 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); box-shadow: 0 0 15px var(--accent-blue); }
         #progress-percent { color: #fff; font-weight: bold; font-size: 0.9rem; margin-top: 8px; display: block; text-shadow: 0 0 5px #000; }
-
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
         .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
-
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         a, button, input, .like-box { cursor: none !important; }
     </style>
@@ -126,9 +102,15 @@
 <body>
 
 <div class="night-sky">
-    <div class="shooting-star" style="top: 5%; left: 80%; animation-delay: 0s;"></div>
-    <div class="shooting-star" style="top: 15%; left: 60%; animation-delay: 1.2s;"></div>
-    <div class="shooting-star" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div>
 </div>
 
 <div id="login-overlay">
@@ -167,7 +149,7 @@
 </div>
 
 <script>
-    // --- Firebase 配置 ---
+    // Firebase 與 內容配置保持不變
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -180,7 +162,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- 幹話語錄庫 ---
     const ganHuaQuotes = [
         "雖然我們是憨包，但我們是全校最帥的憨包。",
         "會考不可怕，可怕的是考完大家都在笑，只有我在哭。",
@@ -191,29 +172,14 @@
         "考卷發下來，除了名字其他都是陌生人。",
         "是種自己的花，愛自己的宇宙，在不完美的生活裡，找到閃亮亮的快樂。",
         "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。",
-        "再忙再累，也要抽出時間讓自己美起來，你總不能既沒錢，又「胖若兩人」吧。",
         "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!",
         "他人對你的尊重，從來不是因為你的順從",
         "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。",
-        "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。",
-        "每個人的一生都有許多夢想，但如果其中一個不斷攪擾著你，剩下的就僅僅是行動了。",
         "從現在開始，不沉溺幻想，不庸人自擾，好好生活，做一個接近幸福的人。",
-        "千里之行，始於足下。改變將來，從現在開始。改變現在，就是改變未來。",
-        "每一個困難，都是一次對心靈和能力的考驗。",
-        "人生短暫，珍惜當下，每一次機會都是一場奇蹟。",
-        "接納自己的情緒狀態，而不是強迫改變。",
-        "接納自己最難以面對的部分，是通往真正改變的第一步。",
-        "當你學會與自己和解，承認自己的不完美，你會發現真正的力量來自於內心的接納。",
-        "對於那些傷害你的人，你就活得更好來報復他們吧！",
-             "萬事萬物皆有裂痕，光就是這樣照進來的。",
-             "生活是屬於每個人自己的感受，不屬於別人的看法。",
-             "每天的太陽都是新的，不要辜負了美好的晨光。",
-             "任何時候都不要為不值得的人和事，浪費時間和心力。",
-             "先愛自己，因為自己是你餘生的伴侶。",
-             "不要為小事遮住視線，我們還有更大的世界。",
-             "窮則思變，差則思勤!沒有比人更高的山，沒有比腳更長的路！",
-             "活著，我願意就這樣單純的活著，簡單的行走，活出我平凡人的精彩。",
-             " 人生，在歷經大大小小的各種坎坷與收穫後，我的思想真的成熟了，不再幼稚的面對問題，而是沉著冷靜的思考。",
+        "萬事萬物皆有裂痕，光就是這樣照進來的。",
+        "生活是屬於每個人自己的感受，不屬於別人的看法。",
+        "每天的太陽都是新的，不要辜負了美好的晨光。",
+        "先愛自己，因為自己是你餘生的伴侶。",
         "老師在講我在聽，但我聽的是心碎的聲音。"
     ];
 
@@ -229,7 +195,6 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
 
-    // --- 功能邏輯 ---
     function rotateQuotes() {
         const display = document.getElementById('quote-display');
         let index = 0;
@@ -263,14 +228,14 @@
             container.appendChild(card);
             observer.observe(card);
             db.ref('likes/' + m.id).on('value', (snapshot) => {
-                document.getElementById(`like-count-${m.id}`).innerText = snapshot.val() || 0;
+                const element = document.getElementById(`like-count-${m.id}`);
+                if (element) element.innerText = snapshot.val() || 0;
             });
         });
     }
 
     function addLike(id) {
         db.ref('likes/' + id).transaction(c => (c || 0) + 1);
-        // 點讚驚喜：跳出幹話
         const randomQuote = ganHuaQuotes[Math.floor(Math.random() * ganHuaQuotes.length)];
         alert("建志發言：\n" + randomQuote);
     }
@@ -281,7 +246,7 @@
         if (input.value === "best322") { 
             overlay.style.transform = "translateY(-100%)";
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
-            rotateQuotes(); // 登入後開始播幹話
+            rotateQuotes();
         } else {
             alert("暗號錯誤!");
             input.value = "";
@@ -302,7 +267,8 @@
         const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
         const bar = document.getElementById('progress-bar');
         if(bar) bar.style.width = progress + '%';
-        document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
+        const percentText = document.getElementById('progress-percent');
+        if(percentText) percentText.innerText = `會考備戰進度：${progress.toFixed(4)}%`;
     }
 
     setInterval(updateCountdown, 1000);
