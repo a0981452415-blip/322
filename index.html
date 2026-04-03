@@ -98,14 +98,25 @@
         .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; }
         #progress-fill { background: linear-gradient(90deg, #4fc3f7, #0288d1); width: 0%; height: 100%; transition: width 1s ease-out; }
 
+        /* 播放器美化 */
         .music-player {
-            position: fixed; bottom: 25px; right: 25px;
-            background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 24px; z-index: 9999;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); backdrop-filter: blur(5px);
+            position: fixed; bottom: 25px; right: 25px; width: 260px;
+            background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
         }
+        #playlist-menu {
+            max-height: 120px; overflow-y: auto; font-size: 0.8rem; 
+            margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;
+        }
+        .playlist-item {
+            padding: 6px 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; color: #546e7a;
+        }
+        .playlist-item:hover { background: #e1f5fe; color: #0288d1; }
+        .playlist-item.active { background: #0288d1; color: white; font-weight: bold; }
+
         .music-controls button {
             cursor: pointer; border: none; background: #e1f5fe; color: #0288d1; 
-            border-radius: 12px; padding: 5px 12px; font-weight: bold; font-size: 0.75rem;
+            border-radius: 12px; padding: 6px 14px; font-weight: bold; font-size: 0.75rem;
             transition: 0.3s;
         }
         .music-controls button:hover { background: #0288d1; color: white; }
@@ -115,8 +126,6 @@
         @media (max-width: 768px) {
             header h1 { font-size: 2.2rem; }
             .music-player { left: 20px; right: 20px; width: auto; bottom: 10px; }
-            .timer-grid { gap: 8px; }
-            .time-block span { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -166,9 +175,10 @@
 </div>
 
 <div class="music-player">
+    <div id="playlist-menu"></div>
     <p id="song-title" style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
-    <audio id="bg-audio" controls><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
-    <div class="music-controls" style="margin-top: 8px; display: flex; gap: 5px; justify-content: center;">
+    <audio id="bg-audio" controls style="width: 100%; height: 35px;"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
+    <div class="music-controls" style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
         <button onclick="prevSong()">上一首</button>
         <button onclick="shuffleSong()">隨機</button>
         <button onclick="nextSong()">下一首</button>
@@ -195,11 +205,25 @@
     const audio = document.getElementById('bg-audio');
     const source = document.getElementById('audio-source');
     const titleDisplay = document.getElementById('song-title');
+    const menu = document.getElementById('playlist-menu');
+
+    // 生成選單
+    function renderMenu() {
+        menu.innerHTML = '';
+        playlist.forEach((song, index) => {
+            const item = document.createElement('div');
+            item.className = `playlist-item ${index === currentSongIndex ? 'active' : ''}`;
+            item.innerText = `${index + 1}. ${song.title}`;
+            item.onclick = () => loadSong(index);
+            menu.appendChild(item);
+        });
+    }
 
     function loadSong(index) {
         currentSongIndex = index;
         source.src = playlist[index].file;
         titleDisplay.innerText = "🎵 正在播放：" + playlist[index].title;
+        renderMenu(); // 更新選單的高亮狀態
         audio.load();
         audio.play().catch(() => {});
     }
@@ -216,9 +240,7 @@
 
     function shuffleSong() {
         let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * playlist.length);
-        } while (newIndex === currentSongIndex);
+        do { newIndex = Math.floor(Math.random() * playlist.length); } while (newIndex === currentSongIndex);
         loadSong(newIndex);
     }
 
@@ -227,10 +249,15 @@
         loadSong(0);
     }
 
-    // 自動播放下一首
     audio.addEventListener('ended', nextSong);
 
-    // 卡片動畫
+    // 初始載入
+    window.onload = function() {
+        renderMenu();
+        updateExamCountdown();
+    };
+
+    // 其他原本的功能 (IntersectionObserver, Countdown)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -241,31 +268,25 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
-    // 倒數計時功能
     function updateExamCountdown() {
         const start = new Date(2025, 7, 30).getTime();
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
         const distance = end - now;
-
         if (distance < 0) {
             document.querySelector('.countdown-title').innerText = "💪 會考順利！";
             return;
         }
-
         document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
         document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
         document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
         document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-
         let progress = ((now - start) / (end - start)) * 100;
         progress = Math.max(0, Math.min(100, progress));
         document.getElementById('progress-fill').style.width = progress.toFixed(2) + "%";
         document.getElementById('progress-text').innerText = `時間消耗：${progress.toFixed(2)}% (撐住啊憨包們！)`;
     }
-
     setInterval(updateExamCountdown, 1000);
-    updateExamCountdown();
 </script>
 </body>
 </html>
