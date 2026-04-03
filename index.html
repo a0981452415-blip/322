@@ -38,22 +38,20 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
-            padding-bottom: 100px;
+            padding-bottom: 120px; /* 為底部播放器留空間 */
         }
 
-        /* --- 卡片基礎樣式 --- */
         .card {
             background: var(--card-bg);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: all 0.4s ease; /* 平滑過度所有變化 */
+            transition: all 0.4s ease;
             text-align: center;
             padding-bottom: 25px;
             position: relative;
         }
 
-        /* --- 升級：卡片懸停動畫 --- */
         .card:hover { 
             transform: translateY(-15px) scale(1.03); 
             box-shadow: 0 20px 40px rgba(2, 136, 209, 0.3);
@@ -74,7 +72,6 @@
             transition: transform 0.6s ease;
         }
 
-        /* --- 升級：照片縮放動畫 --- */
         .card:hover .photo-container img {
             transform: scale(1.1);
         }
@@ -114,7 +111,7 @@
 
         .btn-ig:hover { opacity: 0.9; }
 
-        /* --- 升級：音樂播放器樣式 --- */
+        /* 音樂播放器樣式 */
         .music-player {
             position: fixed;
             bottom: 20px;
@@ -144,44 +141,25 @@
             color: #78909c;
             font-size: 0.9rem;
         }
-/* 當螢幕寬度小於 768px (手機/平板) 時執行的樣式 */
-@media (max-width: 768px) {
-    h1 {
-        font-size: 2rem; /* 縮小標題，避免手機上換行 */
-    }
 
-    .container {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 自動調整卡片寬度 */
-        gap: 15px; /* 縮小間距，節省空間 */
-        padding: 10px;
-    }
-
-    .music-player {
-        width: calc(100% - 40px); /* 讓播放器在手機上橫跨底部 */
-        right: 20px;
-        left: 20px;
-        bottom: 10px;
-        padding: 10px;
-    }
-    
-    audio {
-        width: 100%; /* 播放器寬度撐滿 */
-    }
-}
+        /* 手機版適應 RWD */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+                padding: 10px;
+            }
+            .music-player {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                bottom: 10px;
+                padding: 10px;
+            }
+            audio { width: 100%; }
+        }
     </style>
-<footer>
-        &copy; 2026 322 Class Official Website
-    </footer>
-
-    <div class="music-player">
-        <p>🎵 322 專屬 BGM</p>
-        <audio controls loop>
-            <source src="music.mp3" type="audio/mpeg">
-        </audio>
-    </div>
-
-</body>
-</html>
 </head>
 <body>
 
