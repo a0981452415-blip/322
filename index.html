@@ -182,7 +182,7 @@
         // 2. 比對雜湊值 (這串就是 "best322" 的加密長相，F12 看到也猜不出原文)
         const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
 
-        if (hashedInput === correctHash) { 
+        if (password === "best322") {
             overlay.style.transform = "translateY(-100%)";
             shuffleSong();
         } else {
