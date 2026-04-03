@@ -35,10 +35,15 @@
         }
 
         .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
-        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; }
-        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
-        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; }
-        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; }
+        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.8); }
+        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; animation-duration: 2.8s; }
+        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; transform: scale(1.2); }
+        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; animation-duration: 4.2s; }
+        .shooting-star:nth-child(6) { top: 25%; left: 50%; animation-delay: 3.2s; }
+        .shooting-star:nth-child(7) { top: 30%; left: 85%; animation-delay: 1.8s; transform: scale(0.7); }
+        .shooting-star:nth-child(8) { top: 40%; left: 70%; animation-delay: 5s; animation-duration: 3s; }
+        .shooting-star:nth-child(9) { top: 50%; left: 90%; animation-delay: 2.2s; }
+        .shooting-star:nth-child(10) { top: 5%; left: 100%; animation-delay: 6.5s; animation-duration: 4s; }
 
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
@@ -78,15 +83,10 @@
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; cursor: none; }
 
         .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        
-        .msg-input-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-        .msg-top-row { display: flex; gap: 10px; }
-        .msg-top-row input#nickname-input { width: 120px; }
-        .msg-top-row input#msg-input { flex: 1; }
-        .msg-input-area input { padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
-        
-        .msg-list { max-height: 350px; overflow-y: auto; text-align: left; }
-        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); animation: fadeIn 0.5s ease; }
+        .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
+        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        .msg-list { max-height: 300px; overflow-y: auto; text-align: left; }
+        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); }
 
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
@@ -95,7 +95,6 @@
         .music-player { position: fixed; bottom: 20px; right: 20px; width: 260px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 24px; z-index: 50000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--accent-blue); }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         a, button, input { cursor: none !important; }
     </style>
 </head>
@@ -103,17 +102,14 @@
 
 <div class="night-sky">
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
+    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
 </div>
 
 <div id="login-overlay">
     <div class="login-box">
         <h2 style="color:var(--header-color); margin-top:0;">322 入口</h2>
-        <p style="font-size: 0.9rem; color: #666;">請輸入密碼以解除封印</p>
-        <form onsubmit="event.preventDefault(); checkPass();">
-            <input type="password" id="pass-input" placeholder="請輸入暗號..." autocomplete="current-password">
-            <br>
-            <button type="submit" class="btn-ig">確認身分</button>
-        </form>
+        <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
     </div>
 </div>
 
@@ -133,12 +129,9 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">322 留言板</h3>
+    <h3 style="color:var(--header-color); text-align:center;">322</h3>
     <div class="msg-input-area">
-        <div class="msg-top-row">
-            <input type="text" id="nickname-input" placeholder="你的暱稱">
-            <input type="text" id="msg-input" placeholder="發個牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
-        </div>
+        <input type="text" id="msg-input" placeholder="發個牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
         <button class="btn-ig" onclick="sendMsg()">發出牢騷</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
@@ -174,63 +167,41 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 登入驗證修正版 (SHA-256 對應密碼: best322)
-    async function checkPass() {
+    // 登入驗證
+    function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
-        const password = input.value.trim().toLowerCase(); 
-
-        if (!password) return;
-
-        const msgUint8 = new TextEncoder().encode(password);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-        // best322 的正確 SHA-256 值
-        const correctHash = "59929845700871e98d9c57d762c95e13511b9ca934f07a4a9cf2996d36e2f170";
-
-        if (hashedInput === correctHash) {
+        // 暗號在此設定
+        if (input.value === "best322") { 
             overlay.style.transform = "translateY(-100%)";
-            setTimeout(() => { overlay.style.display = 'none'; }, 800);
             shuffleSong();
         } else {
-            alert("暗號錯誤！你是別班的憨包，我們是322的憨包");
-            input.value = "";
+            alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
         }
     }
 
     // 留言板功能
     function sendMsg() {
-        const msgInput = document.getElementById('msg-input');
-        const nickInput = document.getElementById('nickname-input');
-        if (msgInput.value.trim() === "") return;
-        
+        const input = document.getElementById('msg-input');
+        if (input.value.trim() === "") return;
         const now = new Date();
-        const nickname = nickInput.value.trim() || "匿名憨包";
-        
         db.ref('messages').push({
-            name: nickname,
-            text: msgInput.value,
+            text: input.value,
             time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
             timestamp: Date.now()
         });
-        
-        msgInput.value = "";
+        input.value = "";
     }
 
-    // 監聽留言
     db.ref('messages').limitToLast(20).on('value', (snapshot) => {
         const list = document.getElementById('msg-list');
         list.innerHTML = "";
         const data = snapshot.val();
         if (data) {
-            Object.keys(data).reverse().forEach(key => {
-                const msg = data[key];
+            Object.values(data).reverse().forEach(msg => {
                 const div = document.createElement('div');
                 div.className = 'msg-item';
-                const displayName = msg.name || "匿名憨包";
-                div.innerHTML = `<strong>${displayName}</strong> <small style="color:#888">${msg.time}</small><br><p style="margin:5px 0 0 0;">${msg.text}</p>`;
+                div.innerHTML = `<strong>匿名憨包</strong> <small>${msg.time}</small><br>${msg.text}`;
                 list.appendChild(div);
             });
         }
@@ -244,7 +215,7 @@
         document.getElementById('audio-source').src = songName;
         document.getElementById('song-title').innerText = "🎵 正在播放：" + songName;
         audio.load();
-        audio.play().catch(e => console.log("需使用者互動後播放"));
+        audio.play().catch(() => {});
     }
 
     // 滑鼠跟隨圓點
@@ -261,16 +232,16 @@
     }
     moveDots();
 
-    // 115 會考倒數 (2026/05/16)
+    // 倒數計時
     function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
         const diff = end - now;
         if (diff < 0) return;
-        document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
-        document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        document.getElementById('days').innerText = Math.floor(diff / 86400000);
+        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
+        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
+        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
     }
     setInterval(updateCountdown, 1000);
 
