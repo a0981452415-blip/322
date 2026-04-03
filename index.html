@@ -49,6 +49,7 @@
             padding: 12px; width: 220px; border-radius: 12px;
             border: 1px solid #ddd; margin: 20px 0;
             font-size: 1.1rem; text-align: center; outline: none;
+            transition: all 0.3s;
         }
 
         .cursor-dot {
@@ -79,7 +80,7 @@
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
         .name { font-size: 1.5rem; font-weight: 800; margin-top: 15px; color: #333; }
         .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; }
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-family: inherit;}
 
         .msg-board {
             max-width: 700px; margin: 0 auto 50px;
@@ -87,7 +88,7 @@
             border-radius: 25px; border: 2px solid var(--header-color);
         }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; cursor: none; }
         .msg-list { max-height: 300px; overflow-y: auto; }
         .msg-item { background: #f0faff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--header-color); text-align: left;}
 
@@ -103,9 +104,9 @@
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322 基地入口</h2>
-        <input type="password" id="pass-input" placeholder="請輸入暗號...">
-        <br><button class="btn-ig" onclick="checkPass()">進入基地</button>
+        <h2 style="color:var(--header-color)">322入口</h2>
+        <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button class="btn-ig" onclick="checkPass()">進入322</button>
     </div>
 </div>
 
@@ -125,9 +126,9 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">💬 322 匿名聊天室</h3>
+    <h3 style="color:var(--header-color); text-align:center;">💬 322聊天室</h3>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="說點什麼吧...">
+        <input type="text" id="msg-input" placeholder="發點牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
         <button class="btn-ig" onclick="sendMsg()">發送</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
@@ -146,7 +147,7 @@
 <div class="music-player">
     <p id="song-title" style="font-size:0.8rem; margin:0 0 10px 0;">🎵 待播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
-    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px;">隨機播放</button>
+    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px; cursor: none;">隨機播放</button>
 </div>
 
 <script>
@@ -163,10 +164,30 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // 更新後的暗號驗證：包含錯誤震動與提示
     function checkPass() {
-        if (document.getElementById('pass-input').value === "322") { 
+        const input = document.getElementById('pass-input');
+        if (input.value === "322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
             shuffleSong();
+        } else {
+            // 錯誤效果：變紅 + 震動
+            input.style.border = "2px solid #ff5252";
+            input.style.backgroundColor = "#ffebee";
+            input.animate([
+                { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' },
+                { transform: 'translateX(-5px)' },
+                { transform: 'translateX(5px)' },
+                { transform: 'translateX(0)' }
+            ], { duration: 300 });
+            
+            alert("❌ 暗號錯誤 你不是憨包。");
+            input.value = "";
+            setTimeout(() => {
+                input.style.border = "1px solid #ddd";
+                input.style.backgroundColor = "#fff";
+            }, 1000);
         }
     }
 
@@ -196,6 +217,7 @@
         }
     });
 
+    // 鼠標特效
     const dots = document.querySelectorAll('.cursor-dot');
     let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
