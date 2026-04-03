@@ -39,11 +39,6 @@
         .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; animation-duration: 2.8s; }
         .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; transform: scale(1.2); }
         .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; animation-duration: 4.2s; }
-        .shooting-star:nth-child(6) { top: 25%; left: 50%; animation-delay: 3.2s; }
-        .shooting-star:nth-child(7) { top: 30%; left: 85%; animation-delay: 1.8s; transform: scale(0.7); }
-        .shooting-star:nth-child(8) { top: 40%; left: 70%; animation-delay: 5s; animation-duration: 3s; }
-        .shooting-star:nth-child(9) { top: 50%; left: 90%; animation-delay: 2.2s; }
-        .shooting-star:nth-child(10) { top: 5%; left: 100%; animation-delay: 6.5s; animation-duration: 4s; }
 
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
@@ -67,8 +62,19 @@
 
         /* --- 介面組件 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
+        
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
-        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
+        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
+
+        /* 語錄樣式 */
+        #quote-display {
+            color: #e1f5fe;
+            font-style: italic;
+            font-size: 1.2rem;
+            min-height: 30px;
+            transition: opacity 0.8s ease;
+            text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+        }
         
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
         .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
@@ -102,7 +108,6 @@
 
 <div class="night-sky">
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
-    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
 </div>
 
 <div id="login-overlay">
@@ -115,7 +120,10 @@
 
 <div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
 
-<header><h1> 322 憨包們 </h1></header>
+<header>
+    <h1> 322 憨包們 </h1>
+    <div id="quote-display">「 加載憨包回憶中... 」</div>
+</header>
 
 <div class="container">
     <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
@@ -168,7 +176,34 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 登入驗證修正
+    // 322 專屬語錄資料
+    const quotes = [
+        "「走步哥：這球真的沒走步，是地心引力在抓我。」",
+        "「妮塔：(露出充滿智慧的疑惑表情)」",
+        "「高工候選人：我的選票跟我的球技一樣穩。」",
+        "「崇瑋與軒漢的父親陳緯哲：乖兒子們，爸爸回來了。」",
+        "「雨傘哥：下雨不愁，我有我的專屬雨傘陣。」",
+        "「大野豬廖廷恩：撞開一切阻礙，這就是力量！」",
+        "「養身籃球簡宗翰：流汗就好，勝負都是浮雲。」",
+        "「導演鄭子恩：Action！322 的每一天都是大片。」",
+        "「鬍子哥趙峻霆：鬍子是我的本體，帥氣是我的贈品。」",
+        "「老師：再吵的，去外面走廊跟飲水機聊天！」"
+    ];
+
+    function updateQuote() {
+        const display = document.getElementById('quote-display');
+        display.style.opacity = 0; // 先淡出
+        
+        setTimeout(() => {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            display.innerText = quotes[randomIndex];
+            display.style.opacity = 1; // 再淡入
+        }, 800);
+    }
+    // 每 8 秒切換一次語錄
+    setInterval(updateQuote, 8000);
+
+    // 登入驗證
     function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
@@ -176,6 +211,7 @@
             overlay.style.transform = "translateY(-100%)";
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
             shuffleSong();
+            updateQuote(); // 登入後立即顯示一句
         } else {
             alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
             input.value = "";
@@ -234,7 +270,7 @@
     }
     moveDots();
 
-    // 倒數計時修正
+    // 倒數計時
     function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
