@@ -34,12 +34,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        #bg-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; pointer-events: none;
-        }
-
-        /* --- 登入 --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 30000; background: var(--bg-gradient);
@@ -57,7 +51,6 @@
             font-size: 1.1rem; text-align: center; outline: none;
         }
 
-        /* --- 藍色拖影 --- */
         .cursor-dot {
             width: 10px; height: 10px;
             background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%);
@@ -66,13 +59,13 @@
             box-shadow: 0 0 12px var(--accent-blue);
         }
 
-        header { text-align: center; padding: 60px 0; }
-        header h1 { color: var(--header-color); font-size: 3.5rem; letter-spacing: 4px; }
+        header { text-align: center; padding: 40px 0; }
+        header h1 { color: var(--header-color); font-size: 3rem; letter-spacing: 4px; }
         
         .container {
             max-width: 1200px; margin: 0 auto;
             display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 35px; padding: 20px 20px 60px;
+            gap: 30px; padding-bottom: 60px;
         }
         
         .card {
@@ -82,55 +75,41 @@
         }
         .card.show { opacity: 1; transform: translateY(0); }
         
-        .photo-container { width: 100%; height: 350px; overflow: hidden; }
+        .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-top: 15px; }
-        .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; }
+        .name { font-size: 1.5rem; font-weight: 800; margin-top: 15px; color: #333; }
+        .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
-        /* --- 留言板 --- */
         .msg-board {
-            max-width: 800px; margin: 0 auto 100px;
-            background: var(--card-bg); padding: 30px;
-            border-radius: 30px; border: 2px solid var(--header-color);
+            max-width: 700px; margin: 0 auto 50px;
+            background: var(--card-bg); padding: 25px;
+            border-radius: 25px; border: 2px solid var(--header-color);
         }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        .msg-input-area input {
-            flex: 1; padding: 12px; border-radius: 12px;
-            border: 1px solid #ddd; outline: none;
-        }
-        .msg-list {
-            max-height: 400px; overflow-y: auto; text-align: left;
-        }
-        .msg-item {
-            background: #f0faff; padding: 15px;
-            border-radius: 15px; margin-bottom: 12px;
-            border-left: 5px solid var(--header-color);
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        .msg-list { max-height: 300px; overflow-y: auto; }
+        .msg-item { background: #f0faff; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--header-color); text-align: left;}
 
-        .countdown-container { max-width: 800px; margin: 0 auto 100px; background: var(--card-bg); padding: 30px; border-radius: 30px; text-align: center; }
-        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
-        .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: var(--header-color); }
-        .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
+        .countdown-container { max-width: 700px; margin: 0 auto 100px; background: var(--card-bg); padding: 20px; border-radius: 25px; text-align: center; }
+        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        .time-block { background: #e1f5fe; padding: 10px; border-radius: 12px; }
+        .time-block span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--header-color); }
         
-        .music-player { position: fixed; bottom: 25px; right: 25px; width: 260px; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999; backdrop-filter: blur(10px); }
+        .music-player { position: fixed; bottom: 20px; right: 20px; width: 240px; background: white; padding: 15px; border-radius: 20px; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322</h2>
-        <input type="password" id="pass-input" placeholder="暗號是...">
-        <br><button class="btn-ig" onclick="checkPass()">進入</button>
+        <h2 style="color:var(--header-color)">322 基地入口</h2>
+        <input type="password" id="pass-input" placeholder="請輸入暗號...">
+        <br><button class="btn-ig" onclick="checkPass()">進入基地</button>
     </div>
 </div>
 
 <div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
-<canvas id="bg-canvas"></canvas>
 
 <header><h1>322 憨包們</h1></header>
 
@@ -146,16 +125,16 @@
 </div>
 
 <div class="msg-board">
-    <h2 style="color:var(--header-color); text-align:center;">💬 322 雲端</h2>
+    <h3 style="color:var(--header-color); text-align:center;">💬 322 匿名聊天室</h3>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="匿名耍憨...(按 Enter 發送)">
+        <input type="text" id="msg-input" placeholder="說點什麼吧...">
         <button class="btn-ig" onclick="sendMsg()">發送</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
 </div>
 
 <div class="countdown-container">
-    <h2 style="color:var(--header-color)">🎓 距離 115 會考還有</h2>
+    <h3 style="color:var(--header-color)">🎓 115 會考倒數</h3>
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>天</p></div>
         <div class="time-block"><span id="hours">00</span><p>時</p></div>
@@ -165,17 +144,12 @@
 </div>
 
 <div class="music-player">
-    <p id="song-title" style="font-size:0.75rem; color:var(--header-color); font-weight:bold;">🎵 準備播放...</p>
+    <p id="song-title" style="font-size:0.8rem; margin:0 0 10px 0;">🎵 待播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
-    <div style="display:flex; gap:5px; margin-top:5px;">
-        <button onclick="prevSong()" style="flex:1;">上</button>
-        <button onclick="shuffleSong()" style="flex:1;">隨</button>
-        <button onclick="nextSong()" style="flex:1;">下</button>
-    </div>
+    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px;">隨機播放</button>
 </div>
 
 <script>
-    // --- Firebase 配置 ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -183,8 +157,7 @@
       storageBucket: "project-1673660731296559126.firebasestorage.app",
       messagingSenderId: "475041608650",
       appId: "1:475041608650:web:59e544b5f9a8dca98c1533",
-      measurementId: "G-3R0393SVVQ",
-      databaseURL: "https://project-1673660731296559126-default-rtdb.firebaseio.com/"
+      databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -193,7 +166,7 @@
     function checkPass() {
         if (document.getElementById('pass-input').value === "322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
-            loadSong(0);
+            shuffleSong();
         }
     }
 
@@ -202,7 +175,6 @@
         if (input.value.trim() === "") return;
         const now = new Date();
         db.ref('messages').push({
-            name: "某個憨包",
             text: input.value,
             time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
             timestamp: Date.now()
@@ -210,7 +182,7 @@
         input.value = "";
     }
 
-    db.ref('messages').limitToLast(50).on('value', (snapshot) => {
+    db.ref('messages').limitToLast(20).on('value', (snapshot) => {
         const list = document.getElementById('msg-list');
         list.innerHTML = "";
         const data = snapshot.val();
@@ -218,51 +190,52 @@
             Object.values(data).reverse().forEach(msg => {
                 const div = document.createElement('div');
                 div.className = 'msg-item';
-                div.innerHTML = `<div class="msg-time">${msg.name} · ${msg.time}</div><div class="msg-text">${msg.text}</div>`;
+                div.innerHTML = `<strong>匿名憨包</strong> <small>${msg.time}</small><br>${msg.text}`;
                 list.appendChild(div);
             });
         }
     });
 
-    // --- 其他功能 (粒子, 拖影, 倒數) ---
     const dots = document.querySelectorAll('.cursor-dot');
-    const mousePos = { x: -100, y: -100 };
-    const dotCoords = Array.from({ length: dots.length }, () => ({ x: 0, y: 0 }));
-    window.addEventListener('mousemove', (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; });
-    function updateCursor() {
-        let tx = mousePos.x, ty = mousePos.y;
-        dots.forEach((dot, i) => {
-            const c = dotCoords[i];
-            c.x += (tx - c.x) * 0.25; c.y += (ty - c.y) * 0.25;
-            dot.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${1 - i * 0.1})`;
-            tx = c.x; ty = c.y;
+    let mouseX = 0, mouseY = 0;
+    window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
+    function moveDots() {
+        let x = mouseX, y = mouseY;
+        dots.forEach((dot, index) => {
+            dot.style.left = x + 'px';
+            dot.style.top = y + 'px';
+            dot.style.opacity = 1 - (index * 0.2);
         });
-        requestAnimationFrame(updateCursor);
+        requestAnimationFrame(moveDots);
     }
-    updateCursor();
+    moveDots();
 
-    function countdown() {
+    function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
-        const diff = end - new Date().getTime();
-        if (diff <= 0) return;
+        const now = new Date().getTime();
+        const diff = end - now;
+        if (diff < 0) return;
         document.getElementById('days').innerText = Math.floor(diff / 86400000);
         document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
         document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
         document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
     }
-    setInterval(countdown, 1000);
+    setInterval(updateCountdown, 1000);
 
-    const playlist = [{title:"海嶼你",file:"music1.mp3"},{title:"宗翰獨特品味",file:"music2.mp3"},{title:"擊敗人",file:"music3.mp3"},{title:"步步",file:"music4.mp3"},{title:"可惜沒如果",file:"music5.mp3"},{title:"不該",file:"music6.mp3"},{title:"軒漢獨特品味",file:"music7.mp3"},{title:"擱淺",file:"music8.mp3"},{title:"浪子回頭",file:"music9.mp3"},{title:"浪流蓮",file:"music10.mp3"}];
-    let cur = 0;
-    const audio = document.getElementById('bg-audio');
-    function loadSong(i) { cur=i; document.getElementById('audio-source').src=playlist[i].file; document.getElementById('song-title').innerText="🎵："+playlist[i].title; audio.load(); audio.play().catch(()=>{}); }
-    function nextSong() { loadSong((cur+1)%playlist.length); }
-    function prevSong() { loadSong((cur-1+playlist.length)%playlist.length); }
-    function shuffleSong() { loadSong(Math.floor(Math.random()*playlist.length)); }
+    const playlist = ["music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3", "music7.mp3", "music8.mp3", "music9.mp3", "music10.mp3"];
+    function shuffleSong() {
+        const audio = document.getElementById('bg-audio');
+        const song = playlist[Math.floor(Math.random() * playlist.length)];
+        document.getElementById('audio-source').src = song;
+        document.getElementById('song-title').innerText = "🎵 正在播放：" + song;
+        audio.load();
+        audio.play().catch(() => {});
+    }
 
-    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }));
-    window.onload = () => { document.querySelectorAll('.card').forEach(c => obs.observe(c)); countdown(); };
-    document.getElementById('msg-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMsg(); });
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+    });
+    window.onload = () => { document.querySelectorAll('.card').forEach(c => observer.observe(c)); updateCountdown(); };
 </script>
 </body>
 </html>
