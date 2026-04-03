@@ -35,34 +35,20 @@
         /* 歡迎層 */
         #welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-gradient); background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            display: flex; justify-content: center; align-items: center;
             z-index: 10000; transition: opacity 0.8s ease, visibility 0.8s;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--bg-gradient); background-size: 400% 400%;
         }
         #welcome-overlay.fade-out { opacity: 0; visibility: hidden; }
         .welcome-content {
             text-align: center; background: rgba(255, 255, 255, 0.9);
             padding: 50px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px); max-width: 80%;
+            backdrop-filter: blur(10px);
         }
         .welcome-content button {
             background: linear-gradient(45deg, #4fc3f7, #0288d1);
             color: white; border: none; padding: 15px 45px; border-radius: 50px;
-            font-weight: bold; cursor: pointer; font-size: 1rem;
-        }
-
-        /* 氣泡 */
-        .bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .bubble {
-            position: absolute; bottom: -120px; background: rgba(255, 255, 255, 0.45);
-            border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.6);
-            animation: floatUp 12s infinite ease-in;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(1); opacity: 0; }
-            20% { opacity: 0.8; }
-            100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
+            font-weight: bold; cursor: pointer;
         }
 
         header { text-align: center; padding: 60px 0; }
@@ -75,72 +61,73 @@
             gap: 35px; padding: 20px 20px 100px;
         }
         
-        /* 修正後的卡片樣式 */
+        /* --- 進階座標流光卡片 --- */
         .card {
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            position: relative;
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
             text-align: center; padding-bottom: 25px; 
             opacity: 0; transform: translateY(40px);
-            display: flex; flex-direction: column;
-            border: 1px solid transparent;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card.show { opacity: 1; transform: translateY(0); }
 
+        /* 流光層：使用放射漸層跟隨座標 */
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(
+                circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.45) 0%, 
+                rgba(255, 255, 255, 0) 60%
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .card:hover::after { opacity: 1; }
+
         .card:hover {
-            transform: translateY(-12px) scale(1.02);
-            background: #ffffff;
-            box-shadow: 
-                0 0 10px rgba(79, 195, 247, 0.6),
-                0 0 25px rgba(2, 136, 209, 0.4),
-                0 0 45px rgba(2, 136, 209, 0.2);
-            border: 1px solid rgba(79, 195, 247, 0.8);
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2);
         }
         
-        .photo-container { width: 100%; height: 350px; overflow: hidden; background-color: #f8f9fa; }
+        .photo-container { width: 100%; height: 350px; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .card:hover .photo-container img { transform: scale(1.1); }
+        .card:hover .photo-container img { transform: scale(1.05); }
         
-        .info { padding: 20px; flex-grow: 1; }
-        .name { font-size: 1.6rem; font-weight: 800; margin-bottom: 10px; color: #2c3e50; }
+        .info { padding: 20px; }
+        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
         .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
+        /* 倒數計時 */
         .countdown-container {
             max-width: 800px; margin: 0 auto 100px; background: var(--card-bg);
-            padding: 30px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
+            padding: 30px; border-radius: 30px; text-align: center;
         }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
         .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
-        
-        .progress-wrapper { margin-top: 25px; padding: 0 10px; }
-        .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; }
-        #progress-fill { background: linear-gradient(90deg, #4fc3f7, #0288d1); width: 0%; height: 100%; transition: width 1s ease-out; }
 
+        /* 音樂播放器 */
         .music-player {
             position: fixed; bottom: 25px; right: 25px; width: 260px;
             background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
         }
-        #playlist-menu { max-height: 120px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .playlist-item { padding: 6px 10px; cursor: pointer; border-radius: 8px; transition: 0.2s; color: #546e7a; }
-        .playlist-item:hover { background: #e1f5fe; color: #0288d1; }
-        .playlist-item.active { background: #0288d1; color: white; font-weight: bold; }
-
-        .music-controls button {
-            cursor: pointer; border: none; background: #e1f5fe; color: #0288d1; 
-            border-radius: 12px; padding: 6px 14px; font-weight: bold; font-size: 0.75rem;
-            transition: 0.3s;
-        }
-        .music-controls button:hover { background: #0288d1; color: white; }
+        #playlist-menu { max-height: 100px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid #eee; }
+        .playlist-item { padding: 5px; cursor: pointer; border-radius: 5px; }
+        .playlist-item.active { color: #0288d1; font-weight: bold; background: #e1f5fe; }
+        .music-controls button { cursor: pointer; border: none; background: #e1f5fe; color: #0288d1; border-radius: 8px; padding: 5px 10px; font-size: 0.7rem; }
 
         footer { text-align: center; padding: 40px; color: #546e7a; font-weight: bold; }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 2.2rem; }
-            .music-player { left: 20px; right: 20px; width: auto; bottom: 10px; }
-        }
     </style>
 </head>
 <body>
@@ -155,26 +142,18 @@
     </div>
 </div>
 
-<div class="bubbles">
-    <div class="bubble" style="left:10%"></div>
-    <div class="bubble" style="left:30%; animation-delay:2s"></div>
-    <div class="bubble" style="left:50%; animation-delay:4s"></div>
-    <div class="bubble" style="left:70%; animation-delay:1s"></div>
-    <div class="bubble" style="left:90%; animation-delay:3s"></div>
-</div>
-
 <header><h1>322 憨包們</h1></header>
 
 <div class="container">
-    <div class="card"><div class="photo-container"><img src="p1.jpg" alt="黃崇瑋"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p2.jpg" alt="林軒漢"></div><div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p3.jpg" alt="徐堃翔"></div><div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p4.jpg" alt="廖廷恩"></div><div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p5.jpg" alt="蔡承烜"></div><div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p6.jpg" alt="簡宗翰"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p7.jpg" alt="鄭子恩"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" target="_blank" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p8.jpg" alt="陳緯哲"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" target="_blank" class="btn-ig">Instagram</a></div></div>
-</div> 
+    <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p2.jpg"></div><div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p3.jpg"></div><div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p4.jpg"></div><div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p5.jpg"></div><div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p6.jpg"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p7.jpg"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p8.jpg"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div></div>
+</div>
 
 <div class="countdown-container">
     <h2 class="countdown-title">🎓 距離 115 會考還有</h2>
@@ -184,37 +163,41 @@
         <div class="time-block"><span id="minutes">00</span><p>分</p></div>
         <div class="time-block"><span id="seconds">00</span><p>秒</p></div>
     </div>
-    <div class="progress-wrapper">
-        <div class="progress-bar-bg"><div id="progress-fill"></div></div>
-        <p id="progress-text" style="margin-top:8px; font-size:0.85rem; color:#546e7a; font-weight:bold;">計算中...</p>
-    </div>
 </div>
 
 <div class="music-player">
     <div id="playlist-menu"></div>
-    <p id="song-title" style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
-    <audio id="bg-audio" style="width: 100%; height: 35px;"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
-    <div class="music-controls" style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
-        <button onclick="prevSong()">上一首</button>
+    <p id="song-title" style="margin:0 0 5px; font-size:0.75rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
+    <audio id="bg-audio"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
+    <div class="music-controls">
+        <button onclick="prevSong()">上</button>
         <button onclick="shuffleSong()">隨機</button>
-        <button onclick="nextSong()">下一首</button>
+        <button onclick="nextSong()">下</button>
     </div>
 </div>
 
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
+    // --- 核心互動：座標流光 ---
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--mouse-x', `${x}%`);
+            card.style.setProperty('--mouse-y', `${y}%`);
+        });
+    });
+
+    // --- 音樂與基本功能整合 ---
     const playlist = [
-        { title: "海嶼你", file: "music1.mp3" },
-        { title: "宗翰獨特品味", file: "music2.mp3" },
-        { title: "擊敗人", file: "music3.mp3" },
-        { title: "步步", file: "music4.mp3" },
-        { title: "可惜沒如果", file: "music5.mp3" },
-        { title: "不該", file: "music6.mp3" },
-        { title: "軒漢獨特品味", file: "music7.mp3" },
-        { title: "擱淺", file: "music8.mp3" },
-        { title: "浪子回頭", file: "music9.mp3" },
-        { title: "浪流蓮", file: "music10.mp3" }
+        { title: "海嶼你", file: "music1.mp3" }, { title: "宗翰獨特品味", file: "music2.mp3" },
+        { title: "擊敗人", file: "music3.mp3" }, { title: "步步", file: "music4.mp3" },
+        { title: "可惜沒如果", file: "music5.mp3" }, { title: "不該", file: "music6.mp3" },
+        { title: "軒漢獨特品味", file: "music7.mp3" }, { title: "擱淺", file: "music8.mp3" },
+        { title: "浪子回頭", file: "music9.mp3" }, { title: "浪流蓮", file: "music10.mp3" }
     ];
 
     let currentSongIndex = 0;
@@ -225,133 +208,60 @@
 
     function renderMenu() {
         menu.innerHTML = '';
-        playlist.forEach((song, index) => {
+        playlist.forEach((song, i) => {
             const item = document.createElement('div');
-            item.className = `playlist-item ${index === currentSongIndex ? 'active' : ''}`;
-            item.innerText = `${index + 1}. ${song.title}`;
-            item.onclick = () => loadSong(index);
+            item.className = `playlist-item ${i === currentSongIndex ? 'active' : ''}`;
+            item.innerText = `${i + 1}. ${song.title}`;
+            item.onclick = () => loadSong(i);
             menu.appendChild(item);
         });
     }
 
-    function loadSong(index) {
-        currentSongIndex = index;
-        source.src = playlist[index].file;
-        titleDisplay.innerText = "🎵 正在播放：" + playlist[index].title;
+    function loadSong(i) {
+        currentSongIndex = i;
+        source.src = playlist[i].file;
+        titleDisplay.innerText = "🎵：" + playlist[i].title;
         renderMenu();
         audio.load();
-        audio.play().catch(e => console.log("播放被攔截:", e));
+        audio.play().catch(e => {});
     }
 
-    function nextSong() {
-        currentSongIndex = (currentSongIndex + 1) % playlist.length;
-        loadSong(currentSongIndex);
-    }
+    function nextSong() { loadSong((currentSongIndex + 1) % playlist.length); }
+    function prevSong() { loadSong((currentSongIndex - 1 + playlist.length) % playlist.length); }
+    function shuffleSong() { loadSong(Math.floor(Math.random() * playlist.length)); }
+    function closeWelcome() { document.getElementById('welcome-overlay').classList.add('fade-out'); loadSong(0); }
 
-    function prevSong() {
-        currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
-        loadSong(currentSongIndex);
-    }
-
-    function shuffleSong() {
-        let newIndex;
-        do { newIndex = Math.floor(Math.random() * playlist.length); } while (newIndex === currentSongIndex);
-        loadSong(newIndex);
-    }
-
-    function closeWelcome() {
-        document.getElementById('welcome-overlay').classList.add('fade-out');
-        loadSong(0); // 點擊按鈕後啟動播放，避開瀏覽器限制
-    }
-
-    audio.addEventListener('ended', nextSong);
-
-    // --- 背景粒子特效邏輯 ---
+    // --- 粒子特效與倒數計時 ---
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.onresize = resize; resize();
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    class Particle {
+    class P {
         constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 3 + 1;
-            this.speedX = Math.random() * 0.6 - 0.3;
-            this.speedY = Math.random() * 0.4 + 0.1;
-            this.opacity = Math.random() * 0.5 + 0.1;
-        }
-        update() {
-            this.y += this.speedY;
-            this.x += this.speedX;
-            if (this.y > canvas.height) this.reset();
-        }
-        draw() {
-            ctx.fillStyle = `rgba(2, 136, 209, ${this.opacity})`;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.vy = Math.random()*0.5+0.2; }
+        update() { this.y += this.vy; if(this.y > canvas.height) this.reset(); }
+        draw() { ctx.fillStyle = "rgba(2, 136, 209, 0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
     }
 
-    function initParticles() {
-        particles = [];
-        for (let i = 0; i < 70; i++) { particles.push(new Particle()); }
-    }
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-    initParticles();
-    animate();
+    for(let i=0; i<60; i++) particles.push(new P());
+    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
+    anim();
 
-    // --- 會考倒數邏輯 ---
-    function updateExamCountdown() {
-        const start = new Date(2025, 7, 30).getTime();
+    function countdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
-        const now = new Date().getTime();
-        const distance = end - now;
-
-        if (distance < 0) {
-            document.querySelector('.countdown-title').innerText = "💪 會考順利！";
-            return;
-        }
-
-        document.getElementById('days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
-        document.getElementById('hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-        document.getElementById('minutes').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-        document.getElementById('seconds').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
-
-        let progress = ((now - start) / (end - start)) * 100;
-        progress = Math.max(0, Math.min(100, progress));
-        document.getElementById('progress-fill').style.width = progress.toFixed(2) + "%";
-        document.getElementById('progress-text').innerText = `時間消耗：${progress.toFixed(2)}% (撐住啊憨包們！)`;
+        const diff = end - new Date().getTime();
+        if (diff <= 0) return;
+        document.getElementById('days').innerText = Math.floor(diff / 86400000);
+        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
+        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
+        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
     }
+    setInterval(countdown, 1000);
 
-    // --- 捲動顯現動畫 ---
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => entry.target.classList.add('show'), (index % 4) * 150);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    window.onload = function() {
-        renderMenu();
-        setInterval(updateExamCountdown, 1000);
-        updateExamCountdown();
-        document.querySelectorAll('.card').forEach(card => observer.observe(card));
-    };
+    const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }), {threshold:0.1});
+    window.onload = () => { renderMenu(); countdown(); cards.forEach(c => obs.observe(c)); };
 </script>
 </body>
 </html>
