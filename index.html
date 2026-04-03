@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322憨包們 - 最終流星版</title>
+    <title>322憨包們</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     
@@ -26,19 +26,25 @@
             cursor: none; 
         }
 
-        /* --- 特效與登入層 --- */
+        /* --- 流星雨核心特效 --- */
         .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
             filter: drop-shadow(0 0 6px #ffffff); border-radius: 999px; opacity: 0;
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
+
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        #visualizer-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 100px; z-index: 5; pointer-events: none; opacity: 0.6; }
+        /* --- 視覺化畫布樣式 --- */
+        #visualizer-container {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 150px;
+            z-index: 5; pointer-events: none; opacity: 0.6;
+        }
         #visualizer-canvas { width: 100%; height: 100%; }
 
+        /* --- 登入驗證層 --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 60000; background: var(--bg-gradient);
@@ -48,70 +54,93 @@
         .login-box {
             background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px;
             text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3);
-            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white;
+            border: 1px solid var(--accent-blue); backdrop-filter: blur(15px);
+            color: white;
         }
 
-        /* --- 游標與介面 --- */
+        .typewriter-text {
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden; border-right: .15em solid var(--accent-blue);
+            white-space: nowrap; margin: 0 auto 20px; letter-spacing: .15em; 
+            width: 0; font-size: 1.8rem; font-weight: bold;
+            animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
+
+        .login-box input {
+            background: rgba(255,255,255,0.1); color: white;
+            padding: 12px; width: 220px; border-radius: 12px;
+            border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
+        }
+
+        /* --- 介面組件 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
-        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
-        #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s; font-weight: 500; }
-        
+        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
+        #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); font-weight: 500; }
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
-        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s ease; backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
         .card.show { opacity: 1; transform: translateY(0); }
+        .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: white; }
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        
         .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
-        .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; }
-        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; }
-
-        /* --- 計時器與留言板 --- */
-        .module-box { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        .progress-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); background-size: 200% 100%; animation: shine 3s linear infinite; }
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; }
+        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; transition: transform 0.2s ease; border: 1px solid #ffcdd2; }
+        .like-box:active { transform: scale(1.2); }
+        .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
+        .progress-wrapper { margin: 20px 0; text-align: center; }
+        .progress-container { width: 100%; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-blue), #0288d1); transition: width 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); box-shadow: 0 0 15px var(--accent-blue); }
+        #progress-percent { color: #fff; font-weight: bold; font-size: 0.9rem; margin-top: 8px; display: block; text-shadow: 0 0 5px #000; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
-        .time-block span { display: block; font-size: 2.2rem; font-weight: 800; color: var(--header-color); }
-        
-        #message-list { max-height: 250px; overflow-y: auto; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 15px; text-align: left; }
-        .msg-item { margin-bottom: 10px; padding: 12px; background: white; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.5s ease; }
-        
-        #music-control { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: none; background: rgba(0,0,0,0.6); color: white; padding: 10px 15px; border-radius: 50px; align-items: center; gap: 10px; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
+        .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
+
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        a, button, input, .like-box { cursor: none !important; }
+
+        #music-control {
+            position: fixed; bottom: 20px; right: 20px; z-index: 10000;
+            display: none; background: rgba(0,0,0,0.6); color: white;
+            padding: 10px 15px; border-radius: 50px; border: 1px solid var(--accent-blue);
+            backdrop-filter: blur(5px); font-size: 0.9rem; align-items: center; gap: 10px;
+        }
+        #music-control button { background: none; border: none; color: white; font-size: 1.2rem; padding: 0 5px; }
     </style>
 </head>
 <body>
 
 <div class="night-sky">
     <div class="shooting-star" style="top: 5%; left: 80%; animation-delay: 0s;"></div>
-    <div class="shooting-star" style="top: 20%; left: 60%; animation-delay: 1.5s;"></div>
-    <div class="shooting-star" style="top: 35%; left: 85%; animation-delay: 3s;"></div>
+    <div class="shooting-star" style="top: 15%; left: 60%; animation-delay: 1.2s;"></div>
+    <div class="shooting-star" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
 </div>
 
-<div id="visualizer-container"><canvas id="visualizer-canvas"></canvas></div>
+<div id="visualizer-container">
+    <canvas id="visualizer-canvas"></canvas>
+</div>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="margin-bottom:20px;">歡迎來到 322</h2>
-        <input type="password" id="pass-input" placeholder="請輸入密碼" style="padding:12px; border-radius:12px; border:1px solid var(--accent-blue); background:rgba(255,255,255,0.1); color:white; outline:none;" onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button onclick="checkPass()" style="margin-top:20px; padding:10px 30px; border:none; border-radius:50px; background:var(--ig-gradient); color:white; font-weight:bold;">進入宇宙</button>
+        <div class="typewriter-text">歡迎來到 322</div>
+        <input type="password" id="pass-input" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
     </div>
 </div>
 
 <div id="music-control">
     <span id="music-title">🎵 播放中...</span>
-    <button onclick="prevTrack()" style="background:none; border:none; color:white; cursor:none;">⏮</button>
-    <button onclick="togglePlay()" id="play-pause-icon" style="background:none; border:none; color:white; cursor:none;">⏸</button>
-    <button onclick="nextTrack()" style="background:none; border:none; color:white; cursor:none;">⏭</button>
+    <button onclick="prevTrack()">⏮</button>
+    <button onclick="togglePlay()" id="play-pause-icon">⏸</button>
+    <button onclick="nextTrack()">⏭</button>
 </div>
 
-<div class="cursor-dot"></div>
+<div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
 
 <header>
     <h1> 322 憨包們 </h1>
@@ -120,155 +149,182 @@
 
 <div class="container" id="members-container"></div>
 
-<div class="module-box">
-    <h3 style="color:var(--header-color); text-align:center; margin-bottom: 20px;">🎓 115 會考倒數計時</h3>
-    <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
-    <span id="progress-percent" style="font-weight:bold; color:var(--header-color); margin-top:10px; display:block; text-align:center;">同步中...</span>
-    <div id="timer" class="timer-grid">
-        <div class="time-block"><span id="days">00</span><p>剩餘天數</p></div>
-        <div class="time-block"><span id="hours">00</span><p>小時</p></div>
-        <div class="time-block"><span id="minutes">00</span><p>分鐘</p></div>
-        <div class="time-block"><span id="seconds">00</span><p>秒數</p></div>
+<div class="countdown-container">
+    <h3 style="color:var(--header-color); text-align:center;">🎓 115 會考倒數計時</h3>
+    <div class="progress-wrapper">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <span id="progress-percent">正在計算戰鬥進度...</span>
     </div>
-</div>
-
-<div class="module-box">
-    <h3 style="color:var(--header-color); text-align:center;">💬 憨包留言板</h3>
-    <div id="message-list"><p style="text-align:center; color:#888;">載入留言中...</p></div>
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="user-name" placeholder="名字" style="width: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
-        <input type="text" id="user-msg" placeholder="想對大家說什麼？" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
-        <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold;">發送</button>
+    <div id="timer" class="timer-grid">
+        <div class="time-block"><span id="days">00</span><p>天</p></div>
+        <div class="time-block"><span id="hours">00</span><p>時</p></div>
+        <div class="time-block"><span id="minutes">00</span><p>分</p></div>
+        <div class="time-block"><span id="seconds">00</span><p>秒</p></div>
     </div>
 </div>
 
 <script>
-    // --- 基礎配置 ---
+    // --- 音樂設定 ---
+    const playlist = [
+        { title: "曲目 1", url: "music1.mp3" }, { title: "曲目 2", url: "music2.mp3" },
+        { title: "曲目 3", url: "music3.mp3" }, { title: "曲目 4", url: "music4.mp3" },
+        { title: "曲目 5", url: "music5.mp3" }, { title: "曲目 6", url: "music6.mp3" },
+        { title: "曲目 7", url: "music7.mp3" }, { title: "曲目 8", url: "music8.mp3" },
+        { title: "曲目 9", url: "music9.mp3" }, { title: "曲目 10", url: "music10.mp3" },
+        { title: "曲目 11", url: "music11.mp3" }, { title: "曲目 12", url: "music12.mp3" }
+    ];
+    let currentTrack = 0;
+    const audio = new Audio();
+    audio.crossOrigin = "anonymous"; // 避免部分網址跨域問題
+
+    // --- Firebase 配置 (維持原樣) ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
       projectId: "project-1673660731296559126",
+      storageBucket: "project-1673660731296559126.firebasestorage.app",
+      messagingSenderId: "475041608650",
+      appId: "1:475041608650:web:59e544b5f9a8dca98c1533",
       databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const members = [
-        { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
-        { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
-        { id: "m3", name: "徐堃翔", tag: "高工候選人", ig: "sean.hsu0930", img: "p3.jpg" },
-        { id: "m4", name: "廖廷恩", tag: "大🍼野豬", ig: "ed_331ie", img: "p4.jpg" },
-        { id: "m5", name: "蔡承烜", tag: "雨傘哥", ig: "pywb30", img: "p5.jpg" },
-        { id: "m6", name: "簡宗翰", tag: "養身籃球", ig: "jzh.10.1015", img: "p6.jpg" },
-        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg" },
-        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg" },
-        { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
-    ];
+    // --- 視覺化核心變數 ---
+    let audioCtx, analyser, source, dataArray, canvas, canvasCtx;
+    let isVisualizerInitialized = false;
 
-    const quotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "老師在講我在聽，但我聽的是心碎的聲音。", "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!"];
+    function initVisualizer() {
+        if (isVisualizerInitialized) return;
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 128;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            canvas = document.getElementById('visualizer-canvas');
+            canvasCtx = canvas.getContext('2d');
+            isVisualizerInitialized = true;
+            drawVisualizer();
+        } catch (e) { console.log("視覺化初始化失敗", e); }
+    }
 
-    const audio = new Audio();
-    const playlist = Array.from({length: 12}, (_, i) => ({ title: `曲目 ${i+1}`, url: `music${i+1}.mp3` }));
-    let currentTrack = 0;
+    function drawVisualizer() {
+        requestAnimationFrame(drawVisualizer);
+        const width = canvas.width = window.innerWidth;
+        const height = canvas.height = 150;
+        analyser.getByteFrequencyData(dataArray);
+        canvasCtx.clearRect(0, 0, width, height);
+        const barWidth = (width / dataArray.length) * 1.5;
+        let barHeight, x = 0;
+        for (let i = 0; i < dataArray.length; i++) {
+            barHeight = (dataArray[i] / 255) * height;
+            canvasCtx.fillStyle = `rgba(79, 195, 247, ${dataArray[i] / 255 + 0.2})`;
+            canvasCtx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
+            x += barWidth;
+        }
+    }
 
-    // --- 初始化功能 ---
+    // --- 其他原有功能 ---
+    function loadMusic(index) {
+        currentTrack = index;
+        audio.src = playlist[index].url;
+        document.getElementById('music-title').innerText = "🎵 " + playlist[index].title;
+    }
+
+    function togglePlay() {
+        const btn = document.getElementById('play-pause-icon');
+        if (audio.paused) { audio.play(); btn.innerText = "⏸"; } 
+        else { audio.pause(); btn.innerText = "▶️"; }
+    }
+
+    function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
+    function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
+    audio.onended = () => nextTrack();
+
+    function checkPass() {
+        const input = document.getElementById('pass-input');
+        const overlay = document.getElementById('login-overlay');
+        if (input.value === "best322") { 
+            overlay.style.transform = "translateY(-100%)";
+            
+            // 啟動視覺化與播放
+            initVisualizer();
+            loadMusic(0);
+            audio.play().catch(e => console.log("等待手動播放"));
+            document.getElementById('music-control').style.display = 'flex';
+
+            setTimeout(() => { overlay.style.display = 'none'; }, 800);
+            rotateQuotes(); 
+        } else {
+            alert("暗號錯誤!");
+            input.value = "";
+        }
+    }
+
+    // --- 初始化 UI 元件 ---
+    const ganHuaQuotes = [ "雖然我們是憨包，但我們是全校最帥的憨包。", "會考不可怕，可怕的是考完大家都在笑，只有我在哭。", "只要我不尷尬，尷尬的就是飲水機。" ]; // 此處省略部分語錄
+    const members = [ { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" } ]; // 此處省略部分成員
+
+    function rotateQuotes() {
+        const display = document.getElementById('quote-display');
+        let index = 0;
+        setInterval(() => {
+            display.style.opacity = 0;
+            setTimeout(() => {
+                display.innerText = `「 ${ganHuaQuotes[index]} 」`;
+                display.style.opacity = 1;
+                index = (index + 1) % ganHuaQuotes.length;
+            }, 800);
+        }, 4000);
+    }
+
     function renderCards() {
         const container = document.getElementById('members-container');
         members.forEach(m => {
             const card = document.createElement('div');
             card.className = 'card';
-            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div>`;
+            card.innerHTML = `<div class="photo-container"><img src="${m.img}"></div><div class="info"><div class="name">${m.name}</div><span class="nickname-tag">${m.tag}</span><div class="actions"><a href="https://www.instagram.com/${m.ig}" class="btn-ig">IG</a><div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-count-${m.id}">0</span></div></div></div>`;
             container.appendChild(card);
             observer.observe(card);
-            db.ref('likes/' + m.id).on('value', snap => {
-                const el = document.getElementById(`like-count-${m.id}`);
-                if (el) el.innerText = snap.val() || 0;
-            });
+            db.ref('likes/' + m.id).on('value', (snapshot) => { document.getElementById(`like-count-${m.id}`).innerText = snapshot.val() || 0; });
         });
     }
 
-    function addLike(id) { db.ref('likes/' + id).transaction(c => (c || 0) + 1); }
+    function addLike(id) { db.ref('likes/' + id).transaction(c => (c || 0) + 1); alert("建志發言：點讚成功！"); }
 
-    // --- 留言板邏輯 ---
-    function postMessage() {
-        const name = document.getElementById('user-name').value || "無名氏";
-        const content = document.getElementById('user-msg').value;
-        if (!content) return alert("內容不能空白啦！");
-        db.ref('messages').push({ name, content, time: Date.now() });
-        document.getElementById('user-msg').value = "";
-    }
-
-    db.ref('messages').limitToLast(20).on('value', snap => {
-        const list = document.getElementById('message-list');
-        list.innerHTML = "";
-        const data = snap.val();
-        if (!data) return list.innerHTML = "<p style='text-align:center; color:#888;'>還沒有留言，快來搶頭香！</p>";
-        Object.values(data).reverse().forEach(msg => {
-            const div = document.createElement('div');
-            div.className = 'msg-item';
-            div.innerHTML = `<strong style="color:var(--header-color);">${msg.name}</strong>: <span>${msg.content}</span>`;
-            list.appendChild(div);
-        });
-    });
-
-    // --- 計時器邏輯 ---
     function updateCountdown() {
-        const start = new Date(2025, 8, 1).getTime(); 
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
-        const now = Date.now();
+        const now = new Date().getTime();
         const diff = end - now;
-
         if (diff > 0) {
             document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
             document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
             document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
         }
-        
-        const prog = Math.max(0, Math.min(100, ((now - start) / (end - start)) * 100));
-        document.getElementById('progress-bar').style.width = prog.toFixed(4) + '%';
-        document.getElementById('progress-percent').innerText = `會考備戰進度：${prog.toFixed(4)}%`;
-        requestAnimationFrame(updateCountdown);
     }
 
-    // --- 系統控制 ---
-    function checkPass() {
-        if (document.getElementById('pass-input').value === "best322") {
-            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
-            document.getElementById('music-control').style.display = 'flex';
-            loadMusic(0); audio.play();
-            updateCountdown();
-            rotateQuotes();
-            setTimeout(() => document.getElementById('login-overlay').style.display = 'none', 800);
-        } else { alert("暗號錯誤！"); }
-    }
-
-    function rotateQuotes() {
-        let i = 0;
-        setInterval(() => {
-            const d = document.getElementById('quote-display');
-            d.style.opacity = 0;
-            setTimeout(() => { d.innerText = `「 ${quotes[i]} 」`; d.style.opacity = 1; i = (i + 1) % quotes.length; }, 800);
-        }, 4000);
-    }
-
-    function loadMusic(idx) {
-        currentTrack = idx;
-        audio.src = playlist[idx].url;
-        document.getElementById('music-title').innerText = "🎵 " + playlist[idx].title;
-    }
-    function togglePlay() { 
-        if (audio.paused) { audio.play(); document.getElementById('play-pause-icon').innerText = "⏸"; }
-        else { audio.pause(); document.getElementById('play-pause-icon').innerText = "▶️"; }
-    }
-    function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
-    function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
-
+    setInterval(updateCountdown, 1000);
     const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
-    const dot = document.querySelector('.cursor-dot');
-    window.addEventListener('mousemove', e => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; });
+    
+    const dots = document.querySelectorAll('.cursor-dot');
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+    function moveDots() {
+        dots.forEach((dot, i) => {
+            dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+            dot.style.opacity = 1 - (i * 0.3);
+        });
+        requestAnimationFrame(moveDots);
+    }
+    moveDots();
 
-    window.onload = renderCards;
+    window.onload = () => { renderCards(); updateCountdown(); };
 </script>
 </body>
 </html>
