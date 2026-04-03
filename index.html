@@ -14,11 +14,14 @@
 
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-            background: var(--bg-gradient);
+            /* 擴大漸層範圍，讓動畫有空間跑 */
+            background: linear-gradient(-45deg, #e3f2fd, #bbdefb, #90caf9, #e1f5fe);
+            background-size: 400% 400%; 
+            animation: gradientBG 15s ease infinite; /* 15秒循環一次 */
             background-attachment: fixed;
             margin: 0;
             padding: 20px;
-        }
+                }
 
         header {
             text-align: center;
