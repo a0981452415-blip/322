@@ -34,16 +34,12 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
+        /* 流星延遲設定 */
         .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
-        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.8); }
-        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; animation-duration: 2.8s; }
-        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; transform: scale(1.2); }
-        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; animation-duration: 4.2s; }
-        .shooting-star:nth-child(6) { top: 25%; left: 50%; animation-delay: 3.2s; }
-        .shooting-star:nth-child(7) { top: 30%; left: 85%; animation-delay: 1.8s; transform: scale(0.7); }
-        .shooting-star:nth-child(8) { top: 40%; left: 70%; animation-delay: 5s; animation-duration: 3s; }
-        .shooting-star:nth-child(9) { top: 50%; left: 90%; animation-delay: 2.2s; }
-        .shooting-star:nth-child(10) { top: 5%; left: 100%; animation-delay: 6.5s; animation-duration: 4s; }
+        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; }
+        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
+        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; }
+        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; }
 
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
@@ -84,10 +80,9 @@
 
         .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
         
-        /* 留言區優化 */
         .msg-input-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
         .msg-top-row { display: flex; gap: 10px; }
-        .msg-top-row input#nickname-input { width: 100px; }
+        .msg-top-row input#nickname-input { width: 120px; }
         .msg-top-row input#msg-input { flex: 1; }
         .msg-input-area input { padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
         
@@ -108,7 +103,6 @@
 <body>
 
 <div class="night-sky">
-    <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
 </div>
 
@@ -178,26 +172,25 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 登入驗證 (SHA-256 加密版)
+    // 登入驗證 (SHA-256 版 - 密碼 best322)
     async function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
-        const password = input.value;
+        // 修正點：使用 trim() 去空格，並 toLowerCase() 統一轉小寫
+        const password = input.value.trim().toLowerCase(); 
 
-        // 計算輸入值的 SHA-256
         const msgUint8 = new TextEncoder().encode(password);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // "best322" 的雜湊值
         const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
 
         if (hashedInput === correctHash) {
             overlay.style.transform = "translateY(-100%)";
             shuffleSong();
         } else {
-            alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
+            alert("暗號錯誤！你是別班的憨包，我們是322的憨包");
             input.value = "";
         }
     }
@@ -206,11 +199,10 @@
     function sendMsg() {
         const msgInput = document.getElementById('msg-input');
         const nickInput = document.getElementById('nickname-input');
-        
         if (msgInput.value.trim() === "") return;
         
         const now = new Date();
-        const nickname = nickInput.value.trim() || "匿名憨包"; // 沒填就叫匿名憨包
+        const nickname = nickInput.value.trim() || "匿名憨包";
         
         db.ref('messages').push({
             name: nickname,
@@ -222,15 +214,17 @@
         msgInput.value = "";
     }
 
+    // 監聽留言
     db.ref('messages').limitToLast(20).on('value', (snapshot) => {
         const list = document.getElementById('msg-list');
         list.innerHTML = "";
         const data = snapshot.val();
         if (data) {
-            Object.values(data).reverse().forEach(msg => {
+            // 將留言依時間反轉顯示，最新的在上面
+            Object.keys(data).reverse().forEach(key => {
+                const msg = data[key];
                 const div = document.createElement('div');
                 div.className = 'msg-item';
-                // 讀取留言人的名字，如果是舊留言沒有名字欄位，則顯示「舊憨包」
                 const displayName = msg.name || "匿名憨包";
                 div.innerHTML = `<strong>${displayName}</strong> <small style="color:#888">${msg.time}</small><br><p style="margin:5px 0 0 0;">${msg.text}</p>`;
                 list.appendChild(div);
@@ -246,7 +240,7 @@
         document.getElementById('audio-source').src = songName;
         document.getElementById('song-title').innerText = "🎵 正在播放：" + songName;
         audio.load();
-        audio.play().catch(() => {});
+        audio.play().catch(e => console.log("自動播放被瀏覽器阻擋，需使用者互動後播放"));
     }
 
     // 滑鼠跟隨圓點
@@ -263,16 +257,16 @@
     }
     moveDots();
 
-    // 倒數計時
+    // 115 會考倒數
     function updateCountdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const now = new Date().getTime();
         const diff = end - now;
         if (diff < 0) return;
-        document.getElementById('days').innerText = Math.floor(diff / 86400000);
-        document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
-        document.getElementById('minutes').innerText = Math.floor((diff % 3600000) / 60000);
-        document.getElementById('seconds').innerText = Math.floor((diff % 60000) / 1000);
+        document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+        document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+        document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+        document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
     }
     setInterval(updateCountdown, 1000);
 
