@@ -272,7 +272,7 @@
         db.ref('likes/' + id).transaction(c => (c || 0) + 1);
         // 點讚驚喜：跳出幹話
         const randomQuote = ganHuaQuotes[Math.floor(Math.random() * ganHuaQuotes.length)];
-        alert("322 精神領袖表示：\n" + randomQuote);
+        alert("建志發言：\n" + randomQuote);
     }
 
     function checkPass() {
