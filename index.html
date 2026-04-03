@@ -86,7 +86,6 @@
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
         
-        /* 點讚按鈕與 IG 按鈕佈局 */
         .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; }
         
@@ -102,6 +101,12 @@
         .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
         .msg-list { max-height: 300px; overflow-y: auto; text-align: left; }
         .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); }
+
+        /* 進度條樣式 */
+        .progress-wrapper { margin: 20px 0; text-align: center; }
+        .progress-container { width: 100%; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-blue), #0288d1); transition: width 1.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); box-shadow: 0 0 15px var(--accent-blue); }
+        #progress-percent { color: #fff; font-weight: bold; font-size: 0.9rem; margin-top: 8px; display: block; text-shadow: 0 0 5px #000; }
 
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
@@ -134,8 +139,7 @@
     <div id="quote-display">「 加載憨包回憶中... 」</div>
 </header>
 
-<div class="container" id="members-container">
-    </div>
+<div class="container" id="members-container"></div>
 
 <div class="msg-board">
     <h3 style="color:var(--header-color); text-align:center;">322 留言板</h3>
@@ -148,6 +152,14 @@
 
 <div class="countdown-container">
     <h3 style="color:var(--header-color); text-align:center;">🎓 115 會考倒數計時</h3>
+    
+    <div class="progress-wrapper">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-fill"></div>
+        </div>
+        <span id="progress-percent">正在計算戰鬥進度...</span>
+    </div>
+
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>天</p></div>
         <div class="time-block"><span id="hours">00</span><p>時</p></div>
@@ -189,7 +201,6 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
 
-    // 動態生成卡片
     function renderCards() {
         const container = document.getElementById('members-container');
         members.forEach(m => {
@@ -211,7 +222,6 @@
             container.appendChild(card);
             observer.observe(card);
 
-            // 監聽該成員的讚數
             db.ref('likes/' + m.id).on('value', (snapshot) => {
                 const count = snapshot.val() || 0;
                 document.getElementById(`like-count-${m.id}`).innerText = count;
@@ -219,7 +229,6 @@
         });
     }
 
-    // 點讚功能
     function addLike(id) {
         const likeRef = db.ref('likes/' + id);
         likeRef.transaction((currentLikes) => {
@@ -227,7 +236,6 @@
         });
     }
 
-    // 322 專屬語錄資料
     const quotes = [
         "「走步哥：這球真的沒走步，是地心引力在抓我。」",
         "「妮塔：(露出充滿智慧的疑惑表情)」",
@@ -252,7 +260,6 @@
     }
     setInterval(updateQuote, 8000);
 
-    // 登入驗證
     function checkPass() {
         const input = document.getElementById('pass-input');
         const overlay = document.getElementById('login-overlay');
@@ -267,7 +274,6 @@
         }
     }
 
-    // 留言板功能
     function sendMsg() {
         const input = document.getElementById('msg-input');
         if (input.value.trim() === "") return;
@@ -294,7 +300,6 @@
         }
     });
 
-    // 隨機音樂播放
     const playlist = ["music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3", "music7.mp3", "music8.mp3", "music9.mp3", "music10.mp3"];
     function shuffleSong() {
         const audio = document.getElementById('bg-audio');
@@ -305,7 +310,6 @@
         audio.play().catch(() => {});
     }
 
-    // 滑鼠跟隨圓點
     const dots = document.querySelectorAll('.cursor-dot');
     let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
@@ -319,26 +323,37 @@
     }
     moveDots();
 
-    // 倒數計時
+    // 更新倒數計時與進度條
     function updateCountdown() {
-        const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
+        const start = new Date(2025, 8, 1).getTime(); // 九年級開學日 (2025/09/01)
+        const end = new Date(2026, 4, 16, 8, 0, 0).getTime(); // 會考日 (2026/05/16)
         const now = new Date().getTime();
+        
+        // 1. 更新倒數數字
         const diff = end - now;
-        if (diff < 0) return;
-        document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
-        document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-        document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        if (diff > 0) {
+            document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+            document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        }
+
+        // 2. 更新進度條
+        const totalDuration = end - start;
+        const elapsed = now - start;
+        const progress = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+        
+        document.getElementById('progress-bar').style.width = progress + '%';
+        document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
     }
     setInterval(updateCountdown, 1000);
 
-    // 卡片出現動畫
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
     });
 
     window.onload = () => { 
-        renderCards(); // 初始化生成卡片與點讚監聽
+        renderCards();
         updateCountdown(); 
     };
 </script>
