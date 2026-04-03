@@ -6,13 +6,13 @@
     <title>322 憨包們</title>
     <style>
         :root {
-            --header-color: #d4af37; /* 經典金 */
-            --gold-glow: #ffdf00;   /* 亮金 */
+            --header-color: #0288d1;
             --card-bg: rgba(255, 255, 255, 0.95);
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            --bg-gradient: linear-gradient(-45deg, #fdfbfb, #ebedee, #f1f2f3, #e1f5fe);
+            --bg-gradient: linear-gradient(-45deg, #e3f2fd, #bbdefb, #90caf9, #e1f5fe);
         }
 
+        /* 隱藏原生滑鼠以啟用自定義拖影 */
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background: var(--bg-gradient);
@@ -20,10 +20,13 @@
             animation: gradientBG 15s ease infinite; 
             background-attachment: fixed;
             margin: 0; padding: 20px; overflow-x: hidden;
-            cursor: none; /* 隱藏游標 */
+            cursor: none; /* 核心：隱藏預設游標 */
         }
 
-        a, button, .playlist-item { cursor: none; }
+        /* 確保按鈕與連結也隱藏游標 */
+        a, button, .playlist-item {
+            cursor: none;
+        }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -36,19 +39,18 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* --- 金色拖影樣式 --- */
+        /* --- 滑鼠拖影樣式 --- */
         .cursor-dot {
             width: 10px;
             height: 10px;
-            background: radial-gradient(circle, var(--gold-glow) 0%, var(--header-color) 100%);
+            background-color: var(--header-color);
             position: fixed;
             top: 0; left: 0;
             border-radius: 50%;
             pointer-events: none;
             z-index: 10001;
-            /* 金色發光效果 */
-            box-shadow: 0 0 10px var(--gold-glow), 0 0 20px var(--header-color);
-            filter: blur(0.5px);
+            /* 輕微模糊增加夢幻感 */
+            filter: blur(1px);
         }
 
         /* 歡迎層 */
@@ -65,12 +67,12 @@
             backdrop-filter: blur(10px);
         }
         .welcome-content button {
-            background: linear-gradient(45deg, var(--gold-glow), var(--header-color));
-            color: #4a3c00; border: none; padding: 15px 45px; border-radius: 50px;
+            background: linear-gradient(45deg, #4fc3f7, #0288d1);
+            color: white; border: none; padding: 15px 45px; border-radius: 50px;
             font-weight: bold; cursor: none; margin-top: 20px;
         }
 
-        /* --- 打字機樣式 --- */
+        /* --- 打字機效果樣式 --- */
         .typewriter-cursor {
             border-right: 3px solid var(--header-color);
             animation: blink 0.75s step-end infinite;
@@ -85,28 +87,61 @@
             overflow: hidden;
             white-space: nowrap;
             border-right: 4px solid var(--header-color);
-            animation: typing-header 2s steps(8, end), blink 0.75s step-end infinite;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            animation: 
+                typing-header 2s steps(8, end),
+                blink 0.75s step-end infinite;
         }
 
-        @keyframes typing-header { from { width: 0; } to { width: 100%; } }
-        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--header-color); } }
+        @keyframes typing-header {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--header-color); }
+        }
         
         .container {
             max-width: 1200px; margin: 0 auto;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 35px; padding: 20px 20px 100px;
         }
         
         .card {
-            --mouse-x: 50%; --mouse-y: 50%;
-            position: relative; background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; padding-bottom: 25px; 
+            --mouse-x: 50%;
+            --mouse-y: 50%;
+            position: relative;
+            background: var(--card-bg); border-radius: 24px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            text-align: center; padding-bottom: 25px; 
             opacity: 0; transform: translateY(40px);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2); }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(
+                circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.45) 0%, 
+                rgba(255, 255, 255, 0) 60%
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .card:hover::after { opacity: 1; }
+        .card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2);
+        }
         
         .photo-container { width: 100%; height: 350px; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
@@ -114,7 +149,7 @@
         
         .info { padding: 20px; }
         .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
-        .nickname-tag { display: inline-block; color: var(--header-color); background: #fffcf0; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; border: 1px solid #f9ebbe; }
+        .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
         .countdown-container {
@@ -122,7 +157,7 @@
             padding: 30px; border-radius: 30px; text-align: center;
         }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
-        .time-block { background: #fffcf0; padding: 15px 5px; border-radius: 15px; color: var(--header-color); border: 1px solid #f9ebbe; }
+        .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
 
         .music-player {
@@ -132,8 +167,8 @@
         }
         #playlist-menu { max-height: 100px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid #eee; }
         .playlist-item { padding: 5px; cursor: none; border-radius: 5px; }
-        .playlist-item.active { color: var(--header-color); font-weight: bold; background: #fffcf0; }
-        .music-controls button { cursor: none; border: none; background: #fffcf0; color: var(--header-color); border-radius: 8px; padding: 5px 10px; font-size: 0.7rem; }
+        .playlist-item.active { color: #0288d1; font-weight: bold; background: #e1f5fe; }
+        .music-controls button { cursor: none; border: none; background: #e1f5fe; color: #0288d1; border-radius: 8px; padding: 5px 10px; font-size: 0.7rem; }
 
         footer { text-align: center; padding: 40px; color: #546e7a; font-weight: bold; }
     </style>
@@ -153,8 +188,8 @@
 
 <div id="welcome-overlay">
     <div class="welcome-content">
-        <h1 style="color:var(--header-color)">歡迎來到 322</h1>
-        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.2rem; font-weight: 500; color: #666;"></p>
+        <h1>歡迎來到 322</h1>
+        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.2rem; font-weight: 500;"></p>
         <button onclick="closeWelcome()">點擊進入</button>
     </div>
 </div>
@@ -170,7 +205,8 @@
     <div class="card"><div class="photo-container"><img src="p6.jpg"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p7.jpg"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p8.jpg"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div></div>
-  <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">趙峻霆</div><span class="nickname-tag">鬍子哥</span><br><a href="https://www.instagram.com/venus_tt314" class="btn-ig">Instagram</a></div></div>
+    <div class="card"><div class="photo-container"><img src="p9.jpg"></div><div class="info"><div class="name">趙峻霆</div><span class="nickname-tag">鬍子哥</span><br><a href="https://www.instagram.com/venus_tt314" class="btn-ig">Instagram</a></div></div>
+
 </div>
 
 <div class="countdown-container">
@@ -185,7 +221,7 @@
 
 <div class="music-player">
     <div id="playlist-menu"></div>
-    <p id="song-title" style="margin:0 0 5px; font-size:0.75rem; color:var(--header-color); font-weight:bold;">🎵 準備播放...</p>
+    <p id="song-title" style="margin:0 0 5px; font-size:0.75rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
     <div class="music-controls">
         <button onclick="prevSong()">上</button>
@@ -197,7 +233,7 @@
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
-    // --- 拖影邏輯 (金色加強版) ---
+    // --- 拖影邏輯 (加強版) ---
     const dots = document.querySelectorAll('.cursor-dot');
     const mousePos = { x: -100, y: -100 };
     const dotCoords = Array.from({ length: dots.length }, () => ({ x: 0, y: 0 }));
@@ -213,14 +249,16 @@
 
         dots.forEach((dot, index) => {
             const coords = dotCoords[index];
+            
+            // 追趕效果：0.2 代表反應靈敏度
             coords.x += (targetX - coords.x) * 0.2;
             coords.y += (targetY - coords.y) * 0.2;
             
-            // 加入隨機微顫抖，營造金粉感
-            const jitter = (Math.random() - 0.5) * 2;
-            dot.style.transform = `translate3d(${coords.x + jitter}px, ${coords.y + jitter}px, 0) scale(${1 - index * 0.1})`;
+            // 使用 translate3d 提高渲染效能
+            dot.style.transform = `translate3d(${coords.x}px, ${coords.y}px, 0) scale(${1 - index * 0.1})`;
             dot.style.opacity = 1 - (index * 0.12);
 
+            // 下一個點追著目前的點跑
             targetX = coords.x;
             targetY = coords.y;
         });
@@ -228,7 +266,7 @@
     }
     updateCursorTrail();
 
-    // --- 打字機 JS ---
+    // --- 打字機 JS 函式 ---
     function runTypewriter(element, text, speed = 100) {
         let i = 0;
         element.innerHTML = '';
@@ -245,7 +283,7 @@
         type();
     }
 
-    // --- 流光卡片 ---
+    // --- 核心互動：座標流光 ---
     const cards = document.querySelectorAll('.card');
     cards.forEach(card => {
         card.addEventListener('mousemove', e => {
@@ -300,7 +338,7 @@
         loadSong(0); 
     }
 
-    // --- 背景粒子 ---
+    // --- 粒子特效 ---
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -311,7 +349,7 @@
         constructor() { this.reset(); }
         reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.vy = Math.random()*0.5+0.2; }
         update() { this.y += this.vy; if(this.y > canvas.height) this.reset(); }
-        draw() { ctx.fillStyle = "rgba(212, 175, 55, 0.2)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
+        draw() { ctx.fillStyle = "rgba(2, 136, 209, 0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
     }
 
     for(let i=0; i<60; i++) particles.push(new P());
@@ -333,8 +371,11 @@
     const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }), {threshold:0.1});
     
     window.onload = () => { 
-        renderMenu(); countdown(); cards.forEach(c => obs.observe(c)); 
-        runTypewriter(document.getElementById('welcome-desc'), "準備好看到一群憨包了嗎？", 120);
+        renderMenu(); 
+        countdown(); 
+        cards.forEach(c => obs.observe(c)); 
+        const welcomeDesc = document.getElementById('welcome-desc');
+        runTypewriter(welcomeDesc, "準備好看到一群憨包了嗎？", 120);
     };
 </script>
 </body>
