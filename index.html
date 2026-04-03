@@ -7,12 +7,12 @@
     <style>
         :root {
             --header-color: #0288d1;
+            --accent-blue: #4fc3f7;
             --card-bg: rgba(255, 255, 255, 0.95);
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             --bg-gradient: linear-gradient(-45deg, #e3f2fd, #bbdefb, #90caf9, #e1f5fe);
         }
 
-        /* 隱藏原生滑鼠以啟用自定義拖影 */
         body {
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             background: var(--bg-gradient);
@@ -20,13 +20,10 @@
             animation: gradientBG 15s ease infinite; 
             background-attachment: fixed;
             margin: 0; padding: 20px; overflow-x: hidden;
-            cursor: none; /* 核心：隱藏預設游標 */
+            cursor: none; 
         }
 
-        /* 確保按鈕與連結也隱藏游標 */
-        a, button, .playlist-item {
-            cursor: none;
-        }
+        a, button, .playlist-item { cursor: none; }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -39,145 +36,89 @@
             z-index: -2; pointer-events: none;
         }
 
-        /* --- 滑鼠拖影樣式 --- */
+        /* --- 登入系統 --- */
+        #login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 30000; background: var(--bg-gradient);
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1);
+        }
+        .login-box {
+            background: rgba(255, 255, 255, 0.9); padding: 50px; border-radius: 30px;
+            text-align: center; box-shadow: 0 15px 50px rgba(2, 136, 209, 0.2);
+            border: 2px solid var(--header-color); backdrop-filter: blur(10px);
+        }
+        .login-box input {
+            padding: 12px; width: 220px; border-radius: 12px;
+            border: 1px solid #ddd; margin: 20px 0;
+            font-size: 1.1rem; text-align: center; outline: none; cursor: none;
+        }
+        #login-error { color: #d32f2f; font-size: 0.9rem; display: none; margin-bottom: 10px; }
+
+        /* --- 藍色拖影 --- */
         .cursor-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--header-color);
-            position: fixed;
-            top: 0; left: 0;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            /* 輕微模糊增加夢幻感 */
-            filter: blur(1px);
+            width: 10px; height: 10px;
+            background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%);
+            position: fixed; top: 0; left: 0; border-radius: 50%;
+            pointer-events: none; z-index: 40000;
+            box-shadow: 0 0 12px var(--accent-blue);
         }
 
         /* 歡迎層 */
         #welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10000; transition: opacity 0.8s ease, visibility 0.8s;
+            z-index: 10000; transition: opacity 0.8s;
             display: flex; justify-content: center; align-items: center;
-            background: var(--bg-gradient); background-size: 400% 400%;
+            background: var(--bg-gradient);
         }
         #welcome-overlay.fade-out { opacity: 0; visibility: hidden; }
-        .welcome-content {
-            text-align: center; background: rgba(255, 255, 255, 0.9);
-            padding: 50px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px);
-        }
-        .welcome-content button {
-            background: linear-gradient(45deg, #4fc3f7, #0288d1);
-            color: white; border: none; padding: 15px 45px; border-radius: 50px;
-            font-weight: bold; cursor: none; margin-top: 20px;
-        }
-
-        /* --- 打字機效果樣式 --- */
-        .typewriter-cursor {
-            border-right: 3px solid var(--header-color);
-            animation: blink 0.75s step-end infinite;
-        }
 
         header { text-align: center; padding: 60px 0; }
-        header h1 { 
-            color: var(--header-color); 
-            font-size: 3.5rem; 
-            letter-spacing: 4px;
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            border-right: 4px solid var(--header-color);
-            animation: 
-                typing-header 2s steps(8, end),
-                blink 0.75s step-end infinite;
-        }
-
-        @keyframes typing-header {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-
-        @keyframes blink {
-            from, to { border-color: transparent; }
-            50% { border-color: var(--header-color); }
-        }
+        header h1 { color: var(--header-color); font-size: 3.5rem; letter-spacing: 4px; }
         
         .container {
             max-width: 1200px; margin: 0 auto;
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 35px; padding: 20px 20px 100px;
         }
         
         .card {
-            --mouse-x: 50%;
-            --mouse-y: 50%;
-            position: relative;
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-            text-align: center; padding-bottom: 25px; 
-            opacity: 0; transform: translateY(40px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; padding-bottom: 25px; 
+            opacity: 0; transform: translateY(40px); transition: 0.4s;
+            cursor: none;
         }
         .card.show { opacity: 1; transform: translateY(0); }
-
-        .card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(
-                circle at var(--mouse-x) var(--mouse-y), 
-                rgba(255, 255, 255, 0.45) 0%, 
-                rgba(255, 255, 255, 0) 60%
-            );
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .card:hover::after { opacity: 1; }
-        .card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2);
-        }
+        .card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(2, 136, 209, 0.2); }
         
         .photo-container { width: 100%; height: 350px; overflow: hidden; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .card:hover .photo-container img { transform: scale(1.05); }
         
-        .info { padding: 20px; }
-        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
-        .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
+        .name { font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 10px; margin-top: 15px;}
+        .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; }
 
-        .countdown-container {
-            max-width: 800px; margin: 0 auto 100px; background: var(--card-bg);
-            padding: 30px; border-radius: 30px; text-align: center;
-        }
+        .countdown-container { max-width: 800px; margin: 0 auto 100px; background: var(--card-bg); padding: 30px; border-radius: 30px; text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
-        .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
+        .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: var(--header-color); }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
-
-        .music-player {
-            position: fixed; bottom: 25px; right: 25px; width: 260px;
-            background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); backdrop-filter: blur(10px);
-        }
-        #playlist-menu { max-height: 100px; overflow-y: auto; font-size: 0.8rem; margin-bottom: 10px; border-bottom: 1px solid #eee; }
-        .playlist-item { padding: 5px; cursor: none; border-radius: 5px; }
-        .playlist-item.active { color: #0288d1; font-weight: bold; background: #e1f5fe; }
-        .music-controls button { cursor: none; border: none; background: #e1f5fe; color: #0288d1; border-radius: 8px; padding: 5px 10px; font-size: 0.7rem; }
-
+        .music-player { position: fixed; bottom: 25px; right: 25px; width: 260px; background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         footer { text-align: center; padding: 40px; color: #546e7a; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
-<div class="cursor-dot"></div>
+<div id="login-overlay">
+    <div class="login-box">
+        <h2 style="color:var(--header-color)">322憨包們</h2>
+        <p>請輸入通行暗號</p>
+        <input type="password" id="pass-input" placeholder="暗號是...">
+        <div id="login-error">密碼錯誤，你不是憨包！</div>
+        <br>
+        <button class="btn-ig" onclick="checkPass()">進入</button>
+    </div>
+</div>
+
 <div class="cursor-dot"></div>
 <div class="cursor-dot"></div>
 <div class="cursor-dot"></div>
@@ -188,29 +129,75 @@
 
 <div id="welcome-overlay">
     <div class="welcome-content">
-        <h1>歡迎來到 322</h1>
-        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.2rem; font-weight: 500;"></p>
-        <button onclick="closeWelcome()">點擊進入</button>
+        <h1 style="color:var(--header-color)">歡迎來到 322</h1>
+        <p id="welcome-desc" style="min-height: 1.5em; font-size: 1.1rem; color: #555;">322憨包們</p>
+        <button class="btn-ig" onclick="closeWelcome()">點擊進入</button>
     </div>
 </div>
 
 <header><h1>322 憨包們</h1></header>
 
 <div class="container">
-    <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p2.jpg"></div><div class="info"><div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br><a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p3.jpg"></div><div class="info"><div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br><a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p4.jpg"></div><div class="info"><div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br><a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p5.jpg"></div><div class="info"><div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br><a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p6.jpg"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p7.jpg"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p8.jpg"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a></div></div>
-    <div class="card"><div class="photo-container"><img src="p9.jpg"></div><div class="info"><div class="name">趙峻霆</div><span class="nickname-tag">鬍子哥</span><br><a href="https://www.instagram.com/venus_tt314" class="btn-ig">Instagram</a></div></div>
-
+    <div class="card">
+        <div class="photo-container"><img src="p1.jpg"></div>
+        <div class="info">
+            <div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br>
+            <a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p2.jpg"></div>
+        <div class="info">
+            <div class="name">林軒漢</div><span class="nickname-tag">妮塔</span><br>
+            <a href="https://www.instagram.com/linxuanhan97" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p3.jpg"></div>
+        <div class="info">
+            <div class="name">徐堃翔</div><span class="nickname-tag">高工候選人</span><br>
+            <a href="https://www.instagram.com/sean.hsu0930" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p4.jpg"></div>
+        <div class="info">
+            <div class="name">廖廷恩</div><span class="nickname-tag">大🍼野豬</span><br>
+            <a href="https://www.instagram.com/ed_331ie" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p5.jpg"></div>
+        <div class="info">
+            <div class="name">蔡承烜</div><span class="nickname-tag">雨傘哥</span><br>
+            <a href="https://www.instagram.com/pywb30" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p6.jpg"></div>
+        <div class="info">
+            <div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br>
+            <a href="https://www.instagram.com/jzh.10.1015" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p7.jpg"></div>
+        <div class="info">
+            <div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br>
+            <a href="https://www.instagram.com/hu.hu7557" class="btn-ig">Instagram</a>
+        </div>
+    </div>
+    <div class="card">
+        <div class="photo-container"><img src="p8.jpg"></div>
+        <div class="info">
+            <div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br>
+            <a href="https://www.instagram.com/a0981848508" class="btn-ig">Instagram</a>
+        </div>
+    </div>
 </div>
 
 <div class="countdown-container">
-    <h2 class="countdown-title">🎓 距離 115 會考還有</h2>
+    <h2 style="color:var(--header-color)">🎓 距離 115 會考還有</h2>
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>天</p></div>
         <div class="time-block"><span id="hours">00</span><p>時</p></div>
@@ -220,82 +207,50 @@
 </div>
 
 <div class="music-player">
-    <div id="playlist-menu"></div>
-    <p id="song-title" style="margin:0 0 5px; font-size:0.75rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
+    <div id="playlist-menu" style="max-height:80px; overflow-y:auto; font-size:0.7rem; margin-bottom:5px;"></div>
+    <p id="song-title" style="font-size:0.75rem; color:var(--header-color); font-weight:bold; margin:5px 0;">🎵 準備播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
-    <div class="music-controls">
-        <button onclick="prevSong()">上</button>
-        <button onclick="shuffleSong()">隨機</button>
-        <button onclick="nextSong()">下</button>
+    <div style="display:flex; gap:5px;">
+        <button onclick="prevSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">上</button>
+        <button onclick="shuffleSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">隨機</button>
+        <button onclick="nextSong()" style="flex:1; padding:5px; border-radius:5px; border:none; background:#e1f5fe; color:var(--header-color); font-size:0.7rem;">下</button>
     </div>
 </div>
 
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
-    // --- 拖影邏輯 (加強版) ---
+    function checkPass() {
+        if (document.getElementById('pass-input').value === "322") { 
+            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
+            setTimeout(() => { runTypewriter(document.getElementById('welcome-desc'), "準備好看到這群藍色的憨包了嗎？", 80); }, 600);
+        } else { document.getElementById('login-error').style.display = "block"; }
+    }
+
     const dots = document.querySelectorAll('.cursor-dot');
     const mousePos = { x: -100, y: -100 };
     const dotCoords = Array.from({ length: dots.length }, () => ({ x: 0, y: 0 }));
-
-    window.addEventListener('mousemove', (e) => {
-        mousePos.x = e.clientX;
-        mousePos.y = e.clientY;
-    });
-
+    window.addEventListener('mousemove', (e) => { mousePos.x = e.clientX; mousePos.y = e.clientY; });
     function updateCursorTrail() {
-        let targetX = mousePos.x;
-        let targetY = mousePos.y;
-
+        let targetX = mousePos.x; let targetY = mousePos.y;
         dots.forEach((dot, index) => {
             const coords = dotCoords[index];
-            
-            // 追趕效果：0.2 代表反應靈敏度
-            coords.x += (targetX - coords.x) * 0.2;
-            coords.y += (targetY - coords.y) * 0.2;
-            
-            // 使用 translate3d 提高渲染效能
-            dot.style.transform = `translate3d(${coords.x}px, ${coords.y}px, 0) scale(${1 - index * 0.1})`;
-            dot.style.opacity = 1 - (index * 0.12);
-
-            // 下一個點追著目前的點跑
-            targetX = coords.x;
-            targetY = coords.y;
+            coords.x += (targetX - coords.x) * 0.25; coords.y += (targetY - coords.y) * 0.25;
+            dot.style.transform = `translate3d(${coords.x}px, ${coords.y}px, 0) scale(${1 - index * 0.12})`;
+            dot.style.opacity = 1 - (index * 0.18);
+            targetX = coords.x; targetY = coords.y;
         });
         requestAnimationFrame(updateCursorTrail);
     }
     updateCursorTrail();
 
-    // --- 打字機 JS 函式 ---
-    function runTypewriter(element, text, speed = 100) {
-        let i = 0;
-        element.innerHTML = '';
-        element.classList.add('typewriter-cursor');
-        function type() {
-            if (i < text.length) {
-                element.innerHTML += text.charAt(i);
-                i++;
-                setTimeout(type, speed);
-            } else {
-                setTimeout(() => { element.classList.remove('typewriter-cursor'); }, 3000);
-            }
-        }
+    function runTypewriter(element, text, speed) {
+        let i = 0; element.innerHTML = '';
+        function type() { if (i < text.length) { element.innerHTML += text.charAt(i); i++; setTimeout(type, speed); } }
         type();
     }
 
-    // --- 核心互動：座標流光 ---
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const rect = card.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            card.style.setProperty('--mouse-x', `${x}%`);
-            card.style.setProperty('--mouse-y', `${y}%`);
-        });
-    });
-
-    // --- 音樂邏輯 ---
+    // 音樂清單
     const playlist = [
         { title: "海嶼你", file: "music1.mp3" }, { title: "宗翰獨特品味", file: "music2.mp3" },
         { title: "擊敗人", file: "music3.mp3" }, { title: "步步", file: "music4.mp3" },
@@ -303,60 +258,21 @@
         { title: "軒漢獨特品味", file: "music7.mp3" }, { title: "擱淺", file: "music8.mp3" },
         { title: "浪子回頭", file: "music9.mp3" }, { title: "浪流蓮", file: "music10.mp3" }
     ];
-
-    let currentSongIndex = 0;
+    let currentIdx = 0;
     const audio = document.getElementById('bg-audio');
     const source = document.getElementById('audio-source');
-    const titleDisplay = document.getElementById('song-title');
-    const menu = document.getElementById('playlist-menu');
-
-    function renderMenu() {
-        menu.innerHTML = '';
-        playlist.forEach((song, i) => {
-            const item = document.createElement('div');
-            item.className = `playlist-item ${i === currentSongIndex ? 'active' : ''}`;
-            item.innerText = `${i + 1}. ${song.title}`;
-            item.onclick = () => loadSong(i);
-            menu.appendChild(item);
-        });
-    }
 
     function loadSong(i) {
-        currentSongIndex = i;
-        source.src = playlist[i].file;
-        titleDisplay.innerText = "🎵：" + playlist[i].title;
-        renderMenu();
-        audio.load();
-        audio.play().catch(e => {});
+        currentIdx = i; source.src = playlist[i].file;
+        document.getElementById('song-title').innerText = "🎵：" + playlist[i].title;
+        audio.load(); audio.play().catch(e=>{});
     }
-
-    function nextSong() { loadSong((currentSongIndex + 1) % playlist.length); }
-    function prevSong() { loadSong((currentSongIndex - 1 + playlist.length) % playlist.length); }
+    function nextSong() { loadSong((currentIdx + 1) % playlist.length); }
+    function prevSong() { loadSong((currentIdx - 1 + playlist.length) % playlist.length); }
     function shuffleSong() { loadSong(Math.floor(Math.random() * playlist.length)); }
-    function closeWelcome() { 
-        document.getElementById('welcome-overlay').classList.add('fade-out'); 
-        loadSong(0); 
-    }
 
-    // --- 粒子特效 ---
-    const canvas = document.getElementById('bg-canvas');
-    const ctx = canvas.getContext('2d');
-    let particles = [];
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.onresize = resize; resize();
+    function closeWelcome() { document.getElementById('welcome-overlay').classList.add('fade-out'); loadSong(0); }
 
-    class P {
-        constructor() { this.reset(); }
-        reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.vy = Math.random()*0.5+0.2; }
-        update() { this.y += this.vy; if(this.y > canvas.height) this.reset(); }
-        draw() { ctx.fillStyle = "rgba(2, 136, 209, 0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
-    }
-
-    for(let i=0; i<60; i++) particles.push(new P());
-    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
-    anim();
-
-    // --- 倒數計時 ---
     function countdown() {
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
         const diff = end - new Date().getTime();
@@ -368,15 +284,24 @@
     }
     setInterval(countdown, 1000);
 
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.onresize = resize; resize();
+    class P {
+        constructor() { this.reset(); }
+        reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.s = Math.random()*2+1; this.vy = Math.random()*0.5+0.2; }
+        update() { this.y += this.vy; if(this.y > canvas.height) this.reset(); }
+        draw() { ctx.fillStyle = "rgba(2, 136, 209, 0.3)"; ctx.beginPath(); ctx.arc(this.x, this.y, this.s, 0, Math.PI*2); ctx.fill(); }
+    }
+    for(let i=0; i<60; i++) particles.push(new P());
+    function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
+    anim();
+
     const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('show'); }), {threshold:0.1});
-    
-    window.onload = () => { 
-        renderMenu(); 
-        countdown(); 
-        cards.forEach(c => obs.observe(c)); 
-        const welcomeDesc = document.getElementById('welcome-desc');
-        runTypewriter(welcomeDesc, "準備好看到一群憨包了嗎？", 120);
-    };
+    window.onload = () => { document.querySelectorAll('.card').forEach(c => obs.observe(c)); countdown(); };
+    document.getElementById('pass-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPass(); });
 </script>
 </body>
 </html>
