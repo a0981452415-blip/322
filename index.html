@@ -37,7 +37,7 @@
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 登入驗證層 (打字機效果優化) --- */
+        /* --- 登入驗證層 (打字機效果) --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 60000; background: var(--bg-gradient);
@@ -51,20 +51,17 @@
             color: white;
         }
 
-        /* 打字機動畫設定 */
         .typewriter-text {
-            font-family: 'Courier New', Courier, monospace; /* 使用等寬字體更有打字感 */
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden; 
-            border-right: .15em solid var(--accent-blue); /* 光標 */
+            border-right: .15em solid var(--accent-blue);
             white-space: nowrap; 
             margin: 0 auto 20px; 
             letter-spacing: .15em; 
             width: 0;
             font-size: 1.8rem;
             font-weight: bold;
-            animation: 
-                typing 2s steps(10, end) forwards,
-                blink-caret .75s step-end infinite;
+            animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite;
         }
 
         @keyframes typing { from { width: 0 } to { width: 100% } }
@@ -76,7 +73,6 @@
             padding: 12px; width: 220px; border-radius: 12px;
             border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none;
         }
-        .login-box input::placeholder { color: rgba(255,255,255,0.5); }
 
         /* --- 介面組件 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
@@ -87,6 +83,7 @@
         #quote-display {
             color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px;
             transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+            font-weight: 500;
         }
         
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
@@ -111,11 +108,7 @@
         .like-box:active { transform: scale(1.2); }
 
         .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
-        .msg-list { max-height: 300px; overflow-y: auto; text-align: left; }
-        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); }
-
+        
         /* 進度條樣式 */
         .progress-wrapper { margin: 20px 0; text-align: center; }
         .progress-container { width: 100%; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; position: relative; box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
@@ -125,8 +118,6 @@
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
         .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
-
-        .music-player { position: fixed; bottom: 20px; right: 20px; width: 260px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 24px; z-index: 50000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--accent-blue); }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         a, button, input, .like-box { cursor: none !important; }
@@ -157,15 +148,6 @@
 
 <div class="container" id="members-container"></div>
 
-<div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">322 留言板</h3>
-    <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="發個牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
-        <button class="btn-ig" onclick="sendMsg()">發出牢騷</button>
-    </div>
-    <div id="msg-list" class="msg-list"></div>
-</div>
-
 <div class="countdown-container">
     <h3 style="color:var(--header-color); text-align:center;">🎓 115 會考倒數計時</h3>
     
@@ -184,14 +166,8 @@
     </div>
 </div>
 
-<div class="music-player">
-    <p id="song-title" style="font-size:0.85rem; font-weight:800; color:#01579b; margin:0 0 10px 0;">🎵 準備播放...</p>
-    <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
-    <button onclick="shuffleSong()" style="width:100%; border:none; background:#e1f5fe; color:#0288d1; padding:8px; border-radius:12px; font-weight:bold;">換一首隨機音樂</button>
-</div>
-
 <script>
-    // --- 這裡放你原本的所有 Firebase 初始化與邏輯 ---
+    // --- Firebase 配置 ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -204,6 +180,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // --- 幹話語錄庫 ---
+    const ganHuaQuotes = [
+        "雖然我們是憨包，但我們是全校最帥的憨包。",
+        "會考不可怕，可怕的是考完大家都在笑，只有我在哭。",
+        "只要我不尷尬，尷尬的就是飲水機。",
+        "籃球可以不進，但姿勢一定要帥；書可以不讀，但手機一定要帶。",
+        "322 的情義，就像福利社的泡麵——又香又燙。",
+        "今天不讀書，明天變大豬。",
+        "考卷發下來，除了名字其他都是陌生人。",
+        "老師在講我在聽，但我聽的是心碎的聲音。"
+    ];
+
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
@@ -215,6 +203,20 @@
         { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg" },
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
+
+    // --- 功能邏輯 ---
+    function rotateQuotes() {
+        const display = document.getElementById('quote-display');
+        let index = 0;
+        setInterval(() => {
+            display.style.opacity = 0;
+            setTimeout(() => {
+                display.innerText = `「 ${ganHuaQuotes[index]} 」`;
+                display.style.opacity = 1;
+                index = (index + 1) % ganHuaQuotes.length;
+            }, 800);
+        }, 4000);
+    }
 
     function renderCards() {
         const container = document.getElementById('members-container');
@@ -243,6 +245,9 @@
 
     function addLike(id) {
         db.ref('likes/' + id).transaction(c => (c || 0) + 1);
+        // 點讚驚喜：跳出幹話
+        const randomQuote = ganHuaQuotes[Math.floor(Math.random() * ganHuaQuotes.length)];
+        alert("322 精神領袖表示：\n" + randomQuote);
     }
 
     function checkPass() {
@@ -251,14 +256,13 @@
         if (input.value === "best322") { 
             overlay.style.transform = "translateY(-100%)";
             setTimeout(() => { overlay.style.display = 'none'; }, 800);
-            shuffleSong();
+            rotateQuotes(); // 登入後開始播幹話
         } else {
             alert("暗號錯誤!");
             input.value = "";
         }
     }
 
-    // 更新倒數與進度條
     function updateCountdown() {
         const start = new Date(2025, 8, 1).getTime();
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
@@ -271,14 +275,14 @@
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
         }
         const progress = Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
-        document.getElementById('progress-bar').style.width = progress + '%';
+        const bar = document.getElementById('progress-bar');
+        if(bar) bar.style.width = progress + '%';
         document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
     }
 
     setInterval(updateCountdown, 1000);
     const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
     
-    // 滑鼠圓點邏輯
     const dots = document.querySelectorAll('.cursor-dot');
     let mx = 0, my = 0;
     window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
