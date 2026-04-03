@@ -13,7 +13,8 @@
             --accent-blue: #4fc3f7;
             --card-bg: rgba(255, 255, 255, 0.85);
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-            --bg-gradient: linear-gradient(-45deg, #0d1b2a, #1b263b, #415a77, #1b263b); /* 改深色一點讓流星更亮 */
+            /* 深邃夜空漸層 */
+            --bg-gradient: linear-gradient(-45deg, #050b14, #101d2d, #1a2c42, #050b14); 
         }
 
         body {
@@ -26,41 +27,45 @@
             cursor: none; 
         }
 
-        /* --- 流星特效 CSS --- */
+        /* --- 強化版流星雨 CSS --- */
         .night-sky {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 1;
         }
 
         .shooting-star {
-            position: absolute; left: 50%; top: 50%; height: 2px;
-            background: linear-gradient(-45deg, #5f91ff, rgba(0, 0, 255, 0));
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
+            filter: drop-shadow(0 0 6px #ffffff);
             border-radius: 999px;
-            filter: drop-shadow(0 0 6px #699bff);
-            animation: tail 3000ms ease-in-out infinite, shooting 3000ms ease-in-out infinite;
             opacity: 0;
+            animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
-        .shooting-star::before, .shooting-star::after {
-            content: ''; position: absolute; top: calc(50% - 1px); right: 0;
-            height: 2px; background: linear-gradient(-45deg, rgba(0, 0, 255, 0), #5f91ff, rgba(0, 0, 255, 0));
-            transform: translateX(50%) rotateZ(45deg); border-radius: 100%;
-            animation: shining 3000ms ease-in-out infinite;
+        /* 每一顆流星設定不同的位置、大小與速度 */
+        .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
+        .shooting-star:nth-child(2) { top: 10%; left: 60%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.8); }
+        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; animation-duration: 2.8s; }
+        .shooting-star:nth-child(4) { top: 5%; left: 40%; animation-delay: 4s; transform: scale(1.2); }
+        .shooting-star:nth-child(5) { top: 15%; left: 75%; animation-delay: 0.5s; animation-duration: 4.2s; }
+        .shooting-star:nth-child(6) { top: 25%; left: 50%; animation-delay: 3.2s; }
+        .shooting-star:nth-child(7) { top: 30%; left: 85%; animation-delay: 1.8s; transform: scale(0.7); }
+        .shooting-star:nth-child(8) { top: 40%; left: 70%; animation-delay: 5s; animation-duration: 3s; }
+        .shooting-star:nth-child(9) { top: 50%; left: 90%; animation-delay: 2.2s; }
+        .shooting-star:nth-child(10) { top: 5%; left: 100%; animation-delay: 6s; animation-duration: 4s; }
+
+        @keyframes tail { 
+            0% { width: 0; } 
+            30% { width: 120px; } 
+            100% { width: 0; } 
         }
 
-        .shooting-star::after { transform: translateX(50%) rotateZ(-45deg); }
-
-        /* 流星各別隨機位置與延遲 */
-        .shooting-star:nth-child(1) { top: 10%; left: 80%; animation-delay: 0ms; }
-        .shooting-star:nth-child(2) { top: 30%; left: 90%; animation-delay: 1500ms; animation-duration: 3500ms; }
-        .shooting-star:nth-child(3) { top: 50%; left: 70%; animation-delay: 4000ms; }
-        .shooting-star:nth-child(4) { top: 15%; left: 60%; animation-delay: 6000ms; animation-duration: 4000ms; }
-        .shooting-star:nth-child(5) { top: 70%; left: 85%; animation-delay: 2500ms; }
-
-        @keyframes tail { 0% { width: 0; } 30% { width: 100px; } 100% { width: 0; } }
-        @keyframes shining { 0% { width: 0; } 50% { width: 30px; } 100% { width: 0; } }
-        @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-800px) translateY(800px) rotateZ(-45deg); opacity: 0; } }
-        /* --- 流星結束 --- */
+        @keyframes shooting { 
+            0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 
+            100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } 
+        }
+        /* --- 流星雨結束 --- */
 
         a, button, .playlist-item, input { cursor: none; }
 
@@ -78,14 +83,13 @@
         }
         .login-box {
             background: rgba(255, 255, 255, 0.9); padding: 50px; border-radius: 30px;
-            text-align: center; box-shadow: 0 15px 50px rgba(2, 136, 209, 0.2);
+            text-align: center; box-shadow: 0 15px 50px rgba(79, 195, 247, 0.3);
             border: 2px solid var(--header-color); backdrop-filter: blur(10px);
         }
         .login-box input {
             padding: 12px; width: 220px; border-radius: 12px;
             border: 1px solid #ddd; margin: 20px 0;
             font-size: 1.1rem; text-align: center; outline: none;
-            transition: all 0.3s ease;
         }
 
         .cursor-dot {
@@ -97,7 +101,7 @@
         }
 
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
-        header h1 { color: #fff; font-size: 3rem; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(79, 195, 247, 0.5); }
+        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
         
         .container {
             position: relative; z-index: 10;
@@ -108,36 +112,34 @@
         
         .card {
             background: var(--card-bg); border-radius: 24px; overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05); text-align: center; padding-bottom: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; 
             opacity: 0; transform: translateY(40px);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.4);
         }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-15px) scale(1.03); box-shadow: 0 20px 40px rgba(79, 195, 247, 0.3); background: rgba(255, 255, 255, 1); }
+        .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: rgba(255, 255, 255, 1); }
 
         .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; position: relative; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-        .card:hover .photo-container img { transform: scale(1.1); }
+        .card:hover .photo-container img { transform: scale(1.15); }
 
-        .name { font-size: 1.5rem; font-weight: 800; margin-top: 15px; color: #333; }
-        .nickname-tag { display: inline-block; color: var(--header-color); background: #e1f5fe; padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-family: inherit; transition: opacity 0.3s; cursor: none; }
+        .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
+        .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
+        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; transition: 0.3s; }
         
-        .msg-board, .countdown-container { position: relative; z-index: 10; }
-        .msg-board { max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
+        .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
         .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
         .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
         .msg-list { max-height: 300px; overflow-y: auto; }
-        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--header-color); text-align: left;}
+        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); text-align: left;}
 
-        .countdown-container { max-width: 700px; margin: 0 auto 100px; background: var(--card-bg); padding: 20px; border-radius: 25px; text-align: center; backdrop-filter: blur(10px); }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .time-block { background: #e1f5fe; padding: 10px; border-radius: 12px; }
-        .time-block span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--header-color); }
+        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
+        .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
         
-        .music-player { position: fixed; bottom: 20px; right: 20px; width: 240px; background: rgba(255,255,255,0.9); padding: 15px; border-radius: 20px; z-index: 9999; box-shadow: 0 5px 15px rgba(0,0,0,0.1); backdrop-filter: blur(5px); }
+        .music-player { position: fixed; bottom: 20px; right: 20px; width: 260px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 24px; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(5px); border: 1px solid var(--accent-blue); }
     </style>
 </head>
 <body>
@@ -148,19 +150,24 @@
     <div class="shooting-star"></div>
     <div class="shooting-star"></div>
     <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
 </div>
 
 <div id="login-overlay">
     <div class="login-box">
-        <h2 style="color:var(--header-color)">322入口</h2>
+        <h2 style="color:var(--header-color)">322</h2>
         <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">進入322</button>
+        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
     </div>
 </div>
 
 <div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div><div class="cursor-dot"></div>
 
-<header><h1>322 憨包們</h1></header>
+<header><h1>✨ 322 憨包們 ✨</h1></header>
 
 <div class="container">
     <div class="card"><div class="photo-container"><img src="p1.jpg"></div><div class="info"><div class="name">黃崇瑋</div><span class="nickname-tag">走步哥</span><br><a href="https://www.instagram.com/bennynyhuang" class="btn-ig">Instagram</a></div></div>
@@ -174,16 +181,16 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">💬 322聊天室</h3>
+    <h3 style="color:var(--header-color); text-align:center;">💬留言板</h3>
     <div class="msg-input-area">
         <input type="text" id="msg-input" placeholder="發點牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
-        <button class="btn-ig" onclick="sendMsg()">發送</button>
+        <button class="btn-ig" onclick="sendMsg()">發出牢騷</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
 </div>
 
 <div class="countdown-container">
-    <h3 style="color:var(--header-color)">🎓 115 會考倒數</h3>
+    <h3 style="color:var(--header-color)">🎓 115 會考倒數計時</h3>
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>天</p></div>
         <div class="time-block"><span id="hours">00</span><p>時</p></div>
@@ -193,13 +200,12 @@
 </div>
 
 <div class="music-player">
-    <p id="song-title" style="font-size:0.8rem; margin:0 0 10px 0;">🎵 待播放...</p>
+    <p id="song-title" style="font-size:0.85rem; font-weight:bold; color:#0288d1; margin:0 0 10px 0;">🎵 準備播放...</p>
     <audio id="bg-audio"><source id="audio-source" src="music1.mp3"></audio>
-    <button onclick="shuffleSong()" style="width:100%; border:none; background:#eee; padding:5px; border-radius:5px;">隨機播放</button>
+    <button onclick="shuffleSong()" style="width:100%; border:none; background:#e1f5fe; color:#0288d1; padding:8px; border-radius:12px; font-weight:bold;">換一首隨機音樂</button>
 </div>
 
 <script>
-    // Firebase 配置 (保持不變)
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -221,18 +227,8 @@
             shuffleSong();
         } else {
             input.style.border = "2px solid #ff5252";
-            input.style.backgroundColor = "#ffebee";
-            input.animate([
-                { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' },
-                { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' },
-                { transform: 'translateX(0)' }
-            ], { duration: 300 });
-            alert("回答錯誤 你不是憨包");
-            input.value = "";
-            setTimeout(() => {
-                input.style.border = "1px solid #ddd";
-                input.style.backgroundColor = "#fff";
-            }, 1000);
+            input.animate([{ transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(0)' }], { duration: 300 });
+            alert("暗號錯誤！");
         }
     }
 
@@ -266,10 +262,9 @@
     let mouseX = 0, mouseY = 0;
     window.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; });
     function moveDots() {
-        let x = mouseX, y = mouseY;
         dots.forEach((dot, index) => {
-            dot.style.left = x + 'px';
-            dot.style.top = y + 'px';
+            dot.style.left = mouseX + 'px';
+            dot.style.top = mouseY + 'px';
             dot.style.opacity = 1 - (index * 0.2);
         });
         requestAnimationFrame(moveDots);
@@ -291,9 +286,9 @@
     const playlist = ["music1.mp3", "music2.mp3", "music3.mp3", "music4.mp3", "music5.mp3", "music6.mp3", "music7.mp3", "music8.mp3", "music9.mp3", "music10.mp3"];
     function shuffleSong() {
         const audio = document.getElementById('bg-audio');
-        const song = playlist[Math.floor(Math.random() * playlist.length)];
-        document.getElementById('audio-source').src = song;
-        document.getElementById('song-title').innerText = "🎵 正在播放：" + song;
+        const songName = playlist[Math.floor(Math.random() * playlist.length)];
+        document.getElementById('audio-source').src = songName;
+        document.getElementById('song-title').innerText = "🎵 正在播放：" + songName;
         audio.load();
         audio.play().catch(() => {});
     }
