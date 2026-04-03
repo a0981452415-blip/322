@@ -27,6 +27,17 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* 畫布容器：放在所有內容最後面 */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2; /* 確保在氣泡後面 */
+            pointer-events: none;
+        }
+
         /* 歡迎層 */
         #welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -98,7 +109,6 @@
         .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; }
         #progress-fill { background: linear-gradient(90deg, #4fc3f7, #0288d1); width: 0%; height: 100%; transition: width 1s ease-out; }
 
-        /* 播放器美化 */
         .music-player {
             position: fixed; bottom: 25px; right: 25px; width: 260px;
             background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 24px; z-index: 9999;
@@ -130,6 +140,8 @@
     </style>
 </head>
 <body>
+
+<canvas id="bg-canvas"></canvas>
 
 <div id="welcome-overlay">
     <div class="welcome-content">
@@ -207,7 +219,6 @@
     const titleDisplay = document.getElementById('song-title');
     const menu = document.getElementById('playlist-menu');
 
-    // 生成選單
     function renderMenu() {
         menu.innerHTML = '';
         playlist.forEach((song, index) => {
@@ -223,7 +234,7 @@
         currentSongIndex = index;
         source.src = playlist[index].file;
         titleDisplay.innerText = "🎵 正在播放：" + playlist[index].title;
-        renderMenu(); // 更新選單的高亮狀態
+        renderMenu();
         audio.load();
         audio.play().catch(() => {});
     }
@@ -251,13 +262,62 @@
 
     audio.addEventListener('ended', nextSong);
 
-    // 初始載入
+    // --- 背景粒子特效邏輯 ---
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 3 + 1;
+            this.speedX = Math.random() * 0.6 - 0.3;
+            this.speedY = Math.random() * 0.4 + 0.1;
+            this.opacity = Math.random() * 0.5 + 0.1;
+        }
+        update() {
+            this.y += this.speedY;
+            this.x += this.speedX;
+            if (this.y > canvas.height) this.reset();
+        }
+        draw() {
+            ctx.fillStyle = `rgba(2, 136, 209, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    function initParticles() {
+        particles = [];
+        for (let i = 0; i < 70; i++) { particles.push(new Particle()); }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    initParticles();
+    animate();
+    // -----------------------
+
     window.onload = function() {
         renderMenu();
         updateExamCountdown();
     };
 
-    // 其他原本的功能 (IntersectionObserver, Countdown)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
