@@ -39,7 +39,7 @@
         .welcome-content {
             text-align: center; background: rgba(255, 255, 255, 0.9);
             padding: 50px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-            backdrop-filter: blur(10px); animation: slideInWelcome 1s ease-out; max-width: 80%;
+            backdrop-filter: blur(10px); max-width: 80%;
         }
         .welcome-content button {
             background: linear-gradient(45deg, #4fc3f7, #0288d1);
@@ -60,7 +60,6 @@
             100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
         }
 
-        /* 佈局與卡片 */
         header { text-align: center; padding: 60px 0; }
         header h1 { color: var(--header-color); font-size: 3.5rem; letter-spacing: 4px; }
         
@@ -83,24 +82,21 @@
         .nickname-tag { display: inline-block; color: #0288d1; background: #e1f5fe; padding: 5px 18px; border-radius: 12px; margin-bottom: 20px; font-weight: 600; }
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 12px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; }
 
-        /* 倒數計時與進度條 */
         .countdown-container {
             max-width: 800px; margin: 40px auto 100px; background: var(--card-bg);
-            backdrop-filter: blur(10px); padding: 30px; border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
+            padding: 30px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
         }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
         .time-block { background: #e1f5fe; padding: 15px 5px; border-radius: 15px; color: #0288d1; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; }
-        
         .progress-wrapper { margin-top: 25px; padding: 0 10px; }
         .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 10px; overflow: hidden; }
         #progress-fill { background: linear-gradient(90deg, #4fc3f7, #0288d1); width: 0%; height: 100%; transition: width 1s ease-out; }
 
-        /* 音樂播放器 */
         .music-player {
             position: fixed; bottom: 25px; right: 25px;
             background: rgba(255, 255, 255, 0.85); padding: 15px; border-radius: 24px; z-index: 9999;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         @media (max-width: 768px) {
@@ -138,7 +134,9 @@
     <div class="card"><div class="photo-container"><img src="p6.jpg" alt="簡宗翰"></div><div class="info"><div class="name">簡宗翰</div><span class="nickname-tag">養身籃球</span><br><a href="https://www.instagram.com/jzh.10.1015" target="_blank" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p7.jpg" alt="鄭子恩"></div><div class="info"><div class="name">鄭子恩</div><span class="nickname-tag">導演</span><br><a href="https://www.instagram.com/hu.hu7557" target="_blank" class="btn-ig">Instagram</a></div></div>
     <div class="card"><div class="photo-container"><img src="p8.jpg" alt="陳緯哲"></div><div class="info"><div class="name">陳緯哲</div><span class="nickname-tag">崇瑋 軒漢父親</span><br><a href="https://www.instagram.com/a0981848508" target="_blank" class="btn-ig">Instagram</a></div></div>
-</div>
+
+    </div>
+
 <div class="countdown-container">
     <h2 class="countdown-title">🎓 距離 115 會考還有</h2>
     <div id="timer" class="timer-grid">
@@ -148,26 +146,61 @@
         <div class="time-block"><span id="seconds">00</span><p>秒</p></div>
     </div>
     <div class="progress-wrapper">
-        <div class="progress-bar-bg">
-            <div id="progress-fill"></div>
-        </div>
+        <div class="progress-bar-bg"><div id="progress-fill"></div></div>
         <p id="progress-text" style="margin-top:8px; font-size:0.85rem; color:#546e7a; font-weight:bold;">計算中...</p>
     </div>
 </div>
 
 <div class="music-player">
-    <p style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 憨包崇瑋電腦課外放歌曲</p>
-    <audio id="bg-audio" controls loop><source src="music.mp3" type="audio/mpeg"></audio>
+    <p id="song-title" style="margin:0 0 8px; font-size:0.8rem; color:#0288d1; font-weight:bold;">🎵 準備播放...</p>
+    <audio id="bg-audio" controls><source id="audio-source" src="music1.mp3" type="audio/mpeg"></audio>
+    <div style="margin-top: 8px; display: flex; gap: 5px; justify-content: center;">
+        <button onclick="prevSong()" style="cursor:pointer; border:none; background:#e1f5fe; color:#0288d1; border-radius:12px; padding:5px 15px; font-weight:bold;">上一首</button>
+        <button onclick="nextSong()" style="cursor:pointer; border:none; background:#e1f5fe; color:#0288d1; border-radius:12px; padding:5px 15px; font-weight:bold;">下一首</button>
+    </div>
 </div>
 
 <footer>&copy; 2026 322 Class Official Website</footer>
 
 <script>
-    function closeWelcome() {
-        document.getElementById('welcome-overlay').classList.add('fade-out');
-        document.getElementById('bg-audio').play().catch(() => {});
+    // 播放清單設定
+    const playlist = [
+        { title: "憨包主題曲", file: "music1.mp3" },
+        { title: "電腦課外放曲", file: "music2.mp3" },
+        { title: "會考衝刺 BGM", file: "music3.mp3" }
+    ];
+
+    let currentSongIndex = 0;
+    const audio = document.getElementById('bg-audio');
+    const source = document.getElementById('audio-source');
+    const titleDisplay = document.getElementById('song-title');
+
+    function loadSong(index) {
+        currentSongIndex = index;
+        source.src = playlist[index].file;
+        titleDisplay.innerText = "🎵 正在播放：" + playlist[index].title;
+        audio.load();
+        audio.play().catch(() => {});
     }
 
+    function nextSong() {
+        currentSongIndex = (currentSongIndex + 1) % playlist.length;
+        loadSong(currentSongIndex);
+    }
+
+    function prevSong() {
+        currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+        loadSong(currentSongIndex);
+    }
+
+    function closeWelcome() {
+        document.getElementById('welcome-overlay').classList.add('fade-out');
+        loadSong(0); // 點擊進入時啟動第一首歌
+    }
+
+    audio.addEventListener('ended', nextSong);
+
+    // 卡片動畫
     const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -178,6 +211,7 @@
     }, { threshold: 0.1 });
     document.querySelectorAll('.card').forEach(card => observer.observe(card));
 
+    // 倒數計時
     function updateExamCountdown() {
         const start = new Date(2025, 7, 30).getTime();
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
@@ -185,7 +219,7 @@
         const distance = end - now;
 
         if (distance < 0) {
-            document.querySelector('.countdown-title').innerText = "💪 會考順利！";
+            document.querySelector('.countdown-title').innerText = "會考順利！";
             return;
         }
 
@@ -203,6 +237,5 @@
     setInterval(updateExamCountdown, 1000);
     updateExamCountdown();
 </script>
-
 </body>
 </html>
