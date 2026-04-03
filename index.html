@@ -83,10 +83,16 @@
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; cursor: none; }
 
         .msg-board, .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
-        .msg-input-area { display: flex; gap: 10px; margin-bottom: 20px; }
-        .msg-input-area input { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
-        .msg-list { max-height: 300px; overflow-y: auto; text-align: left; }
-        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); }
+        
+        /* 留言區優化 */
+        .msg-input-area { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .msg-top-row { display: flex; gap: 10px; }
+        .msg-top-row input#nickname-input { width: 100px; }
+        .msg-top-row input#msg-input { flex: 1; }
+        .msg-input-area input { padding: 12px; border-radius: 12px; border: 1px solid #ddd; outline: none; }
+        
+        .msg-list { max-height: 350px; overflow-y: auto; text-align: left; }
+        .msg-item { background: rgba(240, 250, 255, 0.8); padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--header-color); animation: fadeIn 0.5s ease; }
 
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
@@ -95,6 +101,7 @@
         .music-player { position: fixed; bottom: 20px; right: 20px; width: 260px; background: rgba(255,255,255,0.95); padding: 15px; border-radius: 24px; z-index: 50000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--accent-blue); }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         a, button, input { cursor: none !important; }
     </style>
 </head>
@@ -108,6 +115,7 @@
 <div id="login-overlay">
     <div class="login-box">
         <h2 style="color:var(--header-color); margin-top:0;">322 入口</h2>
+        <p style="font-size: 0.9rem; color: #666;">請輸入密碼以解除封印</p>
         <input type="password" id="pass-input" placeholder="請輸入暗號..." onkeydown="if(event.key==='Enter') checkPass()">
         <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
     </div>
@@ -129,9 +137,12 @@
 </div>
 
 <div class="msg-board">
-    <h3 style="color:var(--header-color); text-align:center;">322</h3>
+    <h3 style="color:var(--header-color); text-align:center;">322 留言板</h3>
     <div class="msg-input-area">
-        <input type="text" id="msg-input" placeholder="發個牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
+        <div class="msg-top-row">
+            <input type="text" id="nickname-input" placeholder="你的暱稱">
+            <input type="text" id="msg-input" placeholder="發個牢騷吧..." onkeydown="if(event.key==='Enter') sendMsg()">
+        </div>
         <button class="btn-ig" onclick="sendMsg()">發出牢騷</button>
     </div>
     <div id="msg-list" class="msg-list"></div>
@@ -173,13 +184,13 @@
         const overlay = document.getElementById('login-overlay');
         const password = input.value;
 
-        // 1. 將輸入文字轉為 SHA-256 雜湊
+        // 計算輸入值的 SHA-256
         const msgUint8 = new TextEncoder().encode(password);
         const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashedInput = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-        // 2. 比對雜湊值 (這串對應 "best322"，F12 看到也猜不出原文)
+        // "best322" 的雜湊值
         const correctHash = "3991264c9197f90c375e81d77d704506940e4f50f44383457f502280d0d8905b";
 
         if (hashedInput === correctHash) {
@@ -187,21 +198,28 @@
             shuffleSong();
         } else {
             alert("暗號錯誤!你是別班的憨包 我們是322的憨包");
-            input.value = ""; // 錯誤時清空
+            input.value = "";
         }
     }
 
     // 留言板功能
     function sendMsg() {
-        const input = document.getElementById('msg-input');
-        if (input.value.trim() === "") return;
+        const msgInput = document.getElementById('msg-input');
+        const nickInput = document.getElementById('nickname-input');
+        
+        if (msgInput.value.trim() === "") return;
+        
         const now = new Date();
+        const nickname = nickInput.value.trim() || "匿名憨包"; // 沒填就叫匿名憨包
+        
         db.ref('messages').push({
-            text: input.value,
+            name: nickname,
+            text: msgInput.value,
             time: `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`,
             timestamp: Date.now()
         });
-        input.value = "";
+        
+        msgInput.value = "";
     }
 
     db.ref('messages').limitToLast(20).on('value', (snapshot) => {
@@ -212,7 +230,9 @@
             Object.values(data).reverse().forEach(msg => {
                 const div = document.createElement('div');
                 div.className = 'msg-item';
-                div.innerHTML = `<strong>匿名憨包</strong> <small>${msg.time}</small><br>${msg.text}`;
+                // 讀取留言人的名字，如果是舊留言沒有名字欄位，則顯示「舊憨包」
+                const displayName = msg.name || "匿名憨包";
+                div.innerHTML = `<strong>${displayName}</strong> <small style="color:#888">${msg.time}</small><br><p style="margin:5px 0 0 0;">${msg.text}</p>`;
                 list.appendChild(div);
             });
         }
