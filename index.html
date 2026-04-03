@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322憨包們</title>
+    <title>322憨包們 - 最終流星版</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     
@@ -26,7 +26,7 @@
             cursor: none; 
         }
 
-        /* --- 特效層 --- */
+        /* --- 特效與登入層 --- */
         .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
@@ -39,7 +39,6 @@
         #visualizer-container { position: fixed; bottom: 0; left: 0; width: 100%; height: 100px; z-index: 5; pointer-events: none; opacity: 0.6; }
         #visualizer-canvas { width: 100%; height: 100%; }
 
-        /* --- 登入層 --- */
         #login-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 60000; background: var(--bg-gradient);
@@ -52,7 +51,7 @@
             border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white;
         }
 
-        /* --- 內容樣式 --- */
+        /* --- 游標與介面 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
         header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); }
@@ -66,19 +65,23 @@
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
         
-        /* --- 互動元件 --- */
         .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; }
-        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; }
+        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; }
 
-        .countdown-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 50px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); }
-        .progress-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; overflow: hidden; position: relative; }
-        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); background-size: 200% 100%; animation: shine 3s linear infinite; box-shadow: 0 0 15px var(--accent-blue); }
-        
+        /* --- 計時器與留言板 --- */
+        .module-box { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); }
+        .progress-container { width: 100%; height: 24px; background: rgba(0, 0, 0, 0.2); border-radius: 12px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #4fc3f7, #0288d1, #4fc3f7); background-size: 200% 100%; animation: shine 3s linear infinite; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; text-align: center; }
         .time-block span { display: block; font-size: 2.2rem; font-weight: 800; color: var(--header-color); }
         
+        #message-list { max-height: 250px; overflow-y: auto; margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.05); border-radius: 15px; text-align: left; }
+        .msg-item { margin-bottom: 10px; padding: 12px; background: white; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.5s ease; }
+        
         #music-control { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: none; background: rgba(0,0,0,0.6); color: white; padding: 10px 15px; border-radius: 50px; align-items: center; gap: 10px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes shine { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
@@ -87,7 +90,8 @@
 
 <div class="night-sky">
     <div class="shooting-star" style="top: 5%; left: 80%; animation-delay: 0s;"></div>
-    <div class="shooting-star" style="top: 25%; left: 90%; animation-delay: 2.5s;"></div>
+    <div class="shooting-star" style="top: 20%; left: 60%; animation-delay: 1.5s;"></div>
+    <div class="shooting-star" style="top: 35%; left: 85%; animation-delay: 3s;"></div>
 </div>
 
 <div id="visualizer-container"><canvas id="visualizer-canvas"></canvas></div>
@@ -95,16 +99,16 @@
 <div id="login-overlay">
     <div class="login-box">
         <h2 style="margin-bottom:20px;">歡迎來到 322</h2>
-        <input type="password" id="pass-input" placeholder="請輸入密碼" style="padding:10px; border-radius:8px; border:none;" onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button onclick="checkPass()" style="margin-top:15px; padding:8px 20px; cursor:none; background:var(--accent-blue); border:none; border-radius:10px;">確認身分</button>
+        <input type="password" id="pass-input" placeholder="請輸入密碼" style="padding:12px; border-radius:12px; border:1px solid var(--accent-blue); background:rgba(255,255,255,0.1); color:white; outline:none;" onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button onclick="checkPass()" style="margin-top:20px; padding:10px 30px; border:none; border-radius:50px; background:var(--ig-gradient); color:white; font-weight:bold;">進入宇宙</button>
     </div>
 </div>
 
 <div id="music-control">
     <span id="music-title">🎵 播放中...</span>
-    <button onclick="prevTrack()" style="background:none; border:none; color:white;">⏮</button>
-    <button onclick="togglePlay()" id="play-pause-icon" style="background:none; border:none; color:white;">⏸</button>
-    <button onclick="nextTrack()" style="background:none; border:none; color:white;">⏭</button>
+    <button onclick="prevTrack()" style="background:none; border:none; color:white; cursor:none;">⏮</button>
+    <button onclick="togglePlay()" id="play-pause-icon" style="background:none; border:none; color:white; cursor:none;">⏸</button>
+    <button onclick="nextTrack()" style="background:none; border:none; color:white; cursor:none;">⏭</button>
 </div>
 
 <div class="cursor-dot"></div>
@@ -116,12 +120,10 @@
 
 <div class="container" id="members-container"></div>
 
-<div class="countdown-container">
+<div class="module-box">
     <h3 style="color:var(--header-color); text-align:center; margin-bottom: 20px;">🎓 115 會考倒數計時</h3>
-    <div style="text-align: center; margin-bottom: 10px;">
-        <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
-        <span id="progress-percent" style="font-weight:bold; color:var(--header-color); margin-top:10px; display:block;">數據同步中...</span>
-    </div>
+    <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
+    <span id="progress-percent" style="font-weight:bold; color:var(--header-color); margin-top:10px; display:block; text-align:center;">同步中...</span>
     <div id="timer" class="timer-grid">
         <div class="time-block"><span id="days">00</span><p>剩餘天數</p></div>
         <div class="time-block"><span id="hours">00</span><p>小時</p></div>
@@ -130,8 +132,27 @@
     </div>
 </div>
 
+<div class="module-box">
+    <h3 style="color:var(--header-color); text-align:center;">💬 憨包留言板</h3>
+    <div id="message-list"><p style="text-align:center; color:#888;">載入留言中...</p></div>
+    <div style="display: flex; gap: 10px;">
+        <input type="text" id="user-name" placeholder="名字" style="width: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
+        <input type="text" id="user-msg" placeholder="想對大家說什麼？" style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
+        <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold;">發送</button>
+    </div>
+</div>
+
 <script>
-    // --- 資料配置 ---
+    // --- 基礎配置 ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
+      authDomain: "project-1673660731296559126.firebaseapp.com",
+      projectId: "project-1673660731296559126",
+      databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
@@ -144,22 +165,13 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
     ];
 
-    const ganHuaQuotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "籃球可以不進，但姿勢一定要帥。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "考卷發下來，除了名字其他都是陌生人。", "是種自己的花，愛自己的宇宙。", "老師在講我在聽，但我聽的是心碎的聲音。"];
-
-    // --- Firebase 與 初始化 ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
-      authDomain: "project-1673660731296559126.firebaseapp.com",
-      projectId: "project-1673660731296559126",
-      databaseURL: "https://project-1673660731296559126-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const quotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "老師在講我在聽，但我聽的是心碎的聲音。", "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!"];
 
     const audio = new Audio();
-    let currentTrack = 0;
     const playlist = Array.from({length: 12}, (_, i) => ({ title: `曲目 ${i+1}`, url: `music${i+1}.mp3` }));
+    let currentTrack = 0;
 
+    // --- 初始化功能 ---
     function renderCards() {
         const container = document.getElementById('members-container');
         members.forEach(m => {
@@ -177,11 +189,33 @@
 
     function addLike(id) { db.ref('likes/' + id).transaction(c => (c || 0) + 1); }
 
-    // --- 倒數核心邏輯 ---
+    // --- 留言板邏輯 ---
+    function postMessage() {
+        const name = document.getElementById('user-name').value || "無名氏";
+        const content = document.getElementById('user-msg').value;
+        if (!content) return alert("內容不能空白啦！");
+        db.ref('messages').push({ name, content, time: Date.now() });
+        document.getElementById('user-msg').value = "";
+    }
+
+    db.ref('messages').limitToLast(20).on('value', snap => {
+        const list = document.getElementById('message-list');
+        list.innerHTML = "";
+        const data = snap.val();
+        if (!data) return list.innerHTML = "<p style='text-align:center; color:#888;'>還沒有留言，快來搶頭香！</p>";
+        Object.values(data).reverse().forEach(msg => {
+            const div = document.createElement('div');
+            div.className = 'msg-item';
+            div.innerHTML = `<strong style="color:var(--header-color);">${msg.name}</strong>: <span>${msg.content}</span>`;
+            list.appendChild(div);
+        });
+    });
+
+    // --- 計時器邏輯 ---
     function updateCountdown() {
         const start = new Date(2025, 8, 1).getTime(); 
         const end = new Date(2026, 4, 16, 8, 0, 0).getTime();
-        const now = new Date().getTime();
+        const now = Date.now();
         const diff = end - now;
 
         if (diff > 0) {
@@ -191,13 +225,33 @@
             document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
         }
         
-        const progress = Math.max(0, Math.min(100, ((now - start) / (end - start)) * 100));
-        document.getElementById('progress-bar').style.width = progress.toFixed(4) + '%';
-        document.getElementById('progress-percent').innerText = `會考備戰進度：${progress.toFixed(4)}%`;
+        const prog = Math.max(0, Math.min(100, ((now - start) / (end - start)) * 100));
+        document.getElementById('progress-bar').style.width = prog.toFixed(4) + '%';
+        document.getElementById('progress-percent').innerText = `會考備戰進度：${prog.toFixed(4)}%`;
         requestAnimationFrame(updateCountdown);
     }
 
-    // --- 音樂控制 ---
+    // --- 系統控制 ---
+    function checkPass() {
+        if (document.getElementById('pass-input').value === "best322") {
+            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
+            document.getElementById('music-control').style.display = 'flex';
+            loadMusic(0); audio.play();
+            updateCountdown();
+            rotateQuotes();
+            setTimeout(() => document.getElementById('login-overlay').style.display = 'none', 800);
+        } else { alert("暗號錯誤！"); }
+    }
+
+    function rotateQuotes() {
+        let i = 0;
+        setInterval(() => {
+            const d = document.getElementById('quote-display');
+            d.style.opacity = 0;
+            setTimeout(() => { d.innerText = `「 ${quotes[i]} 」`; d.style.opacity = 1; i = (i + 1) % quotes.length; }, 800);
+        }, 4000);
+    }
+
     function loadMusic(idx) {
         currentTrack = idx;
         audio.src = playlist[idx].url;
@@ -209,25 +263,6 @@
     }
     function nextTrack() { currentTrack = (currentTrack + 1) % playlist.length; loadMusic(currentTrack); audio.play(); }
     function prevTrack() { currentTrack = (currentTrack - 1 + playlist.length) % playlist.length; loadMusic(currentTrack); audio.play(); }
-
-    function checkPass() {
-        if (document.getElementById('pass-input').value === "best322") {
-            document.getElementById('login-overlay').style.transform = "translateY(-100%)";
-            document.getElementById('music-control').style.display = 'flex';
-            loadMusic(0); audio.play();
-            updateCountdown();
-            rotateQuotes();
-        } else { alert("暗號錯誤！"); }
-    }
-
-    function rotateQuotes() {
-        let i = 0;
-        setInterval(() => {
-            const d = document.getElementById('quote-display');
-            d.style.opacity = 0;
-            setTimeout(() => { d.innerText = `「 ${ganHuaQuotes[i]} 」`; d.style.opacity = 1; i = (i + 1) % ganHuaQuotes.length; }, 800);
-        }, 4000);
-    }
 
     const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
     const dot = document.querySelector('.cursor-dot');
