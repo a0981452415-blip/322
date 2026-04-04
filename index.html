@@ -300,7 +300,7 @@
 
     // --- 音樂邏輯 ---
     let audioCtx, analyser, dataArray, animId;
-    const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
+    const playlist = Array.from({length: 13, (_, i) => `music${i+1}.mp3`);
     let trackIdx = 0;
     const audio = new Audio(playlist[trackIdx]);
     audio.crossOrigin = "anonymous";
