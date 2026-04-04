@@ -13,73 +13,60 @@
     
     <style>
          /* 1. 定義發光動畫 */
-@keyframes neonPulse {
-    0% {
-        /* 初始狀態：較淡、較窄的陰影 */
-        text-shadow: 
-            0 0 7px rgba(79, 195, 247, 0.3),
-            0 0 10px rgba(79, 195, 247, 0.3);
-    }
-    50% {
-        /* 中間狀態：最亮、最寬的陰影，模擬霓虹燈全開 */
-        text-shadow: 
-            0 0 10px rgba(79, 195, 247, 0.8),
-            0 0 20px rgba(79, 195, 247, 0.8),
-            0 0 30px rgba(79, 195, 247, 0.6),
-            0 0 40px rgba(79, 195, 247, 0.4);
-    }
-    100% {
-        /* 回到初始狀態 */
-        text-shadow: 
-            0 0 7px rgba(79, 195, 247, 0.3),
-            0 0 10px rgba(79, 195, 247, 0.3);
-    }
-}
+        @keyframes neonPulse {
+            0% {
+                text-shadow: 
+                    0 0 7px rgba(79, 195, 247, 0.3),
+                    0 0 10px rgba(79, 195, 247, 0.3);
+            }
+            50% {
+                text-shadow: 
+                    0 0 10px rgba(79, 195, 247, 0.8),
+                    0 0 20px rgba(79, 195, 247, 0.8),
+                    0 0 30px rgba(79, 195, 247, 0.6),
+                    0 0 40px rgba(79, 195, 247, 0.4);
+            }
+            100% {
+                text-shadow: 
+                    0 0 7px rgba(79, 195, 247, 0.3),
+                    0 0 10px rgba(79, 195, 247, 0.3);
+            }
+        }
 
-/* 2. 建立套用的類別 */
-.neon-glow {
-    /* 設定文字基本顏色（通常選用較淡的色調） */
-    color: #e1f5fe; 
-    /* 執行動畫：2秒循環一次，平滑過渡，無限播放 */
-    animation: neonPulse 2s infinite ease-in-out;
-    /* 優化：告訴瀏覽器這準備要動，提前掛載到 GPU */
-    will-change: text-shadow; 
-}
+        /* 2. 建立套用的類別 */
+        .neon-glow {
+            color: #e1f5fe; 
+            animation: neonPulse 2s infinite ease-in-out;
+            will-change: text-shadow; 
+        }
+        
         /* 定義金色流動動畫 */
-@keyframes goldFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+        @keyframes goldFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-.daily-gold-title {
-    /* 建立多層次金色漸層 */
-    background: linear-gradient(
-        90deg, 
-        #ffd700 0%, 
-        #fff5b7 25%, 
-        #ffae00 50%, 
-        #fff5b7 75%, 
-        #ffd700 100%
-    );
-    background-size: 200% auto; /* 讓背景比文字寬，才能滑動 */
-    
-    /* 核心：將背景剪裁成文字形狀 */
-    -webkit-background-clip: text;
-    background-clip: text;
-    
-    /* 必須將文字顏色設為透明，底部的金色背景才會顯現 */
-    color: transparent;
-    
-    /* 執行動畫：3秒循環一次，線性無限播放 */
-    animation: goldFlow 3s linear infinite;
-    
-    /* 增強視覺效果 */
-    font-weight: 900;
-    font-size: 1.5rem;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    display: inline-block;
-}
+        .daily-gold-title {
+            background: linear-gradient(
+                90deg, 
+                #ffd700 0%, 
+                #fff5b7 25%, 
+                #ffae00 50%, 
+                #fff5b7 75%, 
+                #ffd700 100%
+            );
+            background-size: 200% auto; 
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: goldFlow 3s linear infinite;
+            font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            display: inline-block;
+        }
+        
         :root {
             --header-color: #0288d1;
             --accent-blue: #4fc3f7;
@@ -140,7 +127,7 @@
         .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 4px 12px; border-radius: 8px; margin: 8px 0; font-size: 0.9rem; }
         
         .actions { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; }
-        .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 16px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: opacity 0.2s; }
+        .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 16px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: opacity 0.2s; border: none;}
         
         /* 點讚動畫 */
         .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: pointer; transition: transform 0.2s; border: 1px solid #ffcdd2; user-select: none; }
@@ -154,7 +141,7 @@
         .time-block span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--header-color); }
         
         #message-list { max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 15px; }
-        .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; font-size: 0.95rem; border-left: 4px solid var(--accent-blue); }
+        .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; font-size: 0.95rem; border-left: 4px solid var(--accent-blue); word-break: break-all; }
 
         /* --- 底部播放器 --- */
         #music-player { 
@@ -262,6 +249,14 @@
 </div>
 
 <script>
+    // --- 防 XSS 攻擊的過濾函數 (安全修復) ---
+    function escapeHTML(str) {
+        if (!str) return "";
+        return str.replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag]));
+    }
+
     // --- 流星生成邏輯 ---
     function createStars() {
         const container = document.getElementById('star-container');
@@ -297,13 +292,11 @@
         { id: "m8", name: "陳緯哲", tag: "崇瑋軒漢之父", ig: "a0981848508", img: "p8.jpg", quote: "崇瑋軒漢還不快點叫爸爸。" },
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg", quote: "我愛染頭髮 跟雞窩一樣" },
         { id: "m10", name: "林錫諄", tag: "全男生的長輩", ig: "1210_linxizhun", img: "p10.jpg", quote: "我真的沒偷你球" },
-
     ];
 
-    // --- 音樂邏輯 (自訂歌名版) ---
+    // --- 音樂邏輯 ---
     let audioCtx, analyser, dataArray, animId;
     
-    // 🎵 在這裡設定你的歌單與自訂歌名！
     const playlist = [        
         { src: "music1.mp3",  name: "海嶼你)" },
         { src: "music2.mp3",  name: "宗翰特殊癖好" },
@@ -324,7 +317,6 @@
     const audio = new Audio(playlist[trackIdx].src);
     audio.crossOrigin = "anonymous";
 
-    // 專門用來更新歌名顯示的函式
     function updateTrackName() {
         document.getElementById('current-track-name').innerText = `🎵 ${playlist[trackIdx].name}`;
     }
@@ -341,7 +333,9 @@
     }
 
     function drawSpectrum() {
+        cancelAnimationFrame(animId); // 確保不會有兩個動畫重疊執行 (安全修復)
         animId = requestAnimationFrame(drawSpectrum);
+        if (!analyser) return;
         analyser.getByteFrequencyData(dataArray);
         const leftBars = document.querySelectorAll('#viz-left .bar');
         const rightBars = document.querySelectorAll('#viz-right .bar');
@@ -359,7 +353,7 @@
         if (audio.paused) {
             audio.play();
             document.getElementById('play-btn').innerText = "⏸";
-            updateTrackName(); // 播放時確保歌名正確顯示
+            updateTrackName(); 
             drawSpectrum();
         } else {
             audio.pause();
@@ -368,20 +362,25 @@
         }
     }
 
-    function nextSong() {
-        trackIdx = (trackIdx + 1) % playlist.length;
+    // 統整播放歌曲邏輯，避免狀態錯亂 (安全修復)
+    function playCurrentSong() {
         audio.src = playlist[trackIdx].src;
         updateTrackName();
-        audio.play();
-        document.getElementById('play-btn').innerText = "⏸";
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        audio.play().then(() => {
+            document.getElementById('play-btn').innerText = "⏸";
+            drawSpectrum();
+        }).catch(err => console.log("切歌播放被攔截：", err));
+    }
+
+    function nextSong() {
+        trackIdx = (trackIdx + 1) % playlist.length;
+        playCurrentSong();
     }
 
     function prevSong() {
         trackIdx = (trackIdx - 1 + playlist.length) % playlist.length;
-        audio.src = playlist[trackIdx].src;
-        updateTrackName();
-        audio.play();
-        document.getElementById('play-btn').innerText = "⏸";
+        playCurrentSong();
     }
     audio.onended = nextSong;
 
@@ -393,7 +392,6 @@
             document.getElementById('music-player').style.display = 'flex';
             startQuotes();
 
-            // --- 新增：登入成功自動撥歌邏輯 ---
             initAudio();
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -411,7 +409,10 @@
     }
 
     // --- 1. 標題下方小語 ---
+    let quotesStarted = false; // 防止重複執行造成的閃爍 (安全修復)
     function startQuotes() {
+        if (quotesStarted) return;
+        quotesStarted = true;
         const d = document.getElementById('quote-display');
         const q = [
             "雖然我們是憨包，但我們是全校最帥的憨包。", 
@@ -443,10 +444,10 @@
         ];
         let i = 0;
         setInterval(() => {
-            d.style.opacity = 0; // 先淡出
+            d.style.opacity = 0; 
             setTimeout(() => { 
                 d.innerText = `「 ${q[i]} 」`; 
-                d.style.opacity = 1; // 換字後淡入
+                d.style.opacity = 1; 
                 i = (i + 1) % q.length; 
             }, 800);
         }, 4000);
@@ -455,16 +456,17 @@
     // --- 2. 補上漏掉的成員卡片渲染函式 ---
     function renderCards() {
         const container = document.getElementById('members-container');
-        container.innerHTML = ""; // 清空容器
+        container.innerHTML = ""; 
 
         members.forEach(m => {
             const card = document.createElement('div');
             card.className = 'card';
+            // 安全修復：改用 openModalById 避免字串含有引號導致 HTML 破裂
             card.innerHTML = `
-                <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'>
+                <div class="photo-container" onclick='openModalById("${m.id}")'>
                     <img src="${m.img}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/300?text=322'">
                 </div>
-                <div class="name" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
+                <div class="name" onclick='openModalById("${m.id}")'>${m.name}</div>
                 <div class="nickname-tag">${m.tag}</div>
                 <div class="actions">
                     <a href="https://instagram.com/${m.ig}" target="_blank" class="btn-ig">IG</a>
@@ -475,15 +477,16 @@
             `;
             container.appendChild(card);
             
-            // 監聽 Firebase 資料更新點讚數
             db.ref('likes/' + m.id).on('value', snap => {
-                document.getElementById(`count-${m.id}`).innerText = snap.val() || 0;
+                const countSpan = document.getElementById(`count-${m.id}`);
+                if (countSpan) countSpan.innerText = snap.val() || 0;
             });
 
-            // 啟動進場動畫
             setTimeout(() => observer.observe(card), 100);
         });
-    }    // --- 每日隨機憨包生成 ---
+    }    
+    
+    // --- 每日隨機憨包生成 ---
     function renderDailyMember() {
         const display = document.getElementById('daily-member-display');
         const now = new Date();
@@ -493,11 +496,11 @@
 
         display.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px;">
-                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid gold; cursor: pointer; flex-shrink: 0;" onclick='openModal(${JSON.stringify(m)})'>
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; border: 2px solid gold; cursor: pointer; flex-shrink: 0;" onclick='openModalById("${m.id}")'>
                     <img src="${m.img}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div style="text-align: left;">
-                    <div style="font-size: 1.2rem; font-weight: bold; color: white; cursor: pointer;" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
+                    <div style="font-size: 1.2rem; font-weight: bold; color: white; cursor: pointer;" onclick='openModalById("${m.id}")'>${m.name}</div>
                     <div style="color: #ffd700; font-size: 0.9rem; margin-top: 4px;">今日封號：${m.tag}</div>
                     <div style="color: #ccc; font-style: italic; font-size: 0.85rem; margin-top: 5px;">"${m.quote}"</div>
                 </div>
@@ -505,35 +508,34 @@
         `;
     }
 
-// --- 修正版：心靈雞湯邏輯 ---
+// --- 心靈雞湯邏輯 ---
 const soupQuotes = [
      "雖然我們是憨包，但我們是全校最帥的憨包。", 
-            "環境不會改變，解決之道在於改變自己。", 
-            "勇於開始，才能找到成功的路。", 
-            "生活總會給你另一個機會，這個機會叫明天。", 
-            "人生最大的敵人是自已怯懦。", 
-            "簡單的活著，善良率直坦蕩，去品位人生的韻味。享受人生的樂趣。", 
-            "我們什麼都沒有，唯一的本錢就是青春。夢想讓我與眾不同，奮鬥讓我改變命運！", 
-            "沒有人陪你走一輩子，所以你要適應孤獨，沒有人會幫你一輩子，所以你要奮鬥一生。", 
-            "用快樂去奔跑，用心去傾聽，用思維去發展，用努力去奮鬥，用目標去衡量，用愛去生活。", 
-            "再長的路都有盡頭，千萬不要回頭；再快樂的心都有煩惱，千萬不要在意。", 
-            "人生充滿了起起落落。關鍵在於，在頂端時好好享受；在低谷時不失勇氣。", 
-            "為了自己想要的未來，無論現在有多難熬，都必須得滿懷信心的堅持下去。", 
-            "千里之行，始於足下。改變將來，從現在開始。改變現在，就是改變未來。", 
-            "把微笑掛在臉上，時時擁有美好的心情，去面對生活，學習，才不會有困難。", 
-            "今日的事情，盡心、盡意、盡力去做了，無論成績如何，都應該高高興興地上床恬睡。", 
-            "不要因為沒錢就忽視自己的健康，畢竟以後沒錢的日子還很多", 
-            "你說你寧缺勿濫，其實根本就是沒人要。", 
-            "有時候不努力一下，不知道什麼叫絕望。", 
-            "你以為他不會表達，其實他就是不愛你。", 
-            "純友誼還是存在的，長得愈醜，就愈純。", 
-            "單身是一種選擇，只不過不是我選的。", 
-            "請早點睡覺，不要仗著自己長得醜就任意熬夜。", 
-            "轉角不一定會遇到愛，只會遇到乞丐。", 
-            "年輕人嘛，現在沒錢算什麼，以後沒錢的日子還多的是。",  
-            "最靠得住的是金錢，最靠不住的是人心。", 
-            "人生有幾個好朋友就夠了，但問題是你不知道誰才是真朋友。"
-
+     "環境不會改變，解決之道在於改變自己。", 
+     "勇於開始，才能找到成功的路。", 
+     "生活總會給你另一個機會，這個機會叫明天。", 
+     "人生最大的敵人是自已怯懦。", 
+     "簡單的活著，善良率直坦蕩，去品位人生的韻味。享受人生的樂趣。", 
+     "我們什麼都沒有，唯一的本錢就是青春。夢想讓我與眾不同，奮鬥讓我改變命運！", 
+     "沒有人陪你走一輩子，所以你要適應孤獨，沒有人會幫你一輩子，所以你要奮鬥一生。", 
+     "用快樂去奔跑，用心去傾聽，用思維去發展，用努力去奮鬥，用目標去衡量，用愛去生活。", 
+     "再長的路都有盡頭，千萬不要回頭；再快樂的心都有煩惱，千萬不要在意。", 
+     "人生充滿了起起落落。關鍵在於，在頂端時好好享受；在低谷時不失勇氣。", 
+     "為了自己想要的未來，無論現在有多難熬，都必須得滿懷信心的堅持下去。", 
+     "千里之行，始於足下。改變將來，從現在開始。改變現在，就是改變未來。", 
+     "把微笑掛在臉上，時時擁有美好的心情，去面對生活，學習，才不會有困難。", 
+     "今日的事情，盡心、盡意、盡力去做了，無論成績如何，都應該高高興興地上床恬睡。", 
+     "不要因為沒錢就忽視自己的健康，畢竟以後沒錢的日子還很多", 
+     "你說你寧缺勿濫，其實根本就是沒人要。", 
+     "有時候不努力一下，不知道什麼叫絕望。", 
+     "你以為他不會表達，其實他就是不愛你。", 
+     "純友誼還是存在的，長得愈醜，就愈純。", 
+     "單身是一種選擇，只不過不是我選的。", 
+     "請早點睡覺，不要仗著自己長得醜就任意熬夜。", 
+     "轉角不一定會遇到愛，只會遇到乞丐。", 
+     "年輕人嘛，現在沒錢算什麼，以後沒錢的日子還多的是。",  
+     "最靠得住的是金錢，最靠不住的是人心。", 
+     "人生有幾個好朋友就夠了，但問題是你不知道誰才是真朋友。"
 ];
 
 // --- 極致絲滑版：心靈雞湯邏輯 ---
@@ -541,17 +543,14 @@ function serveSoup() {
     const textElement = document.getElementById('soup-text');
     const btn = document.querySelector('.btn-soup');
     
-    // 1. 鎖定按鈕，避免連點混亂
     btn.disabled = true;
     btn.style.opacity = "0.7";
     btn.innerText = "熬煮中... 🥣";
 
-    // 2. 第一階段：縮小並淡出 (啟動 GPU 加速)
     textElement.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
     textElement.style.opacity = "0";
     textElement.style.transform = "scale(0.95)";
 
-    // 3. 第二階段：等待淡出完成後換字
     setTimeout(() => {
         let newQuote;
         do {
@@ -560,12 +559,10 @@ function serveSoup() {
         
         textElement.innerText = `「 ${newQuote} 」`;
 
-        // 4. 第三階段：重新放大並淡入
         setTimeout(() => {
             textElement.style.opacity = "1";
             textElement.style.transform = "scale(1)";
             
-            // 5. 恢復按鈕狀態
             setTimeout(() => {
                 btn.disabled = false;
                 btn.style.opacity = "1";
@@ -580,6 +577,12 @@ function serveSoup() {
         confetti({ particleCount: 40, spread: 50, origin: { y: 0.9 }, colors: ['#ff0000', '#ff69b4'] });
         setTimeout(() => btn.classList.remove('heart-pop'), 400);
         db.ref('likes/'+id).transaction(c => (c || 0) + 1);
+    }
+
+    // 新增：利用 ID 尋找成員並開啟 Modal (安全修復)
+    function openModalById(id) {
+        const m = members.find(member => member.id === id);
+        if (m) openModal(m);
     }
 
     function openModal(m) {
@@ -601,7 +604,6 @@ function serveSoup() {
         const m = document.getElementById('user-msg');
         if (!m.value.trim()) return;
         
-        // 這裡直接把名字固定為 "匿名憨包"
         db.ref('messages').push({ 
             name: "匿名憨包", 
             content: m.value.trim(), 
@@ -614,7 +616,10 @@ function serveSoup() {
         const list = document.getElementById('message-list'), data = snap.val();
         list.innerHTML = "";
         if (data) Object.values(data).reverse().forEach(msg => {
-            list.innerHTML += `<div class="msg-item"><strong>${msg.name}</strong>: ${msg.content}</div>`;
+            // 安全修復：將名字與內容做 HTML 溢出防護
+            const safeName = escapeHTML(msg.name);
+            const safeContent = escapeHTML(msg.content);
+            list.innerHTML += `<div class="msg-item"><strong>${safeName}</strong>: ${safeContent}</div>`;
         });
     });
 
@@ -630,17 +635,24 @@ function serveSoup() {
     window.onload = () => {
         createStars();
         renderDailyMember(); 
-        serveSoup(); // 網頁載入時先裝一碗雞湯
+        serveSoup();
         renderCards();
-        setInterval(() => {
         
-            const target = new Date(2026, 4, 16, 8, 0).getTime();
+        // 倒數計時器邏輯修復
+        setInterval(() => {
+            const target = new Date(2026, 4, 16, 8, 0).getTime(); // 2026年5月16日
             const diff = target - Date.now();
             if (diff > 0) {
                 document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
                 document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
                 document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
                 document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+            } else {
+                // 安全修復：時間到了的話強制顯示 00，避免卡在最後一秒
+                document.getElementById('days').innerText = "00";
+                document.getElementById('hours').innerText = "00";
+                document.getElementById('minutes').innerText = "00";
+                document.getElementById('seconds').innerText = "00";
             }
         }, 1000);
     };
