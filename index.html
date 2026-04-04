@@ -347,29 +347,31 @@ function serveSoup() {
     const textElement = document.getElementById('soup-text');
     const btn = document.querySelector('.btn-soup');
     
-    // 1. 防止連續點擊導致混亂
+    // 1. 防止連點
     btn.disabled = true;
     
-    // 2. 先讓文字消失
+    // 2. 開始淡出
+    textElement.style.transition = "opacity 0.4s ease"; 
     textElement.style.opacity = 0;
     
-    // 3. 等 0.5 秒（CSS transition 的時間）後再換字並出現
+    // 3. 核心修正：增加一個微小的延遲，確保手機瀏覽器已經完成淡出
     setTimeout(() => {
         let newQuote;
-        // 確保抽到的跟上次不一樣
         do {
             newQuote = soupQuotes[Math.floor(Math.random() * soupQuotes.length)];
         } while (`「 ${newQuote} 」` === textElement.innerText);
         
+        // 換字
         textElement.innerText = `「 ${newQuote} 」`;
-        textElement.style.opacity = 1;
         
-        // 4. 恢復按鈕功能
-        setTimeout(() => { btn.disabled = false; }, 500);
-    }, 500);
-}
-
-    function renderCards() {
+        // 4. 換好字後再淡入
+        setTimeout(() => {
+            textElement.style.opacity = 1;
+            // 5. 恢復按鈕
+            setTimeout(() => { btn.disabled = false; }, 400);
+        }, 50); // 這 50ms 是給手機瀏覽器反應「內容已更換」的時間
+    }, 450); 
+}    function renderCards() {
         const container = document.getElementById('members-container');
         members.forEach(m => {
             const card = document.createElement('div');
