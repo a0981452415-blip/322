@@ -141,7 +141,7 @@
 </header>
 
 <div class="module-container" id="daily-member-container" style="border: 2px solid gold; background: rgba(255, 215, 0, 0.1); margin-bottom: 40px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);">
-    <h3 style="color:#ffd700; margin-top:0; text-shadow: 0 0 10px rgba(255,215,0,0.5);">🌟 今日精選憨包 🌟</h3>
+    <h3 style="color:#ffd700; margin-top:0; text-shadow: 0 0 10px rgba(255,215,0,0.5);">🌟 今日最憨 🌟</h3>
     <div id="daily-member-display"></div>
 </div>
 
@@ -158,19 +158,19 @@
 </div>
 
 <div class="module-container" style="background: linear-gradient(135deg, rgba(255,236,210,0.1), rgba(252,182,159,0.1)); border-color: #ffb74d; box-shadow: 0 0 15px rgba(255, 183, 77, 0.15);">
-    <h3 style="color:#ff9800; margin-top:0; text-shadow: 0 0 8px rgba(255,152,0,0.3);">🍵 憨包專屬心靈雞湯</h3>
+    <h3 style="color:#ff9800; margin-top:0; text-shadow: 0 0 8px rgba(255,152,0,0.3);">心靈雞湯</h3>
     <div style="min-height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
         <p id="soup-text" style="font-size: 1.1rem; color: #eee; line-height: 1.6; margin: 0; transition: opacity 0.5s ease; font-weight: 500;">「 正在為你熬煮今天的雞湯... 」</p>
     </div>
-    <button class="btn-soup" onclick="serveSoup()">再來一碗 🥣</button>
+    <button class="btn-soup" onclick="serveSoup()">再來一碗 </button>
 </div>
 
 <div class="module-container">
-    <h3 style="color:var(--header-color); margin-top:0;">💭 憨包留言板</h3>
+    <h3 style="color:var(--header-color); margin-top:0;">留言板</h3>
     <div id="message-list"></div>
     <div style="display: flex; gap: 8px;">
         <input type="text" id="user-name" placeholder="名字" style="width: 70px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
-        <input type="text" id="user-msg" placeholder="想說什麼..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
+        <input type="text" id="user-msg" placeholder="想說什麼幹話..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
         <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">發送</button>
     </div>
 </div>
@@ -377,6 +377,10 @@
 const soupQuotes = [
     "那些看似不起波瀾的日復一日，會突然在某天讓你看見堅持的意義。",
     "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+    "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+   "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+    "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+
     "會考的數字只是人生的逗號，你們在 322 留下的笑容才是驚嘆號。",
     "不要害怕暫時的迷茫，那是因為你的前方有無限可能。",
     "累了就看看身邊的憨包們，你從來都不是一個人在戰鬥。",
@@ -419,7 +423,7 @@ function serveSoup() {
             setTimeout(() => {
                 btn.disabled = false;
                 btn.style.opacity = "1";
-                btn.innerText = "再來一碗 🥣";
+                btn.innerText = "爽拉 再來一碗";
             }, 400);
         }, 50);
     }, 400); 
