@@ -236,7 +236,6 @@
     <h3 style="color:var(--header-color); margin-top:0;">留言板</h3>
     <div id="message-list"></div>
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="user-name" placeholder="名字" style="width: 70px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
         <input type="text" id="user-msg" placeholder="想說什麼幹話..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
         <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">發送</button>
     </div>
@@ -392,7 +391,7 @@
         } else { alert("密碼錯誤！"); }
     }
 
-    // --- 1. 標題下方小語 (同樣加入絲滑轉場) ---
+    // --- 1. 標題下方小語 ---
     function startQuotes() {
         const d = document.getElementById('quote-display');
         const q = [
@@ -543,7 +542,6 @@ function serveSoup() {
         textElement.innerText = `「 ${newQuote} 」`;
 
         // 4. 第三階段：重新放大並淡入
-        // 稍微延遲 50ms 確保手機瀏覽器捕捉到內容更換
         setTimeout(() => {
             textElement.style.opacity = "1";
             textElement.style.transform = "scale(1)";
@@ -579,10 +577,17 @@ function serveSoup() {
         document.body.style.overflow = 'auto';
     }
 
+    // --- 修改後的發送邏輯 ---
     function postMessage() {
-        const n = document.getElementById('user-name'), m = document.getElementById('user-msg');
+        const m = document.getElementById('user-msg');
         if (!m.value.trim()) return;
-        db.ref('messages').push({ name: n.value.trim() || "匿名憨包", content: m.value.trim(), ts: Date.now() });
+        
+        // 這裡直接把名字固定為 "匿名憨包"
+        db.ref('messages').push({ 
+            name: "匿名憨包", 
+            content: m.value.trim(), 
+            ts: Date.now() 
+        });
         m.value = "";
     }
 
