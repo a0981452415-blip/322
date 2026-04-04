@@ -27,7 +27,7 @@
             padding-bottom: 120px;
         }
 
-        /* --- 視覺特效：流星雨 (完整 25 顆) --- */
+        /* --- 視覺特效：流星雨 (完整 25 顆保留) --- */
         .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
@@ -35,6 +35,7 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
+        /* 流星座標與延遲 (原封不動) */
         .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
         .shooting-star:nth-child(2) { top: 10%; left: 40%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.7); }
         .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
@@ -64,7 +65,7 @@
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 登入介面 --- */
+        /* --- 登入與基礎樣式 (保留) --- */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 60000; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1); }
         .login-box { background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px; text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3); border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white; }
         .typewriter-text { font-family: 'Courier New', Courier, monospace; overflow: hidden; border-right: .15em solid var(--accent-blue); white-space: nowrap; margin: 0 auto 20px; letter-spacing: .15em; width: 0; font-size: 1.8rem; font-weight: bold; animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite; }
@@ -72,10 +73,8 @@
         @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
         .login-box input { background: rgba(255,255,255,0.1); color: white; padding: 12px; width: 220px; border-radius: 12px; border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none; }
         
-        /* --- 滑鼠特效 --- */
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 100001; box-shadow: 0 0 12px var(--accent-blue); }
         
-        /* --- 內容樣式 --- */
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
         header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
         #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); font-weight: 500; }
@@ -92,7 +91,7 @@
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; cursor: none; }
         .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; transition: transform 0.2s ease; border: 1px solid #ffcdd2; }
 
-        /* --- 彈窗樣式 --- */
+        /* --- 彈窗樣式 (保留) --- */
         #member-modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.85); z-index: 100000; 
@@ -111,7 +110,7 @@
         .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .modal-quote-text { font-style: italic; color: #555; line-height: 1.6; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 15px; position: relative; }
 
-        /* --- 模組容器 --- */
+        /* --- 模組與留言板 (保留) --- */
         .module-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
@@ -123,18 +122,25 @@
         .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.5s ease; text-align: left; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 播放器 --- */
+        /* --- 播放器 (升級：柱子樣式優化) --- */
         #music-player { 
             position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; z-index: 9999; 
             background: rgba(10, 20, 35, 0.95); padding: 0 40px; color: white; 
             backdrop-filter: blur(15px); border-top: 2px solid var(--accent-blue); 
             display: none; align-items: center; justify-content: space-between; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); box-sizing: border-box;
         }
-        .visualizer { display: flex; align-items: flex-end; gap: 3px; height: 25px; width: 40px; }
-        .visualizer .bar { width: 4px; background: var(--accent-blue); border-radius: 2px; height: 20%; transition: 0.2s; }
-        .playing .bar { animation: bar-bounce 0.6s ease-in-out infinite alternate; }
-        @keyframes bar-bounce { from { height: 20%; } to { height: 100%; } }
-        .music-ctrl { background: none; border: none; color: white; font-size: 1.5rem; cursor: none; padding: 0 10px; }
+        .visualizer { display: flex; align-items: flex-end; gap: 4px; height: 35px; width: 50px; }
+        .visualizer .bar { 
+            width: 5px; 
+            background: var(--accent-blue); 
+            border-radius: 3px; 
+            height: 15%; 
+            transition: height 0.08s ease; /* 讓頻譜反應更即時 */
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+        
+        .music-ctrl { background: none; border: none; color: white; font-size: 1.5rem; cursor: none; padding: 0 10px; transition: 0.2s; }
+        .music-ctrl:hover { color: var(--accent-blue); transform: scale(1.1); }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         a, button, input, .like-box, .music-ctrl, .close-btn { cursor: none !important; }
@@ -225,6 +231,7 @@
 </div>
 
 <script>
+    // --- Firebase 配置 (完整保留) ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -236,7 +243,6 @@
 
     const ganHuaQuotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。", "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。", "再忙再累，也要抽出時間讓自己美起來。", "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!", "他人對你的尊重，從來不是因為你的順從。", "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。", "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。", "每個人的一生都有許多夢想，剩下的就僅僅是行動了。", "從現在開始，不沉溺幻想，好好生活，做一個接近幸福的人。", "萬事萬物皆有裂痕，光就是這樣照進來的。", "生活是屬於每個人自己的感受，不屬於別人的看法。", "先愛自己，因為自己是你餘生的伴侶。", "不要為小事遮住視線，我們還有更大的世界。", "窮則思變，差則思勤!沒有比人更高的山！", "（某某某）又在走步了，裁判沒看到嗎？"];
     
-    // 補齊了專屬語錄欄位
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg", quote: "相聚有時，後會無期" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg", quote: "「其實上課睡覺玩手機也能考100」" },
@@ -249,55 +255,93 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg", quote: "「我愛染頭髮 跟雞窩一樣」" }
     ];
 
-    // --- 彈窗邏輯 ---
+    // --- 頻譜分析變數 ---
+    let audioContext, analyser, source, dataArray;
+    let animId;
+
+    // --- 彈窗邏輯 (保留) ---
     function openModal(member) {
         document.getElementById('modal-img').src = member.img;
         document.getElementById('modal-name').innerText = member.name;
         document.getElementById('modal-tag').innerText = member.tag;
         document.getElementById('modal-quote').innerText = member.quote;
         document.getElementById('member-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // 禁止滾動
+        document.body.style.overflow = 'hidden'; 
     }
-
     function closeModal() {
         document.getElementById('member-modal').style.display = 'none';
-        document.body.style.overflow = 'auto'; // 恢復滾動
+        document.body.style.overflow = 'auto'; 
     }
+    function closeModalByBg(e) { if(e.target.id === 'member-modal') closeModal(); }
 
-    function closeModalByBg(e) {
-        if(e.target.id === 'member-modal') closeModal();
-    }
-
-    // --- 音樂功能 ---
+    // --- 音樂與頻譜功能 (升級核心) ---
     const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
     let currentTrackIndex = 0;
     const audio = new Audio();
     audio.src = playlist[currentTrackIndex];
+    audio.crossOrigin = "anonymous"; // 允許分析外部資源
+
+    function initAudio() {
+        if (audioContext) return;
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        source = audioContext.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        analyser.fftSize = 64; 
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+    }
+
+    function drawSpectrum() {
+        animId = requestAnimationFrame(drawSpectrum);
+        analyser.getByteFrequencyData(dataArray);
+        
+        const leftBars = document.querySelectorAll('#viz-left .bar');
+        const rightBars = document.querySelectorAll('#viz-right .bar');
+        
+        // 分配頻率給柱子 (低音到高音)
+        const indices = [2, 6, 12, 20];
+        indices.forEach((idx, i) => {
+            const val = dataArray[idx];
+            const h = (val / 255) * 100;
+            if(leftBars[i]) leftBars[i].style.height = `${Math.max(15, h)}%`;
+            if(rightBars[i]) rightBars[i].style.height = `${Math.max(15, h)}%`;
+        });
+    }
 
     function updateTrackUI() { document.getElementById('current-track-name').innerText = `🎵 曲目 ${currentTrackIndex + 1}`; }
-    function updateVisualizer(isPlaying) {
-        const vLeft = document.getElementById('viz-left'), vRight = document.getElementById('viz-right');
-        if (isPlaying) { vLeft.classList.add('playing'); vRight.classList.add('playing'); }
-        else { vLeft.classList.remove('playing'); vRight.classList.remove('playing'); }
-    }
+
     function toggleMusic() {
+        initAudio();
         const btn = document.getElementById('play-btn');
-        if (audio.paused) { audio.play(); btn.innerText = "⏸"; updateVisualizer(true); }
-        else { audio.pause(); btn.innerText = "▶️"; updateVisualizer(false); }
+        if (audioContext.state === 'suspended') audioContext.resume();
+
+        if (audio.paused) {
+            audio.play();
+            btn.innerText = "⏸";
+            drawSpectrum();
+        } else {
+            audio.pause();
+            btn.innerText = "▶️";
+            cancelAnimationFrame(animId);
+        }
     }
-    function nextSong() {
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-        audio.src = playlist[currentTrackIndex]; audio.play();
-        document.getElementById('play-btn').innerText = "⏸"; updateTrackUI(); updateVisualizer(true);
+
+    function changeSong(offset) {
+        currentTrackIndex = (currentTrackIndex + offset + playlist.length) % playlist.length;
+        audio.src = playlist[currentTrackIndex];
+        updateTrackUI();
+        if (!audio.paused || audioContext) {
+            audio.play();
+            document.getElementById('play-btn').innerText = "⏸";
+            if(!animId) drawSpectrum();
+        }
     }
-    function prevSong() {
-        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-        audio.src = playlist[currentTrackIndex]; audio.play();
-        document.getElementById('play-btn').innerText = "⏸"; updateTrackUI(); updateVisualizer(true);
-    }
+    function nextSong() { changeSong(1); }
+    function prevSong() { changeSong(-1); }
     audio.onended = nextSong;
 
-    // --- 語錄與留言 ---
+    // --- 語錄、留言與計時器 (完整保留) ---
     function drawRandomQuote() {
         const box = document.getElementById('random-quote-box');
         box.style.opacity = 0;
@@ -345,7 +389,6 @@
         const container = document.getElementById('members-container');
         members.forEach(m => {
             const card = document.createElement('div'); card.className = 'card';
-            // 將原本的 HTML 結構包裹，並新增 onclick 觸發彈窗
             card.innerHTML = `
                 <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'><img src="${m.img}"></div>
                 <div class="info">
