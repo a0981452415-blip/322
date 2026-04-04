@@ -9,6 +9,41 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
+        /* 定義金色流動動畫 */
+@keyframes goldFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.daily-gold-title {
+    /* 建立多層次金色漸層 */
+    background: linear-gradient(
+        90deg, 
+        #ffd700 0%, 
+        #fff5b7 25%, 
+        #ffae00 50%, 
+        #fff5b7 75%, 
+        #ffd700 100%
+    );
+    background-size: 200% auto; /* 讓背景比文字寬，才能滑動 */
+    
+    /* 核心：將背景剪裁成文字形狀 */
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* 必須將文字顏色設為透明，底部的金色背景才會顯現 */
+    color: transparent;
+    
+    /* 執行動畫：3秒循環一次，線性無限播放 */
+    animation: goldFlow 3s linear infinite;
+    
+    /* 增強視覺效果 */
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    display: inline-block;
+}
         :root {
             --header-color: #0288d1;
             --accent-blue: #4fc3f7;
