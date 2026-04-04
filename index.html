@@ -6,12 +6,13 @@
     <title>322 憨包們 - 回憶紀錄</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         :root {
             --header-color: #0288d1;
             --accent-blue: #4fc3f7;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --ig-gradient: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             --bg-gradient: linear-gradient(-45deg, #050b14, #101d2d, #1a2c42, #050b14); 
         }
@@ -23,7 +24,6 @@
             animation: gradientBG 15s ease infinite; 
             background-attachment: fixed;
             margin: 0; padding: 20px; overflow-x: hidden;
-            cursor: default; /* 回歸標準鼠標提升操作感 */
             padding-bottom: 120px;
         }
 
@@ -35,17 +35,11 @@
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
-        /* 保留 25 顆流星邏輯... */
-        .shooting-star:nth-child(n) { transform: rotate(-45deg); }
-        .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
-        .shooting-star:nth-child(2) { top: 10%; left: 40%; animation-delay: 1.2s; }
-        .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
-        .shooting-star:nth-child(4) { top: 5%; left: 20%; animation-delay: 4s; }
-        .shooting-star:nth-child(5) { top: 30%; left: 70%; animation-delay: 0.5s; }
-        /* (簡略表示，實際代碼中請保留原有的 25 顆配置) */
-
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
-        @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
+        @keyframes shooting { 
+            0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 
+            100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } 
+        }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         /* --- 登入介面 --- */
@@ -57,7 +51,7 @@
         .login-box input { background: rgba(255,255,255,0.1); color: white; padding: 12px; width: 220px; border-radius: 12px; border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none; }
         
         /* --- 滑鼠特效 --- */
-        .cursor-dot { width: 8px; height: 8px; background: var(--accent-blue); position: fixed; border-radius: 50%; pointer-events: none; z-index: 100001; box-shadow: 0 0 10px var(--accent-blue); transition: transform 0.1s; }
+        .cursor-dot { width: 8px; height: 8px; background: var(--accent-blue); position: fixed; border-radius: 50%; pointer-events: none; z-index: 100001; box-shadow: 0 0 10px var(--accent-blue); transition: transform 0.05s linear; top:0; left:0; }
 
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
         header h1 { color: #fff; font-size: 3rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
@@ -65,9 +59,9 @@
         
         /* --- 卡片設計 --- */
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
-        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(30px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
+        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
         .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(79, 195, 247, 0.3); }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(79, 195, 247, 0.4); }
         .photo-container { width: 100%; height: 280px; background: #ddd; overflow: hidden; cursor: pointer; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
         .card:hover .photo-container img { transform: scale(1.1); }
@@ -76,13 +70,11 @@
         
         .actions { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; }
         .btn-ig { background: var(--ig-gradient); color: white; padding: 8px 16px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: opacity 0.2s; }
-        .btn-ig:hover { opacity: 0.9; }
         
-        /* 點讚動畫特效 */
+        /* 點讚動畫 */
         .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: pointer; transition: transform 0.2s; border: 1px solid #ffcdd2; user-select: none; }
-        .like-box:active { transform: scale(1.3); }
         .heart-pop { animation: heartBeat 0.4s ease-out; }
-        @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.5); } 100% { transform: scale(1); } }
+        @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.4); } 100% { transform: scale(1); } }
 
         /* --- 模組容器 --- */
         .module-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 1px solid var(--accent-blue); backdrop-filter: blur(10px); text-align: center; }
@@ -91,7 +83,7 @@
         .time-block span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--header-color); }
         
         #message-list { max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.03); border-radius: 15px; }
-        .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; font-size: 0.95rem; }
+        .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: left; font-size: 0.95rem; border-left: 4px solid var(--accent-blue); }
 
         /* --- 底部播放器 --- */
         #music-player { 
@@ -105,36 +97,32 @@
             width: 6px; background: var(--accent-blue); border-radius: 3px; height: 15%; 
             transition: height 0.1s ease; box-shadow: 0 0 10px var(--accent-blue);
         }
-        .music-info { text-align: center; flex: 1; }
         .music-ctrl { background: none; border: none; color: white; font-size: 1.6rem; cursor: pointer; padding: 0 15px; transition: 0.2s; }
-        .music-ctrl:hover { color: var(--accent-blue); transform: scale(1.1); }
 
         /* --- 彈窗 --- */
         #member-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: white; width: 85%; max-width: 400px; border-radius: 30px; padding: 40px; text-align: center; position: relative; animation: modalPop 0.3s ease-out; }
-        @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .close-btn { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #ccc; cursor: pointer; }
-        .modal-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden; border: 3px solid var(--accent-blue); }
-        .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<div class="night-sky" id="star-container">
-    </div>
+<div class="night-sky" id="star-container"></div>
 
 <div id="login-overlay">
     <div class="login-box">
         <div class="typewriter-text">歡迎來到 322</div>
         <input type="password" id="pass-input" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" style="padding: 12px 30px; font-size: 1rem;" onclick="checkPass()">確認身分</button>
+        <br><button class="btn-ig" style="padding: 12px 30px; font-size: 1rem; cursor:pointer;" onclick="checkPass()">確認身分</button>
     </div>
 </div>
 
 <div id="member-modal" onclick="if(event.target.id==='member-modal') closeModal()">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">×</span>
-        <div class="modal-avatar"><img id="modal-img" src=""></div>
+        <div style="width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden; border: 3px solid var(--accent-blue);">
+            <img id="modal-img" src="" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
         <h2 id="modal-name" style="margin: 0; color: #1a2c42;"></h2>
         <span id="modal-tag" class="nickname-tag"></span>
         <div id="modal-quote" style="font-style: italic; color: #555; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 12px;"></div>
@@ -174,7 +162,7 @@
     <div class="visualizer" id="viz-left">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
-    <div class="music-info">
+    <div style="text-align: center; flex: 1;">
         <span id="current-track-name" style="font-size: 0.8rem; display: block; margin-bottom: 5px; opacity: 0.8;">🎵 準備播放</span>
         <div style="display: flex; align-items: center; justify-content: center;">
             <button class="music-ctrl" onclick="prevSong()">⏮</button>
@@ -188,7 +176,21 @@
 </div>
 
 <script>
-    // --- Firebase 配置 ---
+    // --- 流星生成邏輯 ---
+    function createStars() {
+        const container = document.getElementById('star-container');
+        for (let i = 0; i < 25; i++) {
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+            star.style.top = `${Math.random() * 50}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            star.style.animationDuration = `${2 + Math.random() * 3}s`;
+            container.appendChild(star);
+        }
+    }
+
+    // --- Firebase 配置 (請確保資料正確) ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -198,8 +200,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const ganHuaQuotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。", "車子的擋風玻璃比後視鏡大，前方才是路。", "再忙再累，也要抽出時間讓自己帥起來。", "他人對你的尊重，從來不是因為你的順從。", "萬事萬物皆有裂痕，光就是這樣照進來的。", "先愛自己，因為自己是你餘生的伴侶。", "窮則思變，差則思勤！沒有比人更高的山！"];
-    
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg", quote: "相聚有時，後會無期" },
         { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg", quote: "其實上課睡覺玩手機也能考 100" },
@@ -212,22 +212,21 @@
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg", quote: "我愛染頭髮 跟雞窩一樣" }
     ];
 
-    // --- 音樂頻譜控制 ---
-    let audioCtx, analyser, source, dataArray, animId;
+    // --- 音樂邏輯 ---
+    let audioCtx, analyser, dataArray, animId;
     const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
     let trackIdx = 0;
-    const audio = new Audio();
-    audio.src = playlist[trackIdx];
+    const audio = new Audio(playlist[trackIdx]);
     audio.crossOrigin = "anonymous";
 
     function initAudio() {
         if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
-        source = audioCtx.createMediaElementSource(audio);
+        const source = audioCtx.createMediaElementSource(audio);
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
-        analyser.fftSize = 64; 
+        analyser.fftSize = 64;
         dataArray = new Uint8Array(analyser.frequencyBinCount);
     }
 
@@ -236,67 +235,60 @@
         analyser.getByteFrequencyData(dataArray);
         const leftBars = document.querySelectorAll('#viz-left .bar');
         const rightBars = document.querySelectorAll('#viz-right .bar');
-        const indices = [2, 6, 12, 20]; // 挑選具代表性的頻段
+        const indices = [2, 6, 12, 20];
         indices.forEach((idx, i) => {
-            const h = (dataArray[idx] / 255) * 100;
-            const finalH = Math.max(15, h);
-            if(leftBars[i]) leftBars[i].style.height = `${finalH}%`;
-            if(rightBars[i]) rightBars[i].style.height = `${finalH}%`;
+            const h = Math.max(15, (dataArray[idx] / 255) * 100);
+            if(leftBars[i]) leftBars[i].style.height = `${h}%`;
+            if(rightBars[i]) rightBars[i].style.height = `${h}%`;
         });
     }
 
     function toggleMusic() {
         initAudio();
-        const btn = document.getElementById('play-btn');
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (audio.paused) {
             audio.play();
-            btn.innerText = "⏸";
+            document.getElementById('play-btn').innerText = "⏸";
             drawSpectrum();
         } else {
             audio.pause();
-            btn.innerText = "▶️";
+            document.getElementById('play-btn').innerText = "▶️";
             cancelAnimationFrame(animId);
         }
     }
 
-    function changeSong(offset) {
-        trackIdx = (trackIdx + offset + playlist.length) % playlist.length;
+    function nextSong() {
+        trackIdx = (trackIdx + 1) % playlist.length;
         audio.src = playlist[trackIdx];
         document.getElementById('current-track-name').innerText = `🎵 曲目 ${trackIdx + 1}`;
-        if (!audio.paused || audioCtx) {
-            audio.play();
-            document.getElementById('play-btn').innerText = "⏸";
-            if(!animId) drawSpectrum();
-        }
+        audio.play();
+        document.getElementById('play-btn').innerText = "⏸";
     }
-    function nextSong() { changeSong(1); }
-    function prevSong() { changeSong(-1); }
+
+    function prevSong() {
+        trackIdx = (trackIdx - 1 + playlist.length) % playlist.length;
+        audio.src = playlist[trackIdx];
+        document.getElementById('current-track-name').innerText = `🎵 曲目 ${trackIdx + 1}`;
+        audio.play();
+    }
     audio.onended = nextSong;
 
-    // --- 核心邏輯 ---
+    // --- 其他功能 ---
     function checkPass() {
-        const input = document.getElementById('pass-input');
-        if (input.value === "best322") { 
+        if (document.getElementById('pass-input').value === "best322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
             document.getElementById('music-player').style.display = 'flex';
             startQuotes();
-        } else { 
-            alert("密碼不對喔，你真的是 322 的嗎？"); 
-            input.value = ""; 
-        }
+        } else { alert("密碼錯誤！"); }
     }
 
     function startQuotes() {
         const d = document.getElementById('quote-display');
+        const q = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。"];
         let i = 0;
         setInterval(() => {
             d.style.opacity = 0;
-            setTimeout(() => {
-                d.innerText = `「 ${ganHuaQuotes[i]} 」`;
-                d.style.opacity = 1;
-                i = (i + 1) % ganHuaQuotes.length;
-            }, 800);
+            setTimeout(() => { d.innerText = `「 ${q[i]} 」`; d.style.opacity = 1; i = (i + 1) % q.length; }, 800);
         }, 4000);
     }
 
@@ -317,15 +309,14 @@
                 </div>`;
             container.appendChild(card);
             observer.observe(card);
-            db.ref('likes/'+m.id).on('value', s => { 
-                document.getElementById(`like-${m.id}`).innerText = s.val() || 0; 
-            });
+            db.ref('likes/'+m.id).on('value', s => { document.getElementById(`like-${m.id}`).innerText = s.val() || 0; });
         });
     }
 
     function addLike(id) {
         const btn = document.getElementById(`btn-like-${id}`);
         btn.classList.add('heart-pop');
+        confetti({ particleCount: 40, spread: 50, origin: { y: 0.9 }, colors: ['#ff0000', '#ff69b4'] });
         setTimeout(() => btn.classList.remove('heart-pop'), 400);
         db.ref('likes/'+id).transaction(c => (c || 0) + 1);
     }
@@ -352,32 +343,15 @@
     }
 
     db.ref('messages').limitToLast(15).on('value', snap => {
-        const list = document.getElementById('message-list');
+        const list = document.getElementById('message-list'), data = snap.val();
         list.innerHTML = "";
-        const data = snap.val();
-        if (data) {
-            Object.values(data).reverse().forEach(msg => {
-                list.innerHTML += `<div class="msg-item"><strong>${msg.name}</strong>: ${msg.content}</div>`;
-            });
-        }
+        if (data) Object.values(data).reverse().forEach(msg => {
+            list.innerHTML += `<div class="msg-item"><strong>${msg.name}</strong>: ${msg.content}</div>`;
+        });
     });
 
-    function updateCountdown() {
-        const target = new Date(2026, 4, 16, 8, 0).getTime();
-        const diff = target - Date.now();
-        if (diff > 0) {
-            document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
-            document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
-            document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-            document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
-        }
-    }
-
-    // --- 效能與滑鼠監聽 ---
     const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('show');
-        });
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
     }, { threshold: 0.1 });
 
     window.addEventListener('mousemove', e => {
@@ -386,9 +360,18 @@
     });
 
     window.onload = () => {
+        createStars();
         renderCards();
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
+        setInterval(() => {
+            const target = new Date(2026, 4, 16, 8, 0).getTime();
+            const diff = target - Date.now();
+            if (diff > 0) {
+                document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+                document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
+                document.getElementById('minutes').innerText = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
+                document.getElementById('seconds').innerText = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+            }
+        }, 1000);
     };
 </script>
 </body>
