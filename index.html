@@ -2,8 +2,8 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322憨包們</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>322 憨包精華版</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     
@@ -25,17 +25,17 @@
             margin: 0; padding: 20px; overflow-x: hidden;
             cursor: none; 
             padding-bottom: 120px;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- 視覺特效：流星雨 (完整 25 顆保留) --- */
-        .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        /* --- 25 顆流星座標 (精準還原) --- */
+        .night-sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; transition: transform 0.1s ease-out; }
         .shooting-star {
             position: absolute; height: 2px; background: linear-gradient(-45deg, #ffffff, rgba(0, 0, 255, 0));
             filter: drop-shadow(0 0 6px #ffffff); border-radius: 999px; opacity: 0;
             animation: tail 3s ease-in-out infinite, shooting 3s ease-in-out infinite;
         }
 
-        /* 流星座標與延遲 (原封不動) */
         .shooting-star:nth-child(1) { top: 0%; left: 80%; animation-delay: 0s; }
         .shooting-star:nth-child(2) { top: 10%; left: 40%; animation-delay: 1.2s; animation-duration: 3.5s; transform: scale(0.7); }
         .shooting-star:nth-child(3) { top: 20%; left: 95%; animation-delay: 2.5s; }
@@ -65,90 +65,51 @@
         @keyframes tail { 0% { width: 0; } 30% { width: 120px; } 100% { width: 0; } }
         @keyframes shooting { 0% { transform: translateX(0) translateY(0) rotateZ(-45deg); opacity: 1; } 100% { transform: translateX(-1000px) translateY(1000px) rotateZ(-45deg); opacity: 0; } }
 
-        /* --- 登入與基礎樣式 (保留) --- */
+        /* --- UI 基礎樣式 --- */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 60000; background: var(--bg-gradient); display: flex; justify-content: center; align-items: center; transition: transform 0.8s cubic-bezier(0.87, 0, 0.13, 1); }
-        .login-box { background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px; text-align: center; box-shadow: 0 0 30px rgba(79, 195, 247, 0.3); border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white; }
-        .typewriter-text { font-family: 'Courier New', Courier, monospace; overflow: hidden; border-right: .15em solid var(--accent-blue); white-space: nowrap; margin: 0 auto 20px; letter-spacing: .15em; width: 0; font-size: 1.8rem; font-weight: bold; animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite; }
+        .login-box { background: rgba(0, 0, 0, 0.8); padding: 50px; border-radius: 30px; text-align: center; border: 1px solid var(--accent-blue); backdrop-filter: blur(15px); color: white; }
+        .typewriter-text { font-family: 'Courier New', monospace; overflow: hidden; border-right: .15em solid var(--accent-blue); white-space: nowrap; margin: 0 auto 20px; letter-spacing: .15em; width: 0; font-size: 1.8rem; font-weight: bold; animation: typing 2s steps(10, end) forwards, blink-caret .75s step-end infinite; }
         @keyframes typing { from { width: 0 } to { width: 100% } }
         @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--accent-blue) } }
         .login-box input { background: rgba(255,255,255,0.1); color: white; padding: 12px; width: 220px; border-radius: 12px; border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none; }
-        
+
         .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 100001; box-shadow: 0 0 12px var(--accent-blue); }
-        
-        header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
-        header h1 { color: #fff; font-size: 3.5rem; letter-spacing: 6px; text-shadow: 0 0 20px rgba(79, 195, 247, 0.8); margin-bottom: 10px;}
-        #quote-display { color: #e1f5fe; font-style: italic; font-size: 1.2rem; min-height: 30px; transition: opacity 0.8s ease; text-shadow: 0 0 10px rgba(79, 195, 247, 0.5); font-weight: 500; }
-        
+        @media (max-width: 768px) { .cursor-dot { display: none; } body { cursor: auto; } }
+
+        /* --- 3D 翻轉卡片系統 --- */
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; padding-bottom: 60px; }
-        .card { background: var(--card-bg); border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center; padding-bottom: 25px; opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
-        .card.show { opacity: 1; transform: translateY(0); }
-        .card:hover { transform: translateY(-15px) scale(1.05); box-shadow: 0 25px 50px rgba(79, 195, 247, 0.4); background: white; }
-        .photo-container { width: 100%; height: 300px; background: #eee; overflow: hidden; }
+        .card-perspective { perspective: 1000px; height: 480px; opacity: 0; transform: translateY(40px); transition: all 0.6s ease-out; }
+        .card-perspective.show { opacity: 1; transform: translateY(0); }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; cursor: none; }
+        .card-perspective.flipped .card-inner { transform: rotateY(180deg); }
+        
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 24px; overflow: hidden; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .card-back { transform: rotateY(180deg); background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; box-sizing: border-box; text-align: center; }
+
+        .photo-container { width: 100%; height: 320px; background: #eee; overflow: hidden; position: relative; }
         .photo-container img { width: 100%; height: 100%; object-fit: cover; }
         .name { font-size: 1.6rem; font-weight: 800; margin-top: 15px; color: #1a2c42; }
-        .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600;}
-        .actions { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
-        .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; cursor: none; }
-        .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; transition: transform 0.2s ease; border: 1px solid #ffcdd2; }
-
-        /* --- 彈窗樣式 (保留) --- */
-        #member-modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 100000; 
-            display: none; justify-content: center; align-items: center; 
-            backdrop-filter: blur(10px);
-        }
-        .modal-content { 
-            background: white; width: 90%; max-width: 450px; 
-            border-radius: 30px; padding: 40px; text-align: center; 
-            position: relative; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 30px; color: #bbb; cursor: none; transition: 0.2s; }
-        .close-btn:hover { color: #333; }
-        .modal-avatar { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden; border: 4px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-quote-text { font-style: italic; color: #555; line-height: 1.6; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 15px; position: relative; }
-
-        /* --- 模組與留言板 (保留) --- */
+        .nickname-tag { display: inline-block; color: #fff; background: var(--header-color); padding: 5px 15px; border-radius: 10px; margin: 10px 0; font-weight: 600; }
+        
+        /* --- 模組樣式 --- */
         .module-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
         .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
-        
         #random-quote-box { margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.6); border-radius: 15px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #01579b; font-weight: bold; border: 1px dashed var(--accent-blue); transition: opacity 0.3s; }
 
-        #message-list { max-height: 250px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 15px; }
-        .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.5s ease; text-align: left; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- 播放器 --- */
+        #music-player { position: fixed; bottom: 0; left: 0; width: 100%; height: 85px; z-index: 9999; background: rgba(10, 20, 35, 0.95); padding: 0 20px; color: white; backdrop-filter: blur(15px); border-top: 2px solid var(--accent-blue); display: none; align-items: center; justify-content: space-between; box-sizing: border-box; }
+        .visualizer { display: flex; align-items: flex-end; gap: 4px; height: 35px; }
+        .visualizer .bar { width: 5px; background: var(--accent-blue); border-radius: 3px; height: 15%; transition: height 0.08s; box-shadow: 0 0 10px var(--accent-blue); }
 
-        /* --- 播放器 (升級：柱子樣式優化) --- */
-        #music-player { 
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; z-index: 9999; 
-            background: rgba(10, 20, 35, 0.95); padding: 0 40px; color: white; 
-            backdrop-filter: blur(15px); border-top: 2px solid var(--accent-blue); 
-            display: none; align-items: center; justify-content: space-between; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); box-sizing: border-box;
-        }
-        .visualizer { display: flex; align-items: flex-end; gap: 4px; height: 35px; width: 50px; }
-        .visualizer .bar { 
-            width: 5px; 
-            background: var(--accent-blue); 
-            border-radius: 3px; 
-            height: 15%; 
-            transition: height 0.08s ease; /* 讓頻譜反應更即時 */
-            box-shadow: 0 0 10px var(--accent-blue);
-        }
-        
-        .music-ctrl { background: none; border: none; color: white; font-size: 1.5rem; cursor: none; padding: 0 10px; transition: 0.2s; }
-        .music-ctrl:hover { color: var(--accent-blue); transform: scale(1.1); }
-
+        .heart-particle { position: fixed; pointer-events: none; animation: heartFloat 1s ease-out forwards; z-index: 100002; font-size: 24px; }
+        @keyframes heartFloat { 0% { transform: scale(1) translateY(0); opacity: 1; } 100% { transform: scale(2) translateY(-120px) rotate(25deg); opacity: 0; } }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        a, button, input, .like-box, .music-ctrl, .close-btn { cursor: none !important; }
     </style>
 </head>
 <body>
 
-<div class="night-sky">
+<div class="night-sky" id="nightSky">
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
     <div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
@@ -163,26 +124,16 @@
 <div id="login-overlay">
     <div class="login-box">
         <div class="typewriter-text">歡迎來到 322</div>
-        <input type="password" id="pass-input" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter') checkPass()">
-        <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
-    </div>
-</div>
-
-<div id="member-modal" onclick="closeModalByBg(event)">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">×</span>
-        <div class="modal-avatar"><img id="modal-img" src=""></div>
-        <h2 id="modal-name" style="margin: 0; color: #1a2c42;"></h2>
-        <span id="modal-tag" class="nickname-tag"></span>
-        <div class="modal-quote-text" id="modal-quote"></div>
+        <input type="password" id="pass-input" placeholder="密碼: best322" onkeydown="if(event.key==='Enter') checkPass()">
+        <br><button class="nickname-tag" style="border:none; cursor:none;" onclick="checkPass()">確認身分</button>
     </div>
 </div>
 
 <div class="cursor-dot"></div><div class="cursor-dot"></div>
 
 <header>
-    <h1> 322 憨包們 </h1>
-    <div id="quote-display">「 加載憨包回憶中... 」</div>
+    <h1 style="color:white; text-align:center; font-size: 3rem; text-shadow: 0 0 20px var(--accent-blue);">322 憨包們</h1>
+    <div id="quote-display" style="text-align:center; color:#e1f5fe; font-style:italic; min-height:30px;">「 加載憨包回憶中... 」</div>
 </header>
 
 <div class="container" id="members-container"></div>
@@ -200,16 +151,16 @@
 <div class="module-container">
     <h3 style="color:var(--header-color);">心靈毒雞湯</h3>
     <div id="random-quote-box">點擊下方按鈕抽一句心靈雞湯...</div>
-    <button class="btn-ig" onclick="drawRandomQuote()">隨機翻牌</button>
+    <button class="nickname-tag" style="border:none; cursor:none; background:var(--ig-gradient);" onclick="drawRandomQuote()">隨機翻牌</button>
 </div>
 
 <div class="module-container">
-    <h3 style="color:var(--header-color);"> 憨包留言板</h3>
-    <div id="message-list"></div>
-    <div style="display: flex; gap: 10px;">
-        <input type="text" id="user-name" placeholder="大名" style="width: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
-        <input type="text" id="user-msg" placeholder="留句幹話吧..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ccc;">
-        <button onclick="postMessage()" style="padding: 10px 15px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold;">發送</button>
+    <h3 style="color:var(--header-color);">憨包留言板</h3>
+    <div id="message-list" style="max-height:200px; overflow-y:auto; margin-bottom:15px; text-align:left;"></div>
+    <div style="display:flex; gap:10px;">
+        <input type="text" id="user-name" placeholder="大名" style="width:70px; border-radius:10px; border:1px solid #ccc; padding:8px;">
+        <input type="text" id="user-msg" placeholder="說點幹話..." style="flex:1; border-radius:10px; border:1px solid #ccc; padding:8px;">
+        <button onclick="postMessage()" style="background:var(--header-color); color:white; border:none; border-radius:10px; padding:0 15px; cursor:none;">發送</button>
     </div>
 </div>
 
@@ -217,13 +168,11 @@
     <div class="visualizer" id="viz-left">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
     </div>
-    <div style="display: flex; flex-direction: column; align-items: center; min-width: 200px;">
-        <span id="current-track-name" style="font-size: 0.85rem; margin-bottom: 5px; opacity: 0.9;">🎵 曲目 1</span>
-        <div style="display: flex; align-items: center;">
-            <button class="music-ctrl" onclick="prevSong()">⏮</button>
-            <button id="play-btn" class="music-ctrl" onclick="toggleMusic()">▶️</button>
-            <button class="music-ctrl" onclick="nextSong()">⏭</button>
-        </div>
+    <div style="text-align:center;">
+        <span id="current-track-name" style="font-size:0.8rem; display:block; margin-bottom:5px;">🎵 曲目 1</span>
+        <button onclick="prevSong()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:none;">⏮</button>
+        <button id="play-btn" onclick="toggleMusic()" style="background:none; border:none; color:white; font-size:1.8rem; margin:0 15px; cursor:none;">▶️</button>
+        <button onclick="nextSong()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:none;">⏭</button>
     </div>
     <div class="visualizer" id="viz-right">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -231,7 +180,7 @@
 </div>
 
 <script>
-    // --- Firebase 配置 (完整保留) ---
+    // --- Firebase 配置 ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -241,7 +190,22 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const ganHuaQuotes = [ "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。", "再忙再累，也要抽出時間讓自己美起來。", "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!", "他人對你的尊重，從來不是因為你的順從。", "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。", "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。", "每個人的一生都有許多夢想，剩下的就僅僅是行動了。", "從現在開始，不沉溺幻想，好好生活，做一個接近幸福的人。", "萬事萬物皆有裂痕，光就是這樣照進來的。", "生活是屬於每個人自己的感受，不屬於別人的看法。", "先愛自己，因為自己是你餘生的伴侶。", "不要為小事遮住視線，我們還有更大的世界。", "窮則思變，差則思勤!沒有比人更高的山！" ];
+    // --- 完整幹話庫 (13句全回歸) ---
+    const ganHuaQuotes = [ 
+        "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。", 
+        "再忙再累，也要抽出時間讓自己美起來。", 
+        "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!", 
+        "他人對你的尊重，從來不是因為你的順從。", 
+        "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。", 
+        "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。", 
+        "每個人的一生都有許多夢想，剩下的就僅僅是行動了。", 
+        "從現在開始，不沉溺幻想，好好生活，做一個接近幸福的人。", 
+        "萬事萬物皆有裂痕，光就是這樣照進來的。", 
+        "生活是屬於每個人自己的感受，不屬於別人的看法。", 
+        "先愛自己，因為自己是你餘生的伴侶。", 
+        "不要為小事遮住視線，我們還有更大的世界。", 
+        "窮則思變，差則思勤!沒有比人更高的山！" 
+    ];
     
     const members = [
         { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg", quote: "相聚有時，後會無期" },
@@ -250,98 +214,59 @@
         { id: "m4", name: "廖廷恩", tag: "大🍼野豬", ig: "ed_331ie", img: "p4.jpg", quote: "「我沒有 就跟你說不是我」" },
         { id: "m5", name: "蔡承烜", tag: "雨傘哥", ig: "pywb30", img: "p5.jpg", quote: "「我家在大肚。」" },
         { id: "m6", name: "簡宗翰", tag: "養身籃球", ig: "jzh.10.1015", img: "p6.jpg", quote: "「徐堃翔真的是智障。」" },
-        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg", quote: "「ผัดกะเพราหมูไม่เผ็ด 打拋豬不要辣」" },
-        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg", quote: "「養兒方知父母恩，崇瑋軒漢還不快點叫爸爸。」" },
+        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg", quote: "「打拋豬不要辣」" },
+        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg", quote: "「養兒方知父母恩，崇瑋軒漢叫爸爸。」" },
         { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg", quote: "「我愛染頭髮 跟雞窩一樣」" }
     ];
 
-    // --- 頻譜分析變數 ---
-    let audioContext, analyser, source, dataArray;
-    let animId;
+    // --- 核心功能 ---
+    const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')), {threshold: 0.1});
 
-    // --- 彈窗邏輯 (保留) ---
-    function openModal(member) {
-        document.getElementById('modal-img').src = member.img;
-        document.getElementById('modal-name').innerText = member.name;
-        document.getElementById('modal-tag').innerText = member.tag;
-        document.getElementById('modal-quote').innerText = member.quote;
-        document.getElementById('member-modal').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; 
-    }
-    function closeModal() {
-        document.getElementById('member-modal').style.display = 'none';
-        document.body.style.overflow = 'auto'; 
-    }
-    function closeModalByBg(e) { if(e.target.id === 'member-modal') closeModal(); }
-
-    // --- 音樂與頻譜功能 (升級核心) ---
-    const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
-    let currentTrackIndex = 0;
-    const audio = new Audio();
-    audio.src = playlist[currentTrackIndex];
-    audio.crossOrigin = "anonymous"; // 允許分析外部資源
-
-    function initAudio() {
-        if (audioContext) return;
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        source = audioContext.createMediaElementSource(audio);
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
-        analyser.fftSize = 64; 
-        dataArray = new Uint8Array(analyser.frequencyBinCount);
-    }
-
-    function drawSpectrum() {
-        animId = requestAnimationFrame(drawSpectrum);
-        analyser.getByteFrequencyData(dataArray);
-        
-        const leftBars = document.querySelectorAll('#viz-left .bar');
-        const rightBars = document.querySelectorAll('#viz-right .bar');
-        
-        // 分配頻率給柱子 (低音到高音)
-        const indices = [2, 6, 12, 20];
-        indices.forEach((idx, i) => {
-            const val = dataArray[idx];
-            const h = (val / 255) * 100;
-            if(leftBars[i]) leftBars[i].style.height = `${Math.max(15, h)}%`;
-            if(rightBars[i]) rightBars[i].style.height = `${Math.max(15, h)}%`;
+    function renderCards() {
+        const container = document.getElementById('members-container');
+        members.forEach(m => {
+            const wrap = document.createElement('div');
+            wrap.className = 'card-perspective';
+            wrap.innerHTML = `
+                <div class="card-inner" onclick="toggleFlip(this)">
+                    <div class="card-face">
+                        <div class="photo-container"><img src="${m.img}" onpointerdown="startHeart(event)" onpointerup="stopHeart()" onpointerleave="stopHeart()"></div>
+                        <div style="padding:15px;">
+                            <div class="name">${m.name}</div>
+                            <span class="nickname-tag">${m.tag}</span>
+                            <div style="margin-top:10px; color:#e91e63; font-weight:800; display:flex; align-items:center; justify-content:center; gap:5px;" onclick="event.stopPropagation(); addLike('${m.id}')">❤️ <span id="like-${m.id}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="card-face card-back">
+                        <h2 style="color:#1a2c42; margin-bottom:10px;">${m.name}</h2>
+                        <div style="background:#f8f9fa; padding:15px; border-radius:15px; font-style:italic; color:#555;">${m.quote}</div>
+                        <a href="https://www.instagram.com/${m.ig}" target="_blank" class="nickname-tag" style="text-decoration:none; background:var(--ig-gradient); margin-top:20px; cursor:none;">追蹤 IG</a>
+                        <p style="font-size:0.8rem; color:#bbb; margin-top:15px;">點擊翻回正面</p>
+                    </div>
+                </div>`;
+            container.appendChild(wrap);
+            observer.observe(wrap);
+            db.ref('likes/'+m.id).on('value', s => { document.getElementById(`like-${m.id}`).innerText = s.val() || 0; });
         });
     }
 
-    function updateTrackUI() { document.getElementById('current-track-name').innerText = `🎵 曲目 ${currentTrackIndex + 1}`; }
+    function toggleFlip(el) { el.parentElement.classList.toggle('flipped'); }
 
-    function toggleMusic() {
-        initAudio();
-        const btn = document.getElementById('play-btn');
-        if (audioContext.state === 'suspended') audioContext.resume();
-
-        if (audio.paused) {
-            audio.play();
-            btn.innerText = "⏸";
-            drawSpectrum();
-        } else {
-            audio.pause();
-            btn.innerText = "▶️";
-            cancelAnimationFrame(animId);
-        }
+    // 愛心噴發
+    let hT;
+    function startHeart(e) {
+        hT = setInterval(() => {
+            const h = document.createElement('div');
+            h.className = 'heart-particle'; h.innerHTML = '❤️';
+            h.style.left = (e.clientX || (e.touches && e.touches[0].clientX)) + 'px';
+            h.style.top = (e.clientY || (e.touches && e.touches[0].clientY)) + 'px';
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 1000);
+        }, 100);
     }
+    function stopHeart() { clearInterval(hT); }
 
-    function changeSong(offset) {
-        currentTrackIndex = (currentTrackIndex + offset + playlist.length) % playlist.length;
-        audio.src = playlist[currentTrackIndex];
-        updateTrackUI();
-        if (!audio.paused || audioContext) {
-            audio.play();
-            document.getElementById('play-btn').innerText = "⏸";
-            if(!animId) drawSpectrum();
-        }
-    }
-    function nextSong() { changeSong(1); }
-    function prevSong() { changeSong(-1); }
-    audio.onended = nextSong;
-
-    // --- 語錄、留言與計時器 (完整保留) ---
+    // 隨機幹話抽卡
     function drawRandomQuote() {
         const box = document.getElementById('random-quote-box');
         box.style.opacity = 0;
@@ -351,30 +276,63 @@
         }, 300);
     }
 
-    function postMessage() {
-        const nInput = document.getElementById('user-name'), mInput = document.getElementById('user-msg');
-        if (!mInput.value.trim()) return;
-        db.ref('messages').push({ name: nInput.value.trim() || "匿名憨包", content: mInput.value.trim(), ts: Date.now() });
-        mInput.value = "";
+    // 陀螺儀連動
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', (e) => {
+            const sky = document.getElementById('nightSky');
+            sky.style.transform = `translate(${e.gamma/6}px, ${e.beta/6}px)`;
+        });
     }
 
-    db.ref('messages').limitToLast(10).on('value', snap => {
-        const list = document.getElementById('message-list'); list.innerHTML = "";
-        const data = snap.val();
-        if (data) {
-            Object.values(data).reverse().forEach(m => {
-                list.innerHTML += `<div class="msg-item"><strong>${m.name}</strong>: ${m.content}</div>`;
-            });
+    // 音樂與頻譜
+    let aCtx, analyser, dataArr, animId;
+    const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
+    let cIdx = 0;
+    const audio = new Audio(playlist[cIdx]);
+    audio.crossOrigin = "anonymous";
+
+    function toggleMusic() {
+        if (!aCtx) {
+            aCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = aCtx.createAnalyser();
+            const source = aCtx.createMediaElementSource(audio);
+            source.connect(analyser); analyser.connect(aCtx.destination);
+            analyser.fftSize = 64; dataArr = new Uint8Array(analyser.frequencyBinCount);
         }
+        if (audio.paused) { audio.play(); document.getElementById('play-btn').innerText = "⏸"; drawSpectrum(); } 
+        else { audio.pause(); document.getElementById('play-btn').innerText = "▶️"; }
+    }
+
+    function drawSpectrum() {
+        animId = requestAnimationFrame(drawSpectrum);
+        analyser.getByteFrequencyData(dataArr);
+        const bars = document.querySelectorAll('.bar');
+        [2, 6, 12, 20].forEach((idx, i) => {
+            const h = (dataArr[idx] / 255) * 100;
+            bars[i].style.height = bars[i+4].style.height = `${Math.max(15, h)}%`;
+        });
+    }
+
+    function playNew() { audio.src = playlist[cIdx]; audio.play(); document.getElementById('current-track-name').innerText = `🎵 曲目 ${cIdx+1}`; }
+    function nextSong() { cIdx = (cIdx + 1) % playlist.length; playNew(); }
+    function prevSong() { cIdx = (cIdx - 1 + playlist.length) % playlist.length; playNew(); }
+    audio.onended = nextSong;
+
+    // 滑鼠點
+    const dots = document.querySelectorAll('.cursor-dot');
+    window.addEventListener('mousemove', e => {
+        dots.forEach((dot, i) => {
+            setTimeout(() => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }, i * 50);
+        });
     });
 
+    // 登入
     function checkPass() {
-        const input = document.getElementById('pass-input');
-        if (input.value === "best322") { 
+        if (document.getElementById('pass-input').value === "best322") {
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
             document.getElementById('music-player').style.display = 'flex';
-            rotateQuotes(); updateTrackUI();
-        } else { alert("抱歉你不是322憨包:?"); input.value = ""; }
+            rotateQuotes();
+        } else { alert("抱歉你不是322憨包:?"); }
     }
 
     function rotateQuotes() {
@@ -385,30 +343,23 @@
         }, 4500);
     }
 
-    function renderCards() {
-        const container = document.getElementById('members-container');
-        members.forEach(m => {
-            const card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `
-                <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'><img src="${m.img}"></div>
-                <div class="info">
-                    <div class="name" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
-                    <span class="nickname-tag">${m.tag}</span>
-                    <div class="actions">
-                        <a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a>
-                        <div class="like-box" onclick="addLike('${m.id}')">❤️ <span id="like-${m.id}">0</span></div>
-                    </div>
-                </div>`;
-            container.appendChild(card); observer.observe(card);
-            db.ref('likes/'+m.id).on('value', s => { document.getElementById(`like-${m.id}`).innerText = s.val() || 0; });
-        });
+    function postMessage() {
+        const n = document.getElementById('user-name'), m = document.getElementById('user-msg');
+        if (!m.value.trim()) return;
+        db.ref('messages').push({ name: n.value || "匿名", content: m.value, ts: Date.now() });
+        m.value = "";
     }
 
-    function addLike(id) { db.ref('likes/'+id).transaction(c => (c || 0) + 1); }
+    db.ref('messages').limitToLast(10).on('value', s => {
+        const list = document.getElementById('message-list'); list.innerHTML = "";
+        const data = s.val();
+        if (data) Object.values(data).reverse().forEach(v => {
+            list.innerHTML += `<div style="background:white; padding:10px; border-radius:10px; margin-bottom:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);"><b>${v.name}:</b> ${v.content}</div>`;
+        });
+    });
 
     function updateCountdown() {
-        const end = new Date(2026, 4, 16, 8, 0).getTime();
-        const diff = end - Date.now();
+        const diff = new Date(2026, 4, 16, 8, 0) - Date.now();
         if (diff > 0) {
             document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
             document.getElementById('hours').innerText = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, '0');
@@ -417,14 +368,9 @@
         }
     }
 
-    const observer = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('show')));
-    const dots = document.querySelectorAll('.cursor-dot');
-    window.addEventListener('mousemove', e => {
-        dots.forEach((dot, i) => { setTimeout(() => { dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px'; }, i * 50); });
-    });
+    function addLike(id) { db.ref('likes/'+id).transaction(c => (c || 0) + 1); }
 
-    setInterval(updateCountdown, 1000);
-    window.onload = () => { renderCards(); updateCountdown(); };
+    window.onload = () => { renderCards(); updateCountdown(); setInterval(updateCountdown, 1000); };
 </script>
 </body>
 </html>
