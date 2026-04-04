@@ -343,55 +343,45 @@ const soupQuotes = [
     "寧願辛苦一陣子，也不要後悔一輩子，衝吧 322！"
 ];
 
+// --- 極致絲滑版：心靈雞湯邏輯 ---
 function serveSoup() {
     const textElement = document.getElementById('soup-text');
     const btn = document.querySelector('.btn-soup');
     
-    // 1. 防止連點
+    // 1. 鎖定按鈕，避免連點混亂
     btn.disabled = true;
-    
-    // 2. 開始淡出
-    textElement.style.transition = "opacity 0.4s ease"; 
-    textElement.style.opacity = 0;
-    
-    // 3. 核心修正：增加一個微小的延遲，確保手機瀏覽器已經完成淡出
+    btn.style.opacity = "0.7";
+    btn.innerText = "熬煮中... 🥣";
+
+    // 2. 第一階段：縮小並淡出 (啟動 GPU 加速)
+    textElement.style.transition = "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+    textElement.style.opacity = "0";
+    textElement.style.transform = "scale(0.95)";
+
+    // 3. 第二階段：等待淡出完成後換字
     setTimeout(() => {
         let newQuote;
         do {
             newQuote = soupQuotes[Math.floor(Math.random() * soupQuotes.length)];
         } while (`「 ${newQuote} 」` === textElement.innerText);
         
-        // 換字
         textElement.innerText = `「 ${newQuote} 」`;
-        
-        // 4. 換好字後再淡入
-        setTimeout(() => {
-            textElement.style.opacity = 1;
-            // 5. 恢復按鈕
-            setTimeout(() => { btn.disabled = false; }, 400);
-        }, 50); // 這 50ms 是給手機瀏覽器反應「內容已更換」的時間
-    }, 450); 
-}    function renderCards() {
-        const container = document.getElementById('members-container');
-        members.forEach(m => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'><img src="${m.img}" loading="lazy"></div>
-                <div class="info">
-                    <div class="name" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
-                    <span class="nickname-tag">${m.tag}</span>
-                    <div class="actions">
-                        <a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a>
-                        <div class="like-box" id="btn-like-${m.id}" onclick="addLike('${m.id}')">❤️ <span id="like-${m.id}">0</span></div>
-                    </div>
-                </div>`;
-            container.appendChild(card);
-            observer.observe(card);
-            db.ref('likes/'+m.id).on('value', s => { document.getElementById(`like-${m.id}`).innerText = s.val() || 0; });
-        });
-    }
 
+        // 4. 第三階段：重新放大並淡入
+        // 稍微延遲 50ms 確保手機瀏覽器捕捉到內容更換
+        setTimeout(() => {
+            textElement.style.opacity = "1";
+            textElement.style.transform = "scale(1)";
+            
+            // 5. 恢復按鈕狀態
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.style.opacity = "1";
+                btn.innerText = "再來一碗 🥣";
+            }, 400);
+        }, 50);
+    }, 400); 
+}
     function addLike(id) {
         const btn = document.getElementById(`btn-like-${id}`);
         btn.classList.add('heart-pop');
