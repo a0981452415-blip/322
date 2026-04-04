@@ -299,17 +299,59 @@
         } else { alert("密碼錯誤！"); }
     }
 
+    // --- 1. 標題下方小語 (同樣加入絲滑轉場) ---
     function startQuotes() {
         const d = document.getElementById('quote-display');
-        const q = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。",  "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。","今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。"];
+        const q = [
+            "雖然我們是憨包，但我們是全校最帥的憨包。", 
+            "只要我不尷尬，尷尬的就是飲水機。", 
+            "322 的情義，就像福利社的泡麵——又香又燙。",  
+            "今天不讀書，明天變大豬。", 
+            "老師在講我在聽，但我聽的是心碎的聲音。"
+        ];
         let i = 0;
         setInterval(() => {
-            d.style.opacity = 0;
-            setTimeout(() => { d.innerText = `「 ${q[i]} 」`; d.style.opacity = 1; i = (i + 1) % q.length; }, 800);
+            d.style.opacity = 0; // 先淡出
+            setTimeout(() => { 
+                d.innerText = `「 ${q[i]} 」`; 
+                d.style.opacity = 1; // 換字後淡入
+                i = (i + 1) % q.length; 
+            }, 800);
         }, 4000);
     }
 
-    // --- 每日隨機憨包生成 ---
+    // --- 2. 補上漏掉的成員卡片渲染函式 ---
+    function renderCards() {
+        const container = document.getElementById('members-container');
+        container.innerHTML = ""; // 清空容器
+
+        members.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'>
+                    <img src="${m.img}" alt="${m.name}" onerror="this.src='https://via.placeholder.com/300?text=322'">
+                </div>
+                <div class="name" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
+                <div class="nickname-tag">${m.tag}</div>
+                <div class="actions">
+                    <a href="https://instagram.com/${m.ig}" target="_blank" class="btn-ig">IG</a>
+                    <div class="like-box" id="btn-like-${m.id}" onclick="addLike('${m.id}')">
+                        ❤️ <span id="count-${m.id}">0</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+            
+            // 監聽 Firebase 資料更新點讚數
+            db.ref('likes/' + m.id).on('value', snap => {
+                document.getElementById(`count-${m.id}`).innerText = snap.val() || 0;
+            });
+
+            // 啟動進場動畫
+            setTimeout(() => observer.observe(card), 100);
+        });
+    }    // --- 每日隨機憨包生成 ---
     function renderDailyMember() {
         const display = document.getElementById('daily-member-display');
         const now = new Date();
