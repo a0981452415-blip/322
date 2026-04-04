@@ -73,7 +73,7 @@
         .login-box input { background: rgba(255,255,255,0.1); color: white; padding: 12px; width: 220px; border-radius: 12px; border: 1px solid var(--accent-blue); margin: 20px 0; font-size: 1.1rem; text-align: center; outline: none; }
         
         /* --- 滑鼠特效 --- */
-        .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 70000; box-shadow: 0 0 12px var(--accent-blue); }
+        .cursor-dot { width: 10px; height: 10px; background: radial-gradient(circle, var(--accent-blue) 0%, var(--header-color) 100%); position: fixed; top: 0; left: 0; border-radius: 50%; pointer-events: none; z-index: 100001; box-shadow: 0 0 12px var(--accent-blue); }
         
         /* --- 內容樣式 --- */
         header { position: relative; z-index: 10; text-align: center; padding: 40px 0; }
@@ -92,20 +92,38 @@
         .btn-ig { display: inline-block; background: var(--ig-gradient); color: white; padding: 8px 18px; border-radius: 50px; text-decoration: none; font-weight: bold; border: none; font-size: 0.9rem; cursor: none; }
         .like-box { display: flex; align-items: center; gap: 5px; background: #ffebee; color: #e91e63; padding: 8px 15px; border-radius: 50px; font-weight: 800; cursor: none; transition: transform 0.2s ease; border: 1px solid #ffcdd2; }
 
+        /* --- 彈窗樣式 --- */
+        #member-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); z-index: 100000; 
+            display: none; justify-content: center; align-items: center; 
+            backdrop-filter: blur(10px);
+        }
+        .modal-content { 
+            background: white; width: 90%; max-width: 450px; 
+            border-radius: 30px; padding: 40px; text-align: center; 
+            position: relative; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 30px; color: #bbb; cursor: none; transition: 0.2s; }
+        .close-btn:hover { color: #333; }
+        .modal-avatar { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; overflow: hidden; border: 4px solid var(--accent-blue); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .modal-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .modal-quote-text { font-style: italic; color: #555; line-height: 1.6; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 15px; position: relative; }
+
         /* --- 模組容器 --- */
         .module-container { position: relative; z-index: 10; max-width: 700px; margin: 0 auto 30px; background: var(--card-bg); padding: 25px; border-radius: 25px; border: 2px solid var(--accent-blue); backdrop-filter: blur(10px); text-align: center; }
         .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
         .time-block { background: rgba(2, 136, 209, 0.1); padding: 10px; border-radius: 12px; }
         .time-block span { display: block; font-size: 2rem; font-weight: 800; color: var(--header-color); }
         
-        /* 語錄翻牌樣式 */
         #random-quote-box { margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.6); border-radius: 15px; min-height: 60px; display: flex; align-items: center; justify-content: center; color: #01579b; font-weight: bold; border: 1px dashed var(--accent-blue); transition: opacity 0.3s; }
 
         #message-list { max-height: 250px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 15px; }
         .msg-item { background: white; padding: 10px 15px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); animation: fadeIn 0.5s ease; text-align: left; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 藍色小柱子音樂播放器 (橫跨底部) --- */
+        /* --- 播放器 --- */
         #music-player { 
             position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; z-index: 9999; 
             background: rgba(10, 20, 35, 0.95); padding: 0 40px; color: white; 
@@ -115,15 +133,11 @@
         .visualizer { display: flex; align-items: flex-end; gap: 3px; height: 25px; width: 40px; }
         .visualizer .bar { width: 4px; background: var(--accent-blue); border-radius: 2px; height: 20%; transition: 0.2s; }
         .playing .bar { animation: bar-bounce 0.6s ease-in-out infinite alternate; }
-        .playing .bar:nth-child(1) { animation-delay: 0.1s; }
-        .playing .bar:nth-child(2) { animation-delay: 0.3s; }
-        .playing .bar:nth-child(3) { animation-delay: 0.2s; }
-        .playing .bar:nth-child(4) { animation-delay: 0.4s; }
         @keyframes bar-bounce { from { height: 20%; } to { height: 100%; } }
         .music-ctrl { background: none; border: none; color: white; font-size: 1.5rem; cursor: none; padding: 0 10px; }
 
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        a, button, input, .like-box, .music-ctrl { cursor: none !important; }
+        a, button, input, .like-box, .music-ctrl, .close-btn { cursor: none !important; }
     </style>
 </head>
 <body>
@@ -145,6 +159,16 @@
         <div class="typewriter-text">歡迎來到 322</div>
         <input type="password" id="pass-input" placeholder="請輸入密碼" onkeydown="if(event.key==='Enter') checkPass()">
         <br><button class="btn-ig" onclick="checkPass()">確認身分</button>
+    </div>
+</div>
+
+<div id="member-modal" onclick="closeModalByBg(event)">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <div class="modal-avatar"><img id="modal-img" src=""></div>
+        <h2 id="modal-name" style="margin: 0; color: #1a2c42;"></h2>
+        <span id="modal-tag" class="nickname-tag"></span>
+        <div class="modal-quote-text" id="modal-quote"></div>
     </div>
 </div>
 
@@ -201,7 +225,6 @@
 </div>
 
 <script>
-    // --- Firebase 配置 (完整不刪) ---
     const firebaseConfig = {
       apiKey: "AIzaSyAH3XXkYfepg-EfQkFAelq8f7d2Yk9JA74",
       authDomain: "project-1673660731296559126.firebaseapp.com",
@@ -213,45 +236,60 @@
 
     const ganHuaQuotes = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。", "車子的擋風玻璃比後視鏡大，人生前方的路也比過去的經歷更重要。", "再忙再累，也要抽出時間讓自己美起來。", "沮喪太容易了，頂著一切苦，依舊熱愛生活才是真的酷!", "他人對你的尊重，從來不是因為你的順從。", "青春不是雪，不是躲到陽光照不到的地方，就可以熬過不屬於自己的季節。", "人生的道路上，你沒有耐心去等待成功，那麼你只有用一生去面對失敗。", "每個人的一生都有許多夢想，剩下的就僅僅是行動了。", "從現在開始，不沉溺幻想，好好生活，做一個接近幸福的人。", "萬事萬物皆有裂痕，光就是這樣照進來的。", "生活是屬於每個人自己的感受，不屬於別人的看法。", "先愛自己，因為自己是你餘生的伴侶。", "不要為小事遮住視線，我們還有更大的世界。", "窮則思變，差則思勤!沒有比人更高的山！", "（某某某）又在走步了，裁判沒看到嗎？"];
     
+    // 補齊了專屬語錄欄位
     const members = [
-        { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg" },
-        { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg" },
-        { id: "m3", name: "徐堃翔", tag: "高工候選人", ig: "sean.hsu0930", img: "p3.jpg" },
-        { id: "m4", name: "廖廷恩", tag: "大🍼野豬", ig: "ed_331ie", img: "p4.jpg" },
-        { id: "m5", name: "蔡承烜", tag: "雨傘哥", ig: "pywb30", img: "p5.jpg" },
-        { id: "m6", name: "簡宗翰", tag: "養身籃球", ig: "jzh.10.1015", img: "p6.jpg" },
-        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg" },
-        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg" },
-        { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg" }
+        { id: "m1", name: "黃崇瑋", tag: "走步哥", ig: "bennynyhuang", img: "p1.jpg", quote: "「裁判，我這不是走步，是華麗的探戈。」" },
+        { id: "m2", name: "林軒漢", tag: "妮塔", ig: "linxuanhan97", img: "p2.jpg", quote: "「召喚大熊，是我對 322 最後的溫柔。」" },
+        { id: "m3", name: "徐堃翔", tag: "高工候選人", ig: "sean.hsu0930", img: "p3.jpg", quote: "「高工之路，只有勤奮與更勤奮。」" },
+        { id: "m4", name: "廖廷恩", tag: "大🍼野豬", ig: "ed_331ie", img: "p4.jpg", quote: "「我的野性，你無法駕馭。」" },
+        { id: "m5", name: "蔡承烜", tag: "雨傘哥", ig: "pywb30", img: "p5.jpg", quote: "「下雨時，我就是你們最堅強的護盾。」" },
+        { id: "m6", name: "簡宗翰", tag: "養身籃球", ig: "jzh.10.1015", img: "p6.jpg", quote: "「打球是為了流汗，不是為了流血。」" },
+        { id: "m7", name: "鄭子恩", tag: "導演", ig: "hu.hu7557", img: "p7.jpg", quote: "「Action! 每個憨包都是自己人生的主角。」" },
+        { id: "m8", name: "陳緯哲", tag: "崇瑋 軒漢父親", ig: "a0981848508", img: "p8.jpg", quote: "「養兒方知父母恩，崇瑋軒漢別再皮了。」" },
+        { id: "m9", name: "趙峻霆", tag: "鬍子哥", ig: "venus_tt314", img: "p9.jpg", quote: "「鬍子是男人的靈魂，憨包是我的本質。」" }
     ];
 
-    // --- 音樂功能 (含小柱子邏輯) ---
+    // --- 彈窗邏輯 ---
+    function openModal(member) {
+        document.getElementById('modal-img').src = member.img;
+        document.getElementById('modal-name').innerText = member.name;
+        document.getElementById('modal-tag').innerText = member.tag;
+        document.getElementById('modal-quote').innerText = member.quote;
+        document.getElementById('member-modal').style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // 禁止滾動
+    }
+
+    function closeModal() {
+        document.getElementById('member-modal').style.display = 'none';
+        document.body.style.overflow = 'auto'; // 恢復滾動
+    }
+
+    function closeModalByBg(e) {
+        if(e.target.id === 'member-modal') closeModal();
+    }
+
+    // --- 音樂功能 ---
     const playlist = Array.from({length: 12}, (_, i) => `music${i+1}.mp3`);
     let currentTrackIndex = 0;
     const audio = new Audio();
     audio.src = playlist[currentTrackIndex];
 
     function updateTrackUI() { document.getElementById('current-track-name').innerText = `🎵 曲目 ${currentTrackIndex + 1}`; }
-    
     function updateVisualizer(isPlaying) {
-        const vLeft = document.getElementById('viz-left');
-        const vRight = document.getElementById('viz-right');
+        const vLeft = document.getElementById('viz-left'), vRight = document.getElementById('viz-right');
         if (isPlaying) { vLeft.classList.add('playing'); vRight.classList.add('playing'); }
         else { vLeft.classList.remove('playing'); vRight.classList.remove('playing'); }
     }
-
     function toggleMusic() {
         const btn = document.getElementById('play-btn');
         if (audio.paused) { audio.play(); btn.innerText = "⏸"; updateVisualizer(true); }
         else { audio.pause(); btn.innerText = "▶️"; updateVisualizer(false); }
     }
-
     function nextSong() {
         currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
         audio.src = playlist[currentTrackIndex]; audio.play();
         document.getElementById('play-btn').innerText = "⏸"; updateTrackUI(); updateVisualizer(true);
     }
-
     function prevSong() {
         currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
         audio.src = playlist[currentTrackIndex]; audio.play();
@@ -259,18 +297,16 @@
     }
     audio.onended = nextSong;
 
-    // --- 隨機語錄翻牌邏輯 ---
+    // --- 語錄與留言 ---
     function drawRandomQuote() {
         const box = document.getElementById('random-quote-box');
         box.style.opacity = 0;
         setTimeout(() => {
-            const quote = ganHuaQuotes[Math.floor(Math.random() * ganHuaQuotes.length)];
-            box.innerText = quote;
+            box.innerText = ganHuaQuotes[Math.floor(Math.random() * ganHuaQuotes.length)];
             box.style.opacity = 1;
         }, 300);
     }
 
-    // --- 留言板邏輯 ---
     function postMessage() {
         const nInput = document.getElementById('user-name'), mInput = document.getElementById('user-msg');
         if (!mInput.value.trim()) return;
@@ -288,7 +324,6 @@
         }
     });
 
-    // --- 核心系統 ---
     function checkPass() {
         const input = document.getElementById('pass-input');
         if (input.value === "best322") { 
@@ -310,10 +345,11 @@
         const container = document.getElementById('members-container');
         members.forEach(m => {
             const card = document.createElement('div'); card.className = 'card';
+            // 將原本的 HTML 結構包裹，並新增 onclick 觸發彈窗
             card.innerHTML = `
-                <div class="photo-container"><img src="${m.img}"></div>
+                <div class="photo-container" onclick='openModal(${JSON.stringify(m)})'><img src="${m.img}"></div>
                 <div class="info">
-                    <div class="name">${m.name}</div>
+                    <div class="name" onclick='openModal(${JSON.stringify(m)})'>${m.name}</div>
                     <span class="nickname-tag">${m.tag}</span>
                     <div class="actions">
                         <a href="https://www.instagram.com/${m.ig}" class="btn-ig" target="_blank">IG</a>
