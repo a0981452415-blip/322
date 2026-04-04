@@ -300,7 +300,17 @@
 
     // --- 音樂邏輯 ---
     let audioCtx, analyser, dataArray, animId;
-    const playlist = Array.from({length: 13, (_, i) => `music${i+1}.mp3`);
+    
+    // 🎵 在這裡設定你的歌單！
+    // 1. 你可以放入網路上的音樂直接連結（要以 .mp3 等音頻格式結尾）。
+    // 2. 或者把音樂檔和這個網頁放在同一個資料夾，寫上檔名（例如 "mysong.mp3"）。
+    const playlist = [
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", // 預設的範例音樂
+        "music1.mp3",
+        "music2.mp3",
+        "music3.mp3"
+    ];
+    
     let trackIdx = 0;
     const audio = new Audio(playlist[trackIdx]);
     audio.crossOrigin = "anonymous";
