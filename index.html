@@ -384,10 +384,26 @@
 
     // --- 其他功能 ---
     function checkPass() {
-        if (document.getElementById('pass-input').value === "best322") { 
+        const password = document.getElementById('pass-input').value;
+        if (password === "best322") { 
             document.getElementById('login-overlay').style.transform = "translateY(-100%)";
             document.getElementById('music-player').style.display = 'flex';
             startQuotes();
+
+            // --- 新增：登入成功自動撥歌邏輯 ---
+            initAudio();
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            audio.play().then(() => {
+                document.getElementById('play-btn').innerText = "⏸";
+                updateTrackName();
+                drawSpectrum();
+            }).catch(err => {
+                console.log("播放被攔截：", err);
+            });
+
         } else { alert("密碼錯誤！"); }
     }
 
