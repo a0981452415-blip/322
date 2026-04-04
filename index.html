@@ -226,8 +226,8 @@
     <h3 style="color:var(--header-color); margin-top:0;">留言板</h3>
     <div id="message-list"></div>
     <div style="display: flex; gap: 8px;">
-        <input type="text" id="user-msg" placeholder="想說什麼幹話..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;">
-        <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">發送</button>
+             <input type="text" id="user-msg" placeholder="想說什麼幹話..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid #ddd;" onkeydown="if(event.key==='Enter') postMessage()">
+              <button onclick="postMessage()" style="padding: 10px 20px; background: var(--header-color); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">發送</button>
     </div>
 </div>
 
