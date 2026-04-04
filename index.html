@@ -301,7 +301,7 @@
 
     function startQuotes() {
         const d = document.getElementById('quote-display');
-        const q = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。", "今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。"];
+        const q = ["雖然我們是憨包，但我們是全校最帥的憨包。", "只要我不尷尬，尷尬的就是飲水機。", "322 的情義，就像福利社的泡麵——又香又燙。",  "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。", "只要我不尷尬，尷尬的就是飲水機。","今天不讀書，明天變大豬。", "老師在講我在聽，但我聽的是心碎的聲音。"];
         let i = 0;
         setInterval(() => {
             d.style.opacity = 0;
@@ -331,28 +331,43 @@
         `;
     }
 
-    // --- 新增：心靈雞湯邏輯 ---
-    const soupQuotes = [
-        "那些看似不起波瀾的日復一日，會突然在某天讓你看見堅持的意義。",
-        "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
-        "會考的數字只是人生的逗號，你們在 322 留下的笑容才是驚嘆號。",
-        "不要害怕暫時的迷茫，那是因為你的前方有無限可能。",
-        "累了就看看身邊的憨包們，你從來都不是一個人在戰鬥。",
-        "今天的眼淚和汗水，都會變成明天閃閃發光的鑽石。",
-        "放棄很簡單，但堅持下來的你，一定超級酷！",
-        "寧願辛苦一陣子，也不要後悔一輩子，衝吧 322！"
-    ];
+// --- 修正版：心靈雞湯邏輯 ---
+const soupQuotes = [
+    "那些看似不起波瀾的日復一日，會突然在某天讓你看見堅持的意義。",
+    "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+    "會考的數字只是人生的逗號，你們在 322 留下的笑容才是驚嘆號。",
+    "不要害怕暫時的迷茫，那是因為你的前方有無限可能。",
+    "累了就看看身邊的憨包們，你從來都不是一個人在戰鬥。",
+    "今天的眼淚和汗水，都會變成明天閃閃發光的鑽石。",
+    "放棄很簡單，但堅持下來的你，一定超級酷！",
+    "寧願辛苦一陣子，也不要後悔一輩子，衝吧 322！"
+];
 
-    function serveSoup() {
-        const textElement = document.getElementById('soup-text');
-        textElement.style.opacity = 0; // 先淡出
+function serveSoup() {
+    const textElement = document.getElementById('soup-text');
+    const btn = document.querySelector('.btn-soup');
+    
+    // 1. 防止連續點擊導致混亂
+    btn.disabled = true;
+    
+    // 2. 先讓文字消失
+    textElement.style.opacity = 0;
+    
+    // 3. 等 0.5 秒（CSS transition 的時間）後再換字並出現
+    setTimeout(() => {
+        let newQuote;
+        // 確保抽到的跟上次不一樣
+        do {
+            newQuote = soupQuotes[Math.floor(Math.random() * soupQuotes.length)];
+        } while (`「 ${newQuote} 」` === textElement.innerText);
         
-        setTimeout(() => {
-            const randomIndex = Math.floor(Math.random() * soupQuotes.length);
-            textElement.innerText = `「 ${soupQuotes[randomIndex]} 」`;
-            textElement.style.opacity = 1; // 再淡入
-        }, 500); // 等待 0.5 秒淡出動畫完成
-    }
+        textElement.innerText = `「 ${newQuote} 」`;
+        textElement.style.opacity = 1;
+        
+        // 4. 恢復按鈕功能
+        setTimeout(() => { btn.disabled = false; }, 500);
+    }, 500);
+}
 
     function renderCards() {
         const container = document.getElementById('members-container');
