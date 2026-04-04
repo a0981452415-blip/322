@@ -9,6 +9,39 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
+         /* 1. 定義發光動畫 */
+@keyframes neonPulse {
+    0% {
+        /* 初始狀態：較淡、較窄的陰影 */
+        text-shadow: 
+            0 0 7px rgba(79, 195, 247, 0.3),
+            0 0 10px rgba(79, 195, 247, 0.3);
+    }
+    50% {
+        /* 中間狀態：最亮、最寬的陰影，模擬霓虹燈全開 */
+        text-shadow: 
+            0 0 10px rgba(79, 195, 247, 0.8),
+            0 0 20px rgba(79, 195, 247, 0.8),
+            0 0 30px rgba(79, 195, 247, 0.6),
+            0 0 40px rgba(79, 195, 247, 0.4);
+    }
+    100% {
+        /* 回到初始狀態 */
+        text-shadow: 
+            0 0 7px rgba(79, 195, 247, 0.3),
+            0 0 10px rgba(79, 195, 247, 0.3);
+    }
+}
+
+/* 2. 建立套用的類別 */
+.neon-glow {
+    /* 設定文字基本顏色（通常選用較淡的色調） */
+    color: #e1f5fe; 
+    /* 執行動畫：2秒循環一次，平滑過渡，無限播放 */
+    animation: neonPulse 2s infinite ease-in-out;
+    /* 優化：告訴瀏覽器這準備要動，提前掛載到 GPU */
+    will-change: text-shadow; 
+}
         /* 定義金色流動動畫 */
 @keyframes goldFlow {
     0% { background-position: 0% 50%; }
