@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>322 憨包們</title>
+    <title>322 憨包們 - 回憶紀錄</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -103,6 +103,10 @@
         #member-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 100000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: white; width: 85%; max-width: 400px; border-radius: 30px; padding: 40px; text-align: center; position: relative; animation: modalPop 0.3s ease-out; }
         .close-btn { position: absolute; top: 20px; right: 25px; font-size: 28px; color: #ccc; cursor: pointer; }
+
+        /* --- 雞湯按鈕特效 --- */
+        .btn-soup { background: #ff9800; color: white; border: none; padding: 10px 24px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); }
+        .btn-soup:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5); }
     </style>
 </head>
 <body>
@@ -151,6 +155,14 @@
         <div class="time-block"><span id="minutes">00</span><p>分</p></div>
         <div class="time-block"><span id="seconds">00</span><p>秒</p></div>
     </div>
+</div>
+
+<div class="module-container" style="background: linear-gradient(135deg, rgba(255,236,210,0.1), rgba(252,182,159,0.1)); border-color: #ffb74d; box-shadow: 0 0 15px rgba(255, 183, 77, 0.15);">
+    <h3 style="color:#ff9800; margin-top:0; text-shadow: 0 0 8px rgba(255,152,0,0.3);">🍵 憨包專屬心靈雞湯</h3>
+    <div style="min-height: 70px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+        <p id="soup-text" style="font-size: 1.1rem; color: #eee; line-height: 1.6; margin: 0; transition: opacity 0.5s ease; font-weight: 500;">「 正在為你熬煮今天的雞湯... 」</p>
+    </div>
+    <button class="btn-soup" onclick="serveSoup()">再來一碗 🥣</button>
 </div>
 
 <div class="module-container">
@@ -297,14 +309,11 @@
         }, 4000);
     }
 
-    // --- 新增：每日隨機憨包生成 ---
+    // --- 每日隨機憨包生成 ---
     function renderDailyMember() {
         const display = document.getElementById('daily-member-display');
         const now = new Date();
-        // 將今天的日期轉換為數字種子 (例: 20260404)
         const dateSeed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
-        
-        // 用種子去對 members 陣列長度取餘數，保證當天所有人看到的都一樣
         const index = dateSeed % members.length;
         const m = members[index];
 
@@ -320,6 +329,29 @@
                 </div>
             </div>
         `;
+    }
+
+    // --- 新增：心靈雞湯邏輯 ---
+    const soupQuotes = [
+        "那些看似不起波瀾的日復一日，會突然在某天讓你看見堅持的意義。",
+        "就算我們自稱憨包，也要做全校最努力、最閃耀的那一群！",
+        "會考的數字只是人生的逗號，你們在 322 留下的笑容才是驚嘆號。",
+        "不要害怕暫時的迷茫，那是因為你的前方有無限可能。",
+        "累了就看看身邊的憨包們，你從來都不是一個人在戰鬥。",
+        "今天的眼淚和汗水，都會變成明天閃閃發光的鑽石。",
+        "放棄很簡單，但堅持下來的你，一定超級酷！",
+        "寧願辛苦一陣子，也不要後悔一輩子，衝吧 322！"
+    ];
+
+    function serveSoup() {
+        const textElement = document.getElementById('soup-text');
+        textElement.style.opacity = 0; // 先淡出
+        
+        setTimeout(() => {
+            const randomIndex = Math.floor(Math.random() * soupQuotes.length);
+            textElement.innerText = `「 ${soupQuotes[randomIndex]} 」`;
+            textElement.style.opacity = 1; // 再淡入
+        }, 500); // 等待 0.5 秒淡出動畫完成
     }
 
     function renderCards() {
@@ -391,7 +423,8 @@
 
     window.onload = () => {
         createStars();
-        renderDailyMember(); // 執行今日憨包邏輯
+        renderDailyMember(); 
+        serveSoup(); // 網頁載入時先裝一碗雞湯
         renderCards();
         setInterval(() => {
             const target = new Date(2026, 4, 16, 8, 0).getTime();
